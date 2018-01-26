@@ -10,20 +10,23 @@
       </div>
       <div class="passward input-box">
         <span class="input-icon"></span>
-        <input class="inputs" type="text" placeholder="请输入密码" v-model="password">
+        <input class="inputs" type="password" placeholder="请输入密码" v-model="password">
       </div>
       <div class="remenber" @click="remenberPassWord">
         <i class="check" :class="{'check-yes' : remenber}"></i>
         <span class="tip">记住密码</span>
       </div>
-      <div class="submit-no input-box">
+      <div class="submit-no input-box" @click="login">
         登录
       </div>
     </div>
+    <toast ref="toast"></toast>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import {login} from 'api/admins'
+import Toast from 'base/toast/toast'
 export default {
   data() {
     return {
@@ -32,10 +35,40 @@ export default {
       remenber: true
     }
   },
+  created() {
+    let token = localStorage.getItem('token')
+    if (token !== undefined) {
+      location.href = '#/container/data'
+    }
+  },
   methods: {
     remenberPassWord() {
       this.remenber = !this.remenber
+    },
+    login() {
+      if (this.user === '') {
+        this.$refs.toast.show('请输入用户名')
+        return false
+      } else if (this.password === '') {
+        this.$refs.toast.show('请输入密码')
+        return false
+      }
+      let data = {username: this.user, password: this.password}
+      login(data).then((res) => {
+        if (!res.error && this.remenber) {
+          this.$refs.toast.show('登陆成功')
+          localStorage.setItem('token', res.access_token)
+          setTimeout(() => {
+            location.href = '#/container/data'
+          }, 1500)
+        } else if (res.error) {
+          this.$refs.toast.show(res.message)
+        }
+      })
     }
+  },
+  components: {
+    'toast': Toast
   }
 }
 </script>

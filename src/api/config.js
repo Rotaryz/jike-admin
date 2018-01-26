@@ -1,7 +1,7 @@
 const env = process.env
 
 const DEV_URL = {
-  api: 'http://jike-admin-api.com'
+  api: 'http://dev.jike-admin-api.jerryf.cn'
 }
 
 const TEST_URL = {}

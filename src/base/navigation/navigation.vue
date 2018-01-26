@@ -269,7 +269,7 @@ export default {
           background: $color-menu-select
           border-left: 8px solid $color-nomal
         .nav-item-no-border
-          border-left: none
+          border-left: 8px solid $color-menu-background
         .nav-big-child
           .nav-title
             margin-left: 20px

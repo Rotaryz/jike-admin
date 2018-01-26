@@ -7,6 +7,7 @@ Vue.use(Router)
 const Login = () => import('page/login/login')
 const Container = () => import('page/container/container')
 const Data = () => import('page/data/data')
+const Order = () => import('page/order/order')
 
 export default new Router({
   routes: [
@@ -26,6 +27,9 @@ export default new Router({
       children: [{
         path: 'data',
         component: Data
+      }, {
+        path: 'order',
+        component: Order
       }]
     }
   ]

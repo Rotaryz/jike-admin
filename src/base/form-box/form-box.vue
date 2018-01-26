@@ -18,8 +18,8 @@
                 <span class="city-tap-top"></span>
               </div>
             </div>
-            <ul class="city-box" v-if="item.show">
-              <li class="city-box-item">湖南省</li>
+            <ul class="city-box"  >
+              <li class="city-box-item" v-for="(idx, items) in item.data" :key="idx">湖南省</li>
               <li class="city-box-item">湖北省</li>
               <li class="city-box-item">湖北省</li>
             </ul>
@@ -46,15 +46,15 @@
           <slot name="form-list"></slot>
         </div>
         <div class="total">
-          <div>每页10条，共100000条数据</div>
+          <div>每页{{pageDtail[0].per_page}}条，共{{pageDtail[0].total}}条数据</div>
           <div class="page">
             <div class="page-icon" @click="subtract">
             </div>
-            <div class="pade-detail">{{page}}/20</div>
+            <div class="pade-detail">{{page}}/{{pageDtail[0].total_page}}</div>
             <div class="page-icon page-icon-two"  @click="addPage">
             </div>
             <div class="border-page page-total">
-              {{page}}/20
+              {{page}}/{{pageDtail[0].total_page}}
               <span class="page-tap">
                 <i class="page-top"></i>
               </span>
@@ -70,7 +70,7 @@
         </div>
       </div>
       <div class="shade-win" @click.stop="hideShade" v-show="isShade">
-        <div class="shade-detail">
+        <div class="shade-detail" @click.stop>
           <slot name="shade-box"></slot>
         </div>
       </div>
@@ -79,15 +79,20 @@
 </template>
 
 <script type="text/ecmascript-6">
+import {businessCircle} from 'api/globals'
 export default {
   props: {
     timeList: {
       type: Array,
-      default: () => [{title: '今天', type: '7'}, {title: '昨天', type: '-1'}, {title: '7天', type: '7'}, {title: '30天', type: '30'}, {title: '自定义', type: ''}]
+      default: () => [{title: '今天', type: '1'}, {title: '昨天', type: '-1'}, {title: '7天', type: '7'}, {title: '30天', type: '30'}, {title: '自定义', type: ''}]
     },
     cityList: {
       type: Array,
-      default: () => [{title: '地域筛选', data: [{title: '请选择'}, {title: '请选择'}, {title: '请选择'}, {title: '请选择'}]}]
+      default: () => [{title: '地域筛选', data: [{title: '请选择', type: 'province', data: []}, {title: '请选择', type: 'city', data: []}, {title: '请选择', type: 'city', data: []}, {title: '请选择', data: []}]}]
+    },
+    pageDtail: {
+      type: Array,
+      default: () => [{total: 1, per_page: 10, total_page: 1}]
     }
   },
   data() {
@@ -95,13 +100,29 @@ export default {
       TimeIndex: 0,
       isShade: false,
       page: 1,
-      pageDetail: false
+      pageDetail: false,
+      cityType: 'province'
     }
   },
+  created() {
+    this.showCity()
+  },
   methods: {
+    showCity() {
+      businessCircle().then((res) => {
+        if (this.cityType === 'province') {
+          this.cityList[0].data[0] = res.data.filter.province
+        }
+        console.log(this.cityList[0].data[0])
+      })
+    },
+    checkCity(type) {
+      console.log(type)
+    },
     checkTime(index, type) {
       this.TimeIndex = index
-      this.$emit('checkTime', type)
+      this.page = 1
+      this.$emit('checkTime', type, this.page)
     },
     showShade() {
       this.isShade = true
@@ -110,8 +131,10 @@ export default {
       this.isShade = false
     },
     addPage() {
-      this.page++
-      this.$emit('addPage', this.page)
+      if (this.page < this.pageDtail[0].total_page) {
+        this.page++
+        this.$emit('addPage', this.page)
+      }
     },
     subtract() {
       if (this.page > 1) {
@@ -349,6 +372,6 @@ export default {
           box-shadow: 0 0 5px 0 rgba(12,6,14,0.60)
           border-radius :3px
           background :$color-white
-          width :50.378%
+          width :33.25%
           min-height :50px
 </style>
