@@ -8,6 +8,9 @@ const Login = () => import('page/login/login')
 const Container = () => import('page/container/container')
 const Data = () => import('page/data/data')
 const Order = () => import('page/order/order')
+const Client = () => import('page/client/client')
+const BusinessList = () => import('page/business-list/business-list')
+const BusinessGeneral = () => import('page/business-general/business-general')
 
 export default new Router({
   routes: [
@@ -30,6 +33,15 @@ export default new Router({
       }, {
         path: 'order',
         component: Order
+      }, {
+        path: 'businessList',
+        component: BusinessList
+      }, {
+        path: 'businessGeneral',
+        component: BusinessGeneral
+      }, {
+        path: 'client',
+        component: Client
       }]
     }
   ]

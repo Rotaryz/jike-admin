@@ -14,3 +14,14 @@ export function businessCircle(params) {
     return Promise.resolve(res.data)
   })
 }
+/**
+ * 行业筛选
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function industrie(params) {
+  const url = `/api/globals/filter/industrie`
+  return axios.get(url, {params: params}).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

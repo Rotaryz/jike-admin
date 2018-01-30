@@ -25,3 +25,14 @@ export function orderDetail(id) {
     return Promise.resolve(res.data)
   })
 }
+/**
+ * 添加备注
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function orderManage(id, params) {
+  const url = `/api/order/order-manage/${id}`
+  return axios.put(url, params).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

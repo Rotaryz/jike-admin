@@ -1,44 +1,62 @@
 <template>
-  <div class="form-box">
+  <div class="form-box" @click="hidePageDetail">
     <div class="tag">
       <div class="tag-title">
         <span class="title-item">商家管理</span>
         <span class="title-item">/ 商家管理</span>
       </div>
-      <div class="tag-choice">
-        <div class="tag-time">
-          <span class="time-title" v-for="(item, index) in timeList" :key="index" :class="{'time-title-active': TimeIndex === index}" @click="checkTime(index,item.type)">{{item.title}}</span>
+      <div class="tag-choice" v-if="chioce">
+        <div class="tag-time" v-if="isDate">
+          <span class="time-title" v-for="(item, index) in timeList"
+                :key="index" :class="{'time-title-active': TimeIndex === index}"
+                @click="checkTime(index,item.type)">
+            {{item.title}}
+             <div class="block" v-if="item.type === ''" v-show="showPicker">
+              <el-date-picker
+                v-model="moreTime"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+              </el-date-picker>
+            </div>
+          </span>
         </div>
-        <div class="tag-city">
-          <span class="city-title">{{cityList[0].title}}</span>
-          <div class="city-select" v-for="(item, index) in cityList[0].data" :key="index">
+        <div class="tag-city" v-if="isCity">
+          <span class="city-title">地域筛选</span>
+          <div class="city-select" v-for="(item, index) in cityList"
+               :key="index" @click="checkCity(index)">
             <div class="city-show">
               {{item.title}}
               <div class="city-tap">
                 <span class="city-tap-top"></span>
               </div>
             </div>
-            <ul class="city-box"  >
-              <li class="city-box-item" v-for="(idx, items) in item.data" :key="idx">湖南省</li>
-              <li class="city-box-item">湖北省</li>
-              <li class="city-box-item">湖北省</li>
+            <ul class="city-box" v-show="item.show">
+              <li class="city-box-item" v-for="(items, idx) in item.data"
+                  :class="{'city-box-item-active':item.index === idx}"
+                  :key="idx" @click.stop="showCityList(idx,index,items)">{{items}}
+              </li>
             </ul>
           </div>
         </div>
-        <div class="tag-industry">
+        <div class="tag-industry" v-if="isIndustrie">
           <span class="city-title">行业筛选</span>
-          <div class="city-select">
+          <div class="city-select" v-for="(item, index) in industrieList" :key="index" @click="industrie(index)">
             <div class="city-show">
-              美业
+              {{item.title}}
               <div class="city-tap">
                 <span class="city-tap-top"></span>
               </div>
             </div>
-            <ul class="city-box" style="display: none">
+            <ul class="city-box" v-show="item.show">
+              <li class="city-box-item"  v-for="(items, idx) in item.data" :key="idx"  :class="{'city-box-item-active':item.index === idx}" @click.stop="industrieDetail(idx,index,items.name,items.id)">{{items.name}}</li>
             </ul>
           </div>
         </div>
+        <slot name="tag-sel"></slot>
       </div>
+      <slot name="tap"></slot>
     </div>
     <div class="data">
       <div class="data-content">
@@ -51,21 +69,19 @@
             <div class="page-icon" @click="subtract">
             </div>
             <div class="pade-detail">{{page}}/{{pageDtail[0].total_page}}</div>
-            <div class="page-icon page-icon-two"  @click="addPage">
+            <div class="page-icon page-icon-two" @click="addPage">
             </div>
-            <div class="border-page page-total">
+            <div class="border-page page-total" @click.stop="showPageDetail">
               {{page}}/{{pageDtail[0].total_page}}
               <span class="page-tap">
                 <i class="page-top"></i>
               </span>
               <ul class="page-list" v-show="pageDetail">
-                <li class="page-item">1/20</li>
-                <li class="page-item">1/20</li>
-                <li class="page-item">1/20</li>
+                <li class="page-item" v-for="item in pageDtail[0].total_page" :key="item" :class="{'page-item-active': pageIndex === item}" @click.stop="detailPage(item)">{{item}}/{{pageDtail[0].total_page}}</li>
               </ul>
             </div>
-            <input type="text" class="border-page"/>
-            <div class="border-page">跳转</div>
+            <input type="text" class="border-page" v-model="pageInput"/>
+            <div class="border-page" @click="goPage">跳转</div>
           </div>
         </div>
       </div>
@@ -75,20 +91,44 @@
         </div>
       </div>
     </div>
+    <toast ref="toast"></toast>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import {businessCircle} from 'api/globals'
+import {businessCircle, industrie} from 'api/globals'
+import {ERR_OK} from 'api/config'
+import Toast from 'base/toast/toast'
+const allWay = '全部'
+const shopWay = {id: 0, name: '全部', parent_id: -1}
 export default {
+  name: 'demonstration',
   props: {
     timeList: {
       type: Array,
-      default: () => [{title: '今天', type: '1'}, {title: '昨天', type: '-1'}, {title: '7天', type: '7'}, {title: '30天', type: '30'}, {title: '自定义', type: ''}]
+      default: () => [{title: '今天', type: '1'}, {
+        title: '昨天',
+        type: '-1'
+      }, {title: '7天', type: '7'}, {title: '30天', type: '30'}, {
+        title: '自定义',
+        type: ''
+      }]
     },
-    cityList: {
-      type: Array,
-      default: () => [{title: '地域筛选', data: [{title: '请选择', type: 'province', data: []}, {title: '请选择', type: 'city', data: []}, {title: '请选择', type: 'city', data: []}, {title: '请选择', data: []}]}]
+    chioce: {
+      type: Boolean,
+      default: true
+    },
+    isCity: {
+      type: Boolean,
+      default: true
+    },
+    isDate: {
+      type: Boolean,
+      default: true
+    },
+    isIndustrie: {
+      type: Boolean,
+      default: true
     },
     pageDtail: {
       type: Array,
@@ -97,29 +137,176 @@ export default {
   },
   data() {
     return {
+      moreTime: '',
+      pageInput: '',
       TimeIndex: 0,
       isShade: false,
       page: 1,
       pageDetail: false,
-      cityType: 'province'
+      showPicker: false,
+      pageIndex: 0,
+      prams: ['', '', '', ''],
+      cityIndex: 0,
+      industrieList: [{
+        title: '请选择行业',
+        data: [],
+        show: false,
+        index: -1
+      }, {
+        title: '请选择子行业',
+        data: [],
+        show: false,
+        index: -1
+      }],
+      industrieId: -1,
+      cityList: [{
+        title: '请选择省份',
+        type: 'province',
+        data: [],
+        show: false,
+        index: -1
+      }, {
+        title: '请选择城市',
+        type: 'city',
+        data: [],
+        show: false,
+        index: -1
+      }, {
+        title: '请选择市区',
+        type: 'district',
+        data: [],
+        show: false,
+        index: -1
+      }, {title: '请选择商圈', type: 'business_circle', data: [], show: false, index: -1}],
+      shopIndex: 0,
+      shopData: ['', '']
     }
   },
   created() {
     this.showCity()
+    window.onkeydown = (e) => {
+      if (e.keyCode === 13) {
+        if (this.pageInput > this.pageDtail[0].total_page) {
+          this.pageInput = this.pageDtail[0].total_page
+        }
+        this.page = this.pageInput
+        this.$emit('addPage', this.page)
+      }
+    }
   },
   methods: {
-    showCity() {
-      businessCircle().then((res) => {
-        if (this.cityType === 'province') {
-          this.cityList[0].data[0] = res.data.filter.province
+    industrieDetail(idx, index, title, id) {
+      this.cityList[index].index = idx
+      setTimeout(() => {
+        this.industrieList[index].show = false
+        this.industrieList[index].title = title
+        this.shopData[index] = id
+        this.industrieId = id
+        this.page = 1
+        this.shopData.forEach((item, idx) => {
+          if (idx > index) {
+            if (idx === 1) {
+              this.industrieList[idx].title = '请选择子行业'
+            }
+          }
+        })
+        let shop = {parent_id: this.shopData[0], child_id: this.shopData[1]}
+        this.$emit('showIndustrie', shop)
+      }, 100)
+    },
+    showIndustrie() {
+      let data = {}
+      if (this.industrieId !== -1) {
+        data = {partent_id: this.shopData[0]}
+      }
+      industrie(data).then((res) => {
+        if (res.error === ERR_OK) {
+          this.industrieList[this.shopIndex].data = res.data
+          this.industrieList[this.shopIndex].data.unshift(shopWay)
         }
-        console.log(this.cityList[0].data[0])
       })
     },
-    checkCity(type) {
-      console.log(type)
+    industrie(index) {
+      this.hideShade()
+      this.shopIndex = index
+      this.industrieList[index].show = !this.industrieList[index].show
+      if (index === 0) {
+        this.industrieId = -1
+        this.shopData[1] = ''
+      } else if (index === 1 && this.industrieId === -1) {
+        return false
+      }
+      this.showIndustrie()
+    },
+    goPage() {
+      this.pageInput = this.pageInput * 1
+      if (this.pageInput > this.pageDtail[0].total_page) {
+        this.pageInput = this.pageDtail[0].total_page
+      }
+      this.page = this.pageInput
+      this.$emit('addPage', this.page)
+    },
+    showPageDetail() {
+      this.pageDetail = !this.pageDetail
+    },
+    hidePageDetail() {
+      this.pageDetail = false
+    },
+    detailPage(page) {
+      this.page = page
+      this.pageIndex = page
+      setTimeout(() => {
+        this.hidePageDetail()
+      }, 100)
+      this.$emit('addPage', this.page)
+    },
+    showCity() {
+      this.hideShade()
+      let data = this.infoData(this.prams)
+      businessCircle(data).then((res) => {
+        if (res.error === ERR_OK) {
+          this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]
+          this.cityList[this.cityIndex].data.unshift(allWay)
+        }
+      })
+    },
+    checkCity(index) {
+      this.cityIndex = index
+      for (let i = 0; i < this.prams.length; i++) {
+        if (i >= index) {
+          this.prams[i] = ''
+        }
+      }
+      this.cityList[index].show = !this.cityList[index].show
+      this.showCity()
+    },
+    showCityList(idx, index, title) {
+      this.cityList[index].index = idx
+      setTimeout(() => {
+        this.cityList[index].show = false
+        this.cityList[index].title = title
+        this.prams[index] = title
+        this.page = 1
+        this.$emit('showCity', this.prams, this.page)
+        this.prams.forEach((item, idx) => {
+          if (idx > index) {
+            if (idx === 1) {
+              this.cityList[idx].title = '请选择城市'
+            } else if (idx === 2) {
+              this.cityList[idx].title = '请选择市区'
+            } else if (idx === 3) {
+              this.cityList[idx].title = '请选择商圈'
+            }
+          }
+        })
+      }, 100)
+    },
+    infoData(res) {
+      let data = {province: res[0], city: res[1], district: res[2], business_circle: res[3]}
+      return data
     },
     checkTime(index, type) {
+      this.hideShade()
       this.TimeIndex = index
       this.page = 1
       this.$emit('checkTime', type, this.page)
@@ -141,12 +328,19 @@ export default {
         this.page--
         this.$emit('addPage', this.page)
       }
+    },
+    showContent(content, time) {
+      console.log(this.$refs)
+      this.$refs.toast.show(content, time)
     }
+  },
+  components: {
+    'toast': Toast
   }
 }
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
   .form-box
@@ -156,6 +350,8 @@ export default {
     .tag
       background: $color-white
       flex: 1.7
+      position: relative
+      z-index :150
       .tag-title
         line-height: 88px
         font-size: $font-size-large
@@ -175,14 +371,15 @@ export default {
             color: $color-text
       .tag-choice
         display: flex
+        padding : 0 10px
         .tag-time
-          padding-left: 10px
+          width :310px
           .time-title
             cursor: pointer
             display: inline-block
             position: relative
-            margin-left :30px
-            padding-bottom :10px
+            margin-left: 30px
+            padding-bottom: 10px
             font-size: $font-size-medium
             color: $color-text
             &:before
@@ -192,15 +389,24 @@ export default {
               height: 3px
               width: 32px
               background: $color-white
+            &:last-child
+              position :relative
+              .block
+                position: absolute
+                bottom: -40px
+                transform :translateX(-50%)
+                .el-date-editor .el-range-separator
+                  width :10%
           .time-title-active
             &:before
               background: $color-nomal
       .tag-city, .tag-industry
+        margin-left :70px
         display: flex
-        margin-left: 80px
         font-size: $font-size-medium
         color: $color-text
         .city-title
+          line-height: 17px
           no-wrap()
         .city-select
           cursor: pointer
@@ -211,6 +417,7 @@ export default {
           font-size: $font-size-medium
           color: $color-text-little
           transform: translateY(-25%)
+          position: relative
           .city-show
             padding: 8px 49px 8px 10px
             no-wrap()
@@ -246,29 +453,32 @@ export default {
                 row-center()
                 top: 24%
           .city-box
-            width: 100%
+            min-width: 100%
             border-radius: 3px
             box-shadow: 0 1px 5px 0 rgba(12, 6, 14, 0.20)
             background: $color-white
-            position: relative
+            position: absolute
             z-index: 100
             margin-top: 4px
-            padding: 13px 0
             .city-box-item
+              no-wrap()
               text-align: center
               height: 26px
               line-height: 26px
               font-size: $font-size-medium
+              &:last-child
+                margin-bottom: 13px
+              &:first-child
+                margin-top: 13px
             .city-box-item-active
               background: $color-big-background
         .city-select-active
           color: $color-text
     .data
       flex: 9
-      min-height :600px
+      min-height: 600px
       padding: 25px
       position: relative
-      z-index :1
       .data-content
         height: 100%
         width: 100%
@@ -276,102 +486,101 @@ export default {
         display: flex
         flex-direction: column
         .data-detail
-          height :92.4%
+          height: 92.4%
         .total
           width: 100%
           height: 7.6%
           display: flex
           align-items: center
-          justify-content :space-between
-          padding:0 15px 0 30px
+          justify-content: space-between
+          padding: 0 15px 0 30px
           color: $color-text
           font-size: $font-size-medium
           .page
-            display :flex
-            align-items :center
+            display: flex
+            align-items: center
             .pade-detail
-              margin-right :10px
+              margin-right: 10px
             .page-icon
               cursor: pointer
-              bg-image('icon-before')
-              background-size :cover
-              margin-right :10px
-              height :25px
-              width :25px
+              icon-image('icon-before')
+              margin-right: 10px
+              height: 25px
+              width: 25px
             .page-icon-two
-              bg-image('icon-later')
+              icon-image('icon-later')
             .border-page
-              display :flex
-              align-items :center
-              border-radius :3px
-              margin-right :10px
-              border :1px solid $color-icon-line
-              font-size :$font-size-medium
+              display: flex
+              align-items: center
+              border-radius: 3px
+              margin-right: 10px
+              border: 1px solid $color-icon-line
+              font-size: $font-size-medium
             div.border-page
-              padding : 0 15px
-              height :25px
+              padding: 0 15px
+              height: 25px
               line-height: 25px
             div.page-total
-              padding-right :33px
+              padding-right: 33px
               position: relative
               .page-tap
                 position: absolute
                 right: 0
                 top: 0
-                height :23px
-                display :inline-block
-                width :18px
-                border-left :1px solid $color-icon-line
+                height: 23px
+                display: inline-block
+                width: 18px
+                border-left: 1px solid $color-icon-line
                 .page-top
                   row-center()
                   top: 42%
-                  display :inline-block
-                  height :0
-                  border :5px solid $color-text
-                  border-bottom :5px solid transparent
-                  border-left :5px solid transparent
-                  border-right :5px solid transparent
+                  display: inline-block
+                  height: 0
+                  border: 5px solid $color-text
+                  border-bottom: 5px solid transparent
+                  border-left: 5px solid transparent
+                  border-right: 5px solid transparent
                 .page-bottom
                   row-center()
                   top: 11%
-                  display :inline-block
-                  height :0
-                  border :5px solid $color-text
-                  border-top :5px solid transparent
-                  border-left :5px solid transparent
-                  border-right :5px solid transparent
+                  display: inline-block
+                  height: 0
+                  border: 5px solid $color-text
+                  border-top: 5px solid transparent
+                  border-left: 5px solid transparent
+                  border-right: 5px solid transparent
               .page-list
                 position: absolute
-                width :100%
+                width: 100%
                 left: 0
-                box-shadow: 0 1px 5px 0 rgba(12,6,14,0.20)
-                text-align :center
-                background :$color-white
-                border-radius :3px
+                box-shadow: 0 1px 5px 0 rgba(12, 6, 14, 0.20)
+                text-align: center
+                background: $color-white
+                border-radius: 3px
                 bottom: 30px
-                font-size :$font-size-medium
-                color : $color-text-little
+                font-size: $font-size-medium
+                color: $color-text-little
                 .page-item
                   height: 29px
                   line-height: 29px
                 .page-item-active
                   background: $color-big-background
             input.border-page
-              height :25px
-              width :39px
-              text-align :center
+              height: 25px
+              width: 39px
+              text-align: center
       .shade-win
-        height :100%
-        width :100%
-        background: rgba(50,50,58,0.60)
+        height: 100%
+        width: 100%
+        background: rgba(50, 50, 58, 0.60)
         position: absolute
         top: 0
         left: 0
         .shade-detail
           all-center()
-          box-shadow: 0 0 5px 0 rgba(12,6,14,0.60)
-          border-radius :3px
-          background :$color-white
-          width :33.25%
-          min-height :50px
+          box-shadow: 0 0 5px 0 rgba(12, 6, 14, 0.60)
+          border-radius: 3px
+          background: $color-white
+          width: 33.25%
+          min-height: 50px
 </style>

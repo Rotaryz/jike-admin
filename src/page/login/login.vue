@@ -117,13 +117,12 @@ export default {
         .input-icon
           height: 44%
           width: 6.01%
-          bg-image('icon-user')
-          background-size: cover
+          icon-image('icon-user')
           col-center()
           left: 2.5%
       .passward
         .input-icon
-          bg-image('icon-password')
+          icon-image('icon-password')
       .remenber
         display: flex
         justify-content: right
@@ -137,8 +136,7 @@ export default {
           border-radius: 4px
         .check-yes
           border: none
-          bg-image('icon-select')
-          background-size: cover
+          icon-image('icon-select')
         .tip
           line-height: 1.0416vw
           margin-left: 2.853%

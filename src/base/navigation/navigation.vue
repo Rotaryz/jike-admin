@@ -10,7 +10,7 @@
             :class="{'nav-tap-active':bigChild === index,'nav-item-no-border':item.children.length > 1}"
             v-for="(item , index) in navList" :key="index"
             @click="showChild(index)" :style="{'height':item.showHeight+'px'}">
-          <a href="javaScript:;" class="nav-tap">
+          <a :href="item.url" class="nav-tap">
             <span class="nav-icon"><img :src="item.icon" class="nav-pic"></span>
             <div class="nav-title" v-show="!showAnimation">
             <span v-for="(items , index) in item.title" :key="index">{{items}}
@@ -23,7 +23,7 @@
             <li class="nav-item" v-for="(items , idx) in item.children"
                 :class="clickChild === idx ? 'nav-big-active' : ''"
                 :key="idx" @click.stop="bigChildren(idx)">
-              <a href="javaScript:;" class="nav-tap">
+              <a :href="items.url" class="nav-tap">
                 <span class="nav-icon"><img src=""></span>
                 <div class="nav-title">
                  <span v-for="(child , index) in items.title" :key="index">{{
@@ -78,7 +78,7 @@ const navList = [
     showHeight: 70
   }, {
     title: '数据概况',
-    url: 'javaScript:;',
+    url: '#/container/data',
     icon: require('./icon-data@2x.png'),
     children: [{
       title: '数据概况',
@@ -87,20 +87,20 @@ const navList = [
     showHeight: 70
   }, {
     title: '商家管理',
-    url: 'javaScript:;',
+    url: '#/container/businessList',
     icon: require('./icon-shop@2x.png'),
     children: [{
       title: '商家列表',
-      url: 'javaScript:;'
+      url: '#/container/businessList'
     }, {
       title: '商家概况',
-      url: 'javaScript:;'
+      url: '#/container/businessGeneral'
     }],
     showHeight: 70
   }, {
     title: '客户管理',
     icon: require('./icon-guest@2x.png'),
-    url: 'javaScript:;',
+    url: '#/container/client',
     children: [{
       title: '客户管理',
       url: 'javaScript:;'
@@ -109,7 +109,7 @@ const navList = [
   }, {
     title: '订单管理',
     icon: require('./icon-indent@2x.png'),
-    url: 'javaScript:;',
+    url: '#/container/order',
     children: [{
       title: '订单管理',
       url: 'javaScript:;'
@@ -137,9 +137,27 @@ export default {
       showHeight: 70,
       timer: null,
       clickChild: 0,
-      recodIndex: -1,
+      recodIndex: 2,
       showAnimation: false
     }
+  },
+  created() {
+    let rootType = (location.hash.slice(2)).split('/')
+    let type = rootType[rootType.length - 1]
+    this.navList.forEach((item, idx) => {
+      if (item.children.length > 1) {
+        item.children.forEach((items, index) => {
+          if (items.url.includes(type)) {
+            this.showChild(idx)
+          }
+        })
+        return false
+      }
+      if (item.url.includes(type)) {
+        this.showChild(idx)
+        return false
+      }
+    })
   },
   methods: {
     showChild(index) {
@@ -225,8 +243,7 @@ export default {
         position: relative
         .icon
           col-center()
-          bg-image('pic-logo_menu')
-          background-size: cover
+          icon-image('pic-logo_menu')
           height: 39px
           width: 36px
           left: 37px
@@ -263,8 +280,7 @@ export default {
               height: 18px
               width: 18px
               right: 23px
-              bg-image('icon-pressed')
-              background-size: cover
+              icon-image('icon-pressed')
         .nav-tap-active
           background: $color-menu-select
           border-left: 8px solid $color-nomal
@@ -287,8 +303,7 @@ export default {
         background: $color-menu-select
         position: relative
         .icon
-          bg-image('pic-logo_menu')
-          background-size: cover
+          icon-image('pic-logo_menu')
           height: 39px
           width: 36px
           col-center()

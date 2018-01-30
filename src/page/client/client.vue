@@ -1,7 +1,7 @@
 <template>
   <form-box ref="order" @checkTime="checkTime" @addPage="addPage" @showCity="showCity" :pageDtail="pageDtail" :isIndustrie="isIndustrie">
     <div class="selects" slot="tag-sel">
-      <span class="select-title">订单</span>
+      <span class="city-title">订单</span>
       <div class="select-box">
         <span class="select-item" v-for="(item, index) in statusList" :class="{'select-item-active': status === item.status}" :key="index" @click="orderStatus(item.status)">{{item.title}}</span>
       </div>
@@ -13,85 +13,85 @@
         </div>
       </div>
       <ul class="list">
-        <li class="list-box" v-for="(item,index) in orderList" :key="index" @mouseenter="showHeight">
-          <div class="list-item list-text">{{item.order_sn}}</div>
+        <li class="list-box" v-for="(item,index) in customers" :key="index" @mouseenter="showHeight">
+          <div class="list-item list-text">{{item.user}}</div>
           <div class="list-item list-text">{{item.shop_name}}</div>
-          <div class="list-item list-text">{{item.nickname}}</div>
-          <div class="list-item list-text">{{item.total}}</div>
-          <div class="list-item list-text">{{item.created_at}}</div>
-          <div class="list-item list-text">{{item.status}}</div>
-          <div class="list-item"><span class="showDetail" @click="showDetail(item.id)">查看</span></div>
+          <div class="list-item list-text">{{item.bind_time}}</div>
+          <div class="list-item"><span class="showDetail" @click="showDetail(item.user_id)">查看</span></div>
         </li>
       </ul>
     </div>
     <div slot="shade-box" class="shade-box">
-      <div class="shade-border shade-tiem">订单信息<span class="close" @click="hideShadeBox">&times;</span></div>
+      <div class="shade-border shade-tiem">客户信息<span class="close" @click="hideShadeBox">&times;</span></div>
       <div class="shade-border shade-tiem">
-        <span class="shade-title">订单号</span>
-        <span class="shade-text">{{orderDetail.order_sn}}</span>
+        <span class="shade-title">客户账号</span>
+        <span class="shade-text">{{customersDetail.user}}</span>
       </div>
       <div class="shade-border shade-tiem">
-        <span class="shade-title">归属商家</span>
-        <span class="shade-text">{{orderDetail.shop_name}}</span>
-        </div>
-      <div class="shade-border shade-tiem">
-        <span class="shade-title">归属客户</span>
-        <span class="shade-text">{{orderDetail.nickname}}</span>
-       </div>
-      <div class="shade-border shade-tiem">
-        <span class="shade-title">订单金额</span>
-        <span class="shade-text">{{orderDetail.total}}</span>
+        <span class="shade-title">绑定商家</span>
+        <span class="shade-text">{{customersDetail.shop_name}}</span>
       </div>
       <div class="shade-border shade-tiem">
-        <span class="shade-title">下单时间</span>
-        <span class="shade-text">{{orderDetail.created_at}}</span>
-        </div>
-      <div class="shade-border shade-tiem">
-        <span class="shade-title">订单状态</span>
-        <span class="shade-text">{{orderDetail.status}}</span>
-        </div>
+        <span class="shade-title">绑定时间</span>
+        <span class="shade-text">{{customersDetail.bind_time}}</span>
+      </div>
+      <div class="shade-border shade-tiem" v-show="status === 'order_customer'">
+        <span class="shade-title">订单数量</span>
+        <span class="shade-text">{{customersDetail.order_count}}</span>
+      </div>
+      <div class="shade-border shade-tiem" v-show="status === 'order_customer'">
+        <span class="shade-title">消费金额</span>
+        <span class="shade-text">{{customersDetail.order_money_total}}</span>
+      </div>
       <div class="shade-border shade-exprent">
         备注
-        <textarea id="exprent" placeholder="请输入" v-model="orderDetail.reamrk"></textarea>
+        <textarea id="exprent" placeholder="请输入" v-model="customersDetail.remark"></textarea>
       </div>
-      <div class="ok" @click="orderManage(orderDetail.id)">
+      <div class="ok" @click="customerRemark">
         <span class="submit">保存</span>
       </div>
     </div>
+    <toast></toast>
   </form-box>
 </template>
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {orderList, orderDetail, orderManage} from 'api/order'
+import {customers, wechatdata, customerInfo, customerRemark} from 'api/customer'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
-const titleList = ['订单号', '商家名称', '客户名称', '订单金额', '下单时间', '订单状态', '订单详情']
-const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
+const titleList = ['客户账号', '绑定商家', '绑定时间', '操作']
+const statusList = [{title: '订单客户', status: 'order_customer'}, {title: '微信用户', status: 'wechat_user'}]
 export default {
   data() {
     return {
       titleList: titleList,
-      orderList: [],
+      customers: [],
       time: 1,
       pageDtail: [{total: 1, per_page: 10, total_page: 1}],
       page: 1,
-      orderDetail: [],
+      customersDetail: [],
       isIndustrie: false,
       address: {},
-      status: 1,
-      statusList: statusList
+      status: 'order_customer',
+      statusList: statusList,
+      remarkId: 0
     }
   },
   created() {
     this.showList()
   },
   methods: {
-    orderManage(id) {
-      let data = {remark: this.orderDetail.reamrk}
-      orderManage(id, data).then((res) => {
+    customerRemark() {
+      let data = {remark: this.customersDetail.remark, user_id: this.remarkId, type: 'customers'}
+      if (this.status === 'wechat_user') {
+        data.type = 'wechat_data'
+      }
+      customerRemark(data).then((res) => {
         if (res.error === ERR_OK) {
           this.$refs.order.hideShade()
+        } else {
+          this.$refs.toast.show(res.message)
         }
       })
     },
@@ -100,20 +100,30 @@ export default {
     },
     showList() {
       let data = {}
-      data = Object.assign({}, {time: this.time, page: this.page, status: this.status}, this.address)
-      orderList(data).then((res) => {
+      data = Object.assign({}, {time: this.time, page: this.page, user_type: this.status}, this.address)
+      customers(data).then((res) => {
         if (res.error === ERR_OK) {
-          this.orderList = res.data
+          this.customers = res.data
           let pages = res.meta
           this.pageDtail = [{total: pages.total, per_page: pages.per_page, total_page: pages.last_page}]
         }
       })
     },
     showDetail(id) {
+      this.remarkId = id
       this.$refs.order.showShade()
-      orderDetail(id).then((res) => {
+      let data = {user_id: id}
+      if (this.status === 'wechat_user') {
+        wechatdata(data).then((res) => {
+          if (res.error === ERR_OK) {
+            this.customersDetail = res.data
+          }
+        })
+        return false
+      }
+      customerInfo(data).then((res) => {
         if (res.error === ERR_OK) {
-          this.orderDetail = res.data
+          this.customersDetail = res.data
         }
       })
     },
@@ -185,6 +195,8 @@ export default {
         border: 1px solid $color-nomal
       &:nth-child(1), &:nth-child(2)
         flex: 1.2
+      &:last-child
+        flex :0.5
     .list-box-active
       background: #C9D1D8
   .shade-box
@@ -239,10 +251,8 @@ export default {
     font-size :$font-size-medium
     color :$color-text
     line-height :30px
-    margin-left :70px
     transform: translateY(-25%)
-    .select-title
-      no-wrap()
+    margin-left :70px
     .select-box
       display :flex
       margin-left :10px
