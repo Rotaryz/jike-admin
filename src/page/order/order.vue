@@ -13,7 +13,7 @@
         </div>
       </div>
       <ul class="list">
-        <li class="list-box" v-for="(item,index) in orderList" :key="index" @mouseenter="showHeight">
+        <li class="list-box" v-for="(item,index) in orderList" :key="index" :class="{'list-box-active': heightIndex === index}" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
           <div class="list-item list-text">{{item.order_sn}}</div>
           <div class="list-item list-text">{{item.shop_name}}</div>
           <div class="list-item list-text">{{item.nickname}}</div>
@@ -80,7 +80,8 @@ export default {
       isIndustrie: false,
       address: {},
       status: 1,
-      statusList: statusList
+      statusList: statusList,
+      heightIndex: -1
     }
   },
   created() {
@@ -117,11 +118,18 @@ export default {
         }
       })
     },
-    showHeight() {
-
+    showHeight(index) {
+      this.heightIndex = index
+    },
+    hideHeight() {
+      this.heightIndex = -1
     },
     checkTime(value, page) {
-      this.time = value
+      if (Array.isArray(value)) {
+        this.time = value.join(',')
+      } else {
+        this.time = value
+      }
       this.page = page
       this.showList()
     },
@@ -186,7 +194,7 @@ export default {
       &:nth-child(1), &:nth-child(2)
         flex: 1.2
     .list-box-active
-      background: #C9D1D8
+      background: $color-background
   .shade-box
     .shade-border
       border-bottom :1px solid #DADADA

@@ -4,10 +4,14 @@
     <div class="left-side">
       <div class="herder-peo">
         <img src="./icon-menu@2x.png" class="guide" :class="{'guide-rotate':navStatus}" @click="checkStatus">
-        <div class="user">
+        <div class="user" :class="{'user-active': logout}" @click="showlogout">
           <img src="./header.jpeg" class="user-header">
-          <span class="nick-name">秦淘淘</span>
-          <i class="icons-top"></i>
+          <span class="nick-name">{{userName}}</span>
+          <i :class="logout ? 'icons-bottom': 'icons-top' "></i>
+          <div class="logout" v-show="logout" @click.stop="isLogout">
+            <span class="logout-icons"></span>
+            退出登录
+          </div>
         </div>
       </div>
       <div class="content" @mouseover="hideNav">
@@ -22,16 +26,32 @@ import Navigation from 'base/navigation/navigation'
 export default {
   data() {
     return {
-      navStatus: true
+      navStatus: true,
+      userName: localStorage.getItem('userName'),
+      logout: false,
+      showOut: false
     }
   },
   methods: {
+    showlogout() {
+      this.logout = !this.logout
+    },
     checkStatus() {
       this.$refs.nav.isShowBig()
       this.navStatus = !this.navStatus
     },
     hideNav() {
       this.$refs.nav.hideHover()
+    },
+    isLogout() {
+      localStorage.clear()
+      location.href = '#/login'
+    },
+    showHeight() {
+      this.showOut = true
+    },
+    hideHeight() {
+      this.showOut = false
     }
   },
   components: {
@@ -72,6 +92,26 @@ export default {
           align-items: center
           padding: 0 41px 0 33px
           position: relative
+          .logout
+            border-radius :3px
+            position: absolute
+            width: 90%
+            text-indent :64px
+            height :50px
+            box-shadow: 0 1px 5px 0 rgba(12,6,14,0.20)
+            line-height: 50px
+            bottom: -58px
+            right: 9px
+            z-index :200
+            .logout-icons
+              position: absolute
+              left: 30px
+              height: 22px
+              width: 22px
+              icon-image('icon-exit')
+              col-center()
+          .logout:active
+            background: $color-background
           .user-header
             height: 43px
             border-radius: 100%
@@ -87,7 +127,16 @@ export default {
             border-right: 8px solid transparent
             position: absolute
             right: 28px
-            tcol-center()
+            top: 50%
+          .icons-bottom
+            height: 0px
+            border: 8px solid $color-text-icon
+            border-top: 8px solid transparent
+            border-left: 8px solid transparent
+            border-right: 8px solid transparent
+            position: absolute
+            right: 28px
+            col-center()
         .user-active
           background: $color-background
       .content

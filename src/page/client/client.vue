@@ -13,7 +13,7 @@
         </div>
       </div>
       <ul class="list">
-        <li class="list-box" v-for="(item,index) in customers" :key="index" @mouseenter="showHeight">
+        <li class="list-box" v-for="(item,index) in customers" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
           <div class="list-item list-text">{{item.user}}</div>
           <div class="list-item list-text">{{item.shop_name}}</div>
           <div class="list-item list-text">{{item.bind_time}}</div>
@@ -75,7 +75,8 @@ export default {
       address: {},
       status: 'order_customer',
       statusList: statusList,
-      remarkId: 0
+      remarkId: 0,
+      heightIndex: -1
     }
   },
   created() {
@@ -109,6 +110,12 @@ export default {
         }
       })
     },
+    showHeight(index) {
+      this.heightIndex = index
+    },
+    hideHeight() {
+      this.heightIndex = -1
+    },
     showDetail(id) {
       this.remarkId = id
       this.$refs.order.showShade()
@@ -127,11 +134,12 @@ export default {
         }
       })
     },
-    showHeight() {
-
-    },
     checkTime(value, page) {
-      this.time = value
+      if (Array.isArray(value)) {
+        this.time = value.join(',')
+      } else {
+        this.time = value
+      }
       this.page = page
       this.showList()
     },
@@ -198,7 +206,7 @@ export default {
       &:last-child
         flex :0.5
     .list-box-active
-      background: #C9D1D8
+      background: $color-background
   .shade-box
     .shade-border
       border-bottom :1px solid #DADADA

@@ -9,8 +9,7 @@
         </div>
       </div>
       <ul class="list">
-        <li class="list-box" v-for="(item,index) in merchanList" :key="index"
-            @mouseenter="showHeight">
+        <li class="list-box" v-for="(item,index) in merchanList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
           <div class="list-item list-text">{{item.mobile}}</div>
           <div class="list-item list-text">{{item.shop_name}}</div>
           <div class="list-item list-text">{{item.industry}}</div>
@@ -119,7 +118,8 @@ export default {
       address: {},
       status: 1,
       statusList: statusList,
-      shopId: {}
+      shopId: {},
+      heightIndex: -1
     }
   },
   created() {
@@ -147,7 +147,7 @@ export default {
         if (res.error === ERR_OK) {
           this.$refs.order.hideShade()
         } else {
-          this.$refs.toast.show(res.message)
+          this.$refs.order.showContent(res.message)
         }
       })
     },
@@ -187,7 +187,6 @@ export default {
       }, this.address, this.shopId)
       merchanList(data).then((res) => {
         if (res.error === ERR_OK) {
-          console.log(res.data)
           this.merchanList = res.data
           let pages = res.meta
           this.pageDtail = [{
@@ -207,11 +206,18 @@ export default {
         }
       })
     },
-    showHeight() {
-
+    showHeight(index) {
+      this.heightIndex = index
+    },
+    hideHeight() {
+      this.heightIndex = -1
     },
     checkTime(value, page) {
-      this.time = value
+      if (Array.isArray(value)) {
+        this.time = value.join(',')
+      } else {
+        this.time = value
+      }
       this.page = page
       this.showList()
     },
@@ -277,7 +283,7 @@ export default {
       &:nth-child(1), &:nth-child(2)
         flex: 1.2
     .list-box-active
-      background: #C9D1D8
+      background: $color-background
 
   .shade-box
     .shade-border

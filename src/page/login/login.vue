@@ -37,7 +37,8 @@ export default {
   },
   created() {
     let token = localStorage.getItem('token')
-    if (token !== undefined) {
+    console.log(token)
+    if (token) {
       location.href = '#/container/data'
     }
   },
@@ -58,6 +59,7 @@ export default {
         if (!res.error && this.remenber) {
           this.$refs.toast.show('登陆成功')
           localStorage.setItem('token', res.access_token)
+          localStorage.setItem('userName', res.admin_info.username)
           setTimeout(() => {
             location.href = '#/container/data'
           }, 1500)

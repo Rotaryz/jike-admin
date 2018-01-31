@@ -46,4 +46,3 @@ export function customerRemark(prams) {
     return Promise.resolve(res.data)
   })
 }
-

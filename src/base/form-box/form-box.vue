@@ -2,8 +2,7 @@
   <div class="form-box" @click="hidePageDetail">
     <div class="tag">
       <div class="tag-title">
-        <span class="title-item">商家管理</span>
-        <span class="title-item">/ 商家管理</span>
+        <span class="title-item" v-for="(item,index) in navTitle" :key="index">{{index > 0 ? '/' : ''}} {{item}}</span>
       </div>
       <div class="tag-choice" v-if="chioce">
         <div class="tag-time" v-if="isDate">
@@ -26,10 +25,10 @@
           <span class="city-title">地域筛选</span>
           <div class="city-select" v-for="(item, index) in cityList"
                :key="index" @click="checkCity(index)">
-            <div class="city-show">
+            <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
-                <span class="city-tap-top"></span>
+                <span class="city-tap-top" :class="{'city-tap-bottom':item.show && item.active,'city-tap-top-two': !item.show && item.active}"></span>
               </div>
             </div>
             <ul class="city-box" v-show="item.show">
@@ -42,15 +41,21 @@
         </div>
         <div class="tag-industry" v-if="isIndustrie">
           <span class="city-title">行业筛选</span>
-          <div class="city-select" v-for="(item, index) in industrieList" :key="index" @click="industrie(index)">
-            <div class="city-show">
+          <div class="city-select" v-for="(item, index) in industrieList"
+               :key="index" @click="industrie(index)">
+            <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
-                <span class="city-tap-top"></span>
+                <span class="city-tap-top" :class="{'city-tap-bottom':item.show && item.active,'city-tap-top-two': !item.show && item.active}"></span>
               </div>
             </div>
             <ul class="city-box" v-show="item.show">
-              <li class="city-box-item"  v-for="(items, idx) in item.data" :key="idx"  :class="{'city-box-item-active':item.index === idx}" @click.stop="industrieDetail(idx,index,items.name,items.id)">{{items.name}}</li>
+              <li class="city-box-item" v-for="(items, idx) in item.data"
+                  :key="idx"
+                  :class="{'city-box-item-active':item.index === idx}"
+                  @click.stop="industrieDetail(idx,index,items.name,items.id)">
+                {{items.name}}
+              </li>
             </ul>
           </div>
         </div>
@@ -77,7 +82,12 @@
                 <i class="page-top"></i>
               </span>
               <ul class="page-list" v-show="pageDetail">
-                <li class="page-item" v-for="item in pageDtail[0].total_page" :key="item" :class="{'page-item-active': pageIndex === item}" @click.stop="detailPage(item)">{{item}}/{{pageDtail[0].total_page}}</li>
+                <li class="page-item" v-for="item in pageDtail[0].total_page"
+                    :key="item"
+                    :class="{'page-item-active': pageIndex === item}"
+                    @click.stop="detailPage(item)">
+                  {{item}}/{{pageDtail[0].total_page}}
+                </li>
               </ul>
             </div>
             <input type="text" class="border-page" v-model="pageInput"/>
@@ -177,9 +187,16 @@ export default {
         data: [],
         show: false,
         index: -1
-      }, {title: '请选择商圈', type: 'business_circle', data: [], show: false, index: -1}],
+      }, {
+        title: '请选择商圈',
+        type: 'business_circle',
+        data: [],
+        show: false,
+        index: -1
+      }],
       shopIndex: 0,
-      shopData: ['', '']
+      shopData: ['', ''],
+      navTitle: []
     }
   },
   created() {
@@ -193,6 +210,7 @@ export default {
         this.$emit('addPage', this.page)
       }
     }
+    this.navTitle = sessionStorage.getItem('title').split(',')
   },
   methods: {
     industrieDetail(idx, index, title, id) {
@@ -230,6 +248,7 @@ export default {
       this.hideShade()
       this.shopIndex = index
       this.industrieList[index].show = !this.industrieList[index].show
+      this.industrieList[index].active = true
       if (index === 0) {
         this.industrieId = -1
         this.shopData[1] = ''
@@ -265,8 +284,11 @@ export default {
       let data = this.infoData(this.prams)
       businessCircle(data).then((res) => {
         if (res.error === ERR_OK) {
-          this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]
-          this.cityList[this.cityIndex].data.unshift(allWay)
+          console.log(this.cityList[this.cityIndex].data)
+          if (res.data.filter[this.cityList[this.cityIndex].type]) {
+            this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]
+            this.cityList[this.cityIndex].data.unshift(allWay)
+          }
         }
       })
     },
@@ -277,7 +299,13 @@ export default {
           this.prams[i] = ''
         }
       }
+      this.cityList.forEach((item, idx) => {
+        if (idx !== index) {
+          item.show = false
+        }
+      })
       this.cityList[index].show = !this.cityList[index].show
+      this.cityList[index].active = true
       this.showCity()
     },
     showCityList(idx, index, title) {
@@ -302,13 +330,24 @@ export default {
       }, 100)
     },
     infoData(res) {
-      let data = {province: res[0], city: res[1], district: res[2], business_circle: res[3]}
+      let data = {
+        province: res[0],
+        city: res[1],
+        district: res[2],
+        business_circle: res[3]
+      }
       return data
     },
     checkTime(index, type) {
       this.hideShade()
       this.TimeIndex = index
       this.page = 1
+      if (type === '') {
+        this.moreTime = ''
+        this.showPicker = true
+        return false
+      }
+      this.showPicker = false
       this.$emit('checkTime', type, this.page)
     },
     showShade() {
@@ -334,6 +373,15 @@ export default {
       this.$refs.toast.show(content, time)
     }
   },
+  watch: {
+    moreTime(newVal) {
+      let time = []
+      newVal.forEach((item) => {
+        time.push(item.toLocaleDateString().replace(/\//g, '-'))
+      })
+      this.$emit('checkTime', time, 1)
+    }
+  },
   components: {
     'toast': Toast
   }
@@ -351,8 +399,9 @@ export default {
       background: $color-white
       flex: 1.7
       position: relative
-      z-index :150
+      z-index: 150
       .tag-title
+        height: 88px
         line-height: 88px
         font-size: $font-size-large
         color: $color-text-little
@@ -371,9 +420,9 @@ export default {
             color: $color-text
       .tag-choice
         display: flex
-        padding : 0 10px
+        padding: 0 10px
         .tag-time
-          width :310px
+          width: 310px
           .time-title
             cursor: pointer
             display: inline-block
@@ -390,18 +439,18 @@ export default {
               width: 32px
               background: $color-white
             &:last-child
-              position :relative
+              position: relative
               .block
                 position: absolute
                 bottom: -40px
-                transform :translateX(-50%)
+                transform: translateX(-50%)
                 .el-date-editor .el-range-separator
-                  width :10%
+                  width: 10%
           .time-title-active
             &:before
               background: $color-nomal
       .tag-city, .tag-industry
-        margin-left :70px
+        margin-left: 70px
         display: flex
         font-size: $font-size-medium
         color: $color-text
@@ -419,6 +468,7 @@ export default {
           transform: translateY(-25%)
           position: relative
           .city-show
+            min-width: 128.99px
             padding: 8px 49px 8px 10px
             no-wrap()
             .city-tap
@@ -451,7 +501,9 @@ export default {
                 border-left: 6px solid transparent
                 border-right: 6px solid transparent
                 row-center()
-                top: 24%
+                top: 20%
+          .city-show-active
+            color: $color-text
           .city-box
             min-width: 100%
             border-radius: 3px
@@ -460,9 +512,12 @@ export default {
             position: absolute
             z-index: 100
             margin-top: 4px
+            max-height :228px
+            overflow-y :auto
             .city-box-item
               no-wrap()
-              text-align: center
+              padding: 0 10px
+              text-align:left
               height: 26px
               line-height: 26px
               font-size: $font-size-medium

@@ -19,8 +19,7 @@
         </div>
       </div>
       <ul class="list">
-        <li class="list-box list-industry" v-for="(item) in industryList" :key="item.id"
-            @mouseenter="showHeight">
+        <li class="list-box list-industry" v-for="(item,index) in industryList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
           <div class="list-item list-text">{{item.name}}</div>
           <div class="list-item list-text">{{item.parent_name}}</div>
           <div class="list-item"><span class="showDetail" @click="showDetail()">查看</span>
@@ -35,8 +34,7 @@
         </div>
       </div>
       <ul class="list">
-        <li class="list-box" v-for="(item,idx) in merchanList" :key="idx"
-            @mouseenter="showHeight">
+        <li class="list-box" v-for="(item,idx) in merchanList" :class="{'list-box-active': heightIndex === idx}" :key="item.id" @mouseenter="showHeight(idx)" @mouseleave="hideHeight">
           <div class="list-item list-text">{{item.name}}</div>
           <div class="list-item list-text">{{item.province}}</div>
           <div class="list-item list-text">{{item.city}}</div>
@@ -137,13 +135,20 @@ export default {
       cityIndex: 0,
       prams: ['', '', ''],
       name: '',
-      insId: 0
+      insId: 0,
+      heightIndex: -1
     }
   },
   created() {
     this.showList()
   },
   methods: {
+    showHeight(index) {
+      this.heightIndex = index
+    },
+    hideHeight() {
+      this.heightIndex = -1
+    },
     checkCity(index) {
       this.cityIndex = index
       for (let i = 0; i < this.prams.length; i++) {
@@ -201,16 +206,21 @@ export default {
     setData() {
       let tip = ''
       this.type === 'circles' ? tip = '行业' : tip = '商家'
-      console.log(this.name === '')
       if (this.name === '') {
         this.$refs.order.showContent(`${tip}名称不能为空`)
         return false
       }
+      console.log(this.insId)
       if (this.type === 'circles') {
+        for (let i = 0; i < this.prams.length; i++) {
+          if (this.prams[i] === '') {
+            this.$refs.order.showContent(`${this.cityList[i].title}`)
+            return false
+          }
+        }
         let data = this.infoData(this.prams)
         data = Object.assign({}, data, {name: this.name})
         addCircle(data).then((res) => {
-          console.log(res)
           if (res.error === ERR_OK) {
             this.showList()
             this.hideShadeBox()
@@ -220,14 +230,15 @@ export default {
         })
         return false
       }
+      if (this.insId === 0) {
+        this.$refs.order.showContent('请选择所属行业')
+        return false
+      }
       let data = {parent_id: this.insId, name: this.name}
       indestryAdd(data).then((res) => {
         if (res.error === ERR_OK) {
           this.showList()
           this.hideShadeBox()
-        } else {
-          console.log(res)
-          this.$refs.order.showContent(res.message)
         }
       })
     },
@@ -276,9 +287,6 @@ export default {
       }
       this.shadeTitle = '商家名称'
       this.cityList = JSON.parse(JSON.stringify(cityInfo))
-    },
-    showHeight() {
-
     },
     checkTap(index, value) {
       this.hideShadeBox()
@@ -420,7 +428,7 @@ export default {
       &:last-child
         flex: 0.9
     .list-box-active
-      background: #C9D1D8
+      background: $color-background
   .list-industry
     .list-item:nth-child(2)
       flex :2.9

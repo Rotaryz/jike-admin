@@ -7,7 +7,7 @@
         </div>
       </div>
       <ul class="list">
-        <li class="list-box" v-for="(item,index) in datasList" :key="index" @mouseenter="showHeight">
+        <li class="list-box" v-for="(item,index) in datasList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
           <div class="list-item list-text">{{item.date}}</div>
           <div class="list-item list-text">{{item.merchant_count}}</div>
           <div class="list-item list-text">{{item.user_count}}</div>
@@ -23,7 +23,7 @@
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {datasList, merchantDetail, orderManage} from 'api/datas'
+import {datasList} from 'api/datas'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
 const titleList = ['日期', '商家数', '用户数', '客户数', '订单数', '交易金额']
@@ -41,7 +41,8 @@ export default {
       address: {},
       status: 1,
       statusList: statusList,
-      shopId: {}
+      shopId: {},
+      heightIndex: -1
     }
   },
   created() {
@@ -51,16 +52,6 @@ export default {
     showIndustrie(res) {
       this.shopId = res
       this.showList()
-    },
-    orderManage(id) {
-      let data = {remark: this.merchantDetail.reamrk}
-      orderManage(id, data).then((res) => {
-        if (res.error === ERR_OK) {
-          this.$refs.order.hideShade()
-        } else {
-          this.$refs.toast.show(res.message)
-        }
-      })
     },
     level(type) {
       if (type === 'single') {
@@ -91,7 +82,7 @@ export default {
     },
     showList() {
       let data = {}
-      data = Object.assign({}, {time: this.time, page: this.page, status: this.status}, this.address, this.shopId)
+      data = Object.assign({}, {time: this.time, page: this.page}, this.address, this.shopId)
       datasList(data).then((res) => {
         if (res.error === ERR_OK) {
           console.log(res.data)
@@ -101,19 +92,18 @@ export default {
         }
       })
     },
-    showDetail(id) {
-      this.$refs.order.showShade()
-      merchantDetail(id).then((res) => {
-        if (res.error === ERR_OK) {
-          this.merchantDetail = res.data
-        }
-      })
+    showHeight(index) {
+      this.heightIndex = index
     },
-    showHeight() {
-
+    hideHeight() {
+      this.heightIndex = -1
     },
     checkTime(value, page) {
-      this.time = value
+      if (Array.isArray(value)) {
+        this.time = value.join(',')
+      } else {
+        this.time = value
+      }
       this.page = page
       this.showList()
     },
@@ -178,7 +168,7 @@ export default {
       &:nth-child(1), &:nth-child(2)
         flex: 1.2
     .list-box-active
-      background: #C9D1D8
+      background: $color-background
       /*修改*/
       .amend
         position: absolute
