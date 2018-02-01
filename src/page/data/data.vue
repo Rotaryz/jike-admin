@@ -1,5 +1,5 @@
 <template>
-  <form-box ref="order" @checkTime="checkTime" @addPage="addPage" @showCity="showCity" @showIndustrie="showIndustrie" :pageDtail="pageDtail" :isIndustrie="isIndustrie">
+  <form-box ref="order" :timeList="timeList" @checkTime="checkTime" @addPage="addPage" @showCity="showCity" @showIndustrie="showIndustrie" :pageDtail="pageDtail" :isIndustrie="isIndustrie">
     <div slot="form-list" class="form-list">
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
@@ -31,9 +31,13 @@ const statusList = [{title: '支付成功', status: 1}, {title: '退款', status
 export default {
   data() {
     return {
+      timeList: [{title: '7天', type: '7'}, {title: '30天', type: '30'}, {
+        title: '自定义',
+        type: ''
+      }],
       titleList: titleList,
       datasList: [],
-      time: 1,
+      time: 7,
       pageDtail: [{total: 1, per_page: 10, total_page: 1}],
       page: 1,
       merchantDetail: [],
@@ -58,7 +62,6 @@ export default {
         if (this.merchantDetail.reseller_level !== 0) {
           this.merchantDetail.reseller_level = 0
         }
-        console.log()
       } else {
         if (this.merchantDetail.reseller_level !== 1) {
           this.merchantDetail.reseller_level = 1
@@ -70,7 +73,6 @@ export default {
         if (this.merchantDetail.is_leader !== 0) {
           this.merchantDetail.is_leader = 0
         }
-        console.log()
       } else {
         if (this.merchantDetail.is_leader !== 1) {
           this.merchantDetail.is_leader = 1
@@ -85,7 +87,6 @@ export default {
       data = Object.assign({}, {time: this.time, page: this.page}, this.address, this.shopId)
       datasList(data).then((res) => {
         if (res.error === ERR_OK) {
-          console.log(res.data)
           this.datasList = res.data
           let pages = res.meta
           this.pageDtail = [{total: pages.total, per_page: pages.per_page, total_page: pages.last_page}]

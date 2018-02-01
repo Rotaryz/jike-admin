@@ -142,7 +142,7 @@ export default {
     },
     pageDtail: {
       type: Array,
-      default: () => [{total: 1, per_page: 10, total_page: 1}]
+      default: () => [{total: 1, per_page: 10, total_page: 0}]
     }
   },
   data() {
@@ -245,16 +245,19 @@ export default {
       })
     },
     industrie(index) {
-      this.hideShade()
-      this.shopIndex = index
-      this.industrieList[index].show = !this.industrieList[index].show
-      this.industrieList[index].active = true
       if (index === 0) {
         this.industrieId = -1
         this.shopData[1] = ''
       } else if (index === 1 && this.industrieId === -1) {
         return false
       }
+      if (index > 0 && this.shopData[0] === '') {
+        return false
+      }
+      this.hideShade()
+      this.shopIndex = index
+      this.industrieList[index].show = !this.industrieList[index].show
+      this.industrieList[index].active = true
       this.showIndustrie()
     },
     goPage() {
@@ -284,7 +287,6 @@ export default {
       let data = this.infoData(this.prams)
       businessCircle(data).then((res) => {
         if (res.error === ERR_OK) {
-          console.log(this.cityList[this.cityIndex].data)
           if (res.data.filter[this.cityList[this.cityIndex].type]) {
             this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]
             this.cityList[this.cityIndex].data.unshift(allWay)
@@ -293,12 +295,15 @@ export default {
       })
     },
     checkCity(index) {
-      this.cityIndex = index
       for (let i = 0; i < this.prams.length; i++) {
         if (i >= index) {
           this.prams[i] = ''
         }
       }
+      if (index > 0 && this.prams[index - 1] === '') {
+        return false
+      }
+      this.cityIndex = index
       this.cityList.forEach((item, idx) => {
         if (idx !== index) {
           item.show = false
@@ -369,7 +374,6 @@ export default {
       }
     },
     showContent(content, time) {
-      console.log(this.$refs)
       this.$refs.toast.show(content, time)
     }
   },
@@ -388,7 +392,7 @@ export default {
 }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
   .form-box
@@ -397,20 +401,19 @@ export default {
     flex-direction: column
     .tag
       background: $color-white
-      flex: 1.7
       position: relative
       z-index: 150
       .tag-title
-        height: 88px
-        line-height: 88px
+        padding :37.5px 0 17px 0
         font-size: $font-size-large
         color: $color-text-little
         text-indent: 41px
         position: relative
         &:before
           content: ''
-          col-center()
+          position: absolute
           background: $color-nomal
+          top: 37.5px
           height: 20px
           width: 6px
           left: 25px
@@ -421,8 +424,9 @@ export default {
       .tag-choice
         display: flex
         padding: 0 10px
+        margin: 20px 0 10px
         .tag-time
-          width: 310px
+          white-space :nowrap
           .time-title
             cursor: pointer
             display: inline-block
@@ -531,7 +535,7 @@ export default {
           color: $color-text
     .data
       flex: 9
-      min-height: 600px
+      min-height: 700px
       padding: 25px
       position: relative
       .data-content

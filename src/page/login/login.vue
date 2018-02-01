@@ -36,8 +36,7 @@ export default {
     }
   },
   created() {
-    let token = localStorage.getItem('token')
-    console.log(token)
+    let token = localStorage.getItem('token') || sessionStorage.getItem('token')
     if (token) {
       location.href = '#/container/data'
     }
@@ -56,13 +55,18 @@ export default {
       }
       let data = {username: this.user, password: this.password}
       login(data).then((res) => {
-        if (!res.error && this.remenber) {
+        if (!res.error) {
           this.$refs.toast.show('登陆成功')
-          localStorage.setItem('token', res.access_token)
-          localStorage.setItem('userName', res.admin_info.username)
+          if (this.remenber) {
+            localStorage.setItem('token', res.access_token)
+            localStorage.setItem('userName', res.admin_info.username)
+          } else {
+            sessionStorage.setItem('token', res.access_token)
+            sessionStorage.setItem('userName', res.admin_info.username)
+          }
           setTimeout(() => {
             location.href = '#/container/data'
-          }, 1500)
+          }, 1000)
         } else if (res.error) {
           this.$refs.toast.show(res.message)
         }

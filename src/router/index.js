@@ -11,6 +11,7 @@ const Order = () => import('page/order/order')
 const Client = () => import('page/client/client')
 const BusinessList = () => import('page/business-list/business-list')
 const BusinessGeneral = () => import('page/business-general/business-general')
+const Account = () => import('page/account/account')
 
 export default new Router({
   routes: [
@@ -42,6 +43,9 @@ export default new Router({
       }, {
         path: 'client',
         component: Client
+      }, {
+        path: 'account',
+        component: Account
       }]
     }
   ]

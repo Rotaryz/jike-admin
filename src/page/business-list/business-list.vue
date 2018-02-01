@@ -127,7 +127,6 @@ export default {
   },
   methods: {
     change() {
-      console.log('sgfd')
       this.disableds = false
     },
     showIndustrie(res) {
@@ -156,7 +155,6 @@ export default {
         if (this.merchantDetail.reseller_level !== 0) {
           this.merchantDetail.reseller_level = 0
         }
-        console.log()
       } else {
         if (this.merchantDetail.reseller_level !== 1) {
           this.merchantDetail.reseller_level = 1
@@ -168,7 +166,6 @@ export default {
         if (this.merchantDetail.is_leader !== 0) {
           this.merchantDetail.is_leader = 0
         }
-        console.log()
       } else {
         if (this.merchantDetail.is_leader !== 1) {
           this.merchantDetail.is_leader = 1

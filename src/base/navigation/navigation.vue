@@ -123,10 +123,10 @@ const navList = [
   }, {
     title: '账户管理',
     icon: require('./icon-account@2x.png'),
-    url: 'javaScript:;',
+    url: '#/container/account',
     children: [{
       title: '账户管理',
-      url: 'javaScript:;'
+      url: '#/container/account'
     }],
     showHeight: 70
   }]
@@ -167,7 +167,6 @@ export default {
   },
   methods: {
     showChild(index, status = true) {
-      console.log(status)
       clearInterval(this.timer)
       if (this.navList[index].children.length === 1) {
         this.timer = setInterval(() => {
@@ -218,6 +217,7 @@ export default {
     },
     hoverChild(index) {
       this.hoverIndex = index
+      this.hoverChildIndex = this.navList[index].childrenIndex
     },
     hideHover() {
       this.hoverIndex = -1
@@ -225,7 +225,7 @@ export default {
     hoverDetail(index, parent) {
       this.hoverChildIndex = index
       this.hoverIndex = parent
-      console.log(this.navList[parent].children)
+      this.navList[parent].childrenIndex = index
       if (this.navList[parent].children.length > 1) {
         this.showChild(parent, false)
         this.navList[parent].childrenIndex = index
@@ -238,18 +238,24 @@ export default {
       this.title = '' || '赞播管理后台'
       setTimeout(() => {
         this.isBig = !this.isBig
-        if (this.navList[this.recodIndex].showHeight > 70) {
-          let target = 70
-          this.timer = setInterval(() => {
-            if (this.navList[this.recodIndex].showHeight >= target) {
-              this.navList[this.recodIndex].showHeight = 70
-              clearInterval(this.timer)
-              return false
-            }
-            this.navList[this.recodIndex].showHeight -= 20
-          }, 30)
+        if (!this.isBig) {
+          if (this.navList[this.recodIndex].showHeight > 70) {
+            let target = 70
+            this.timer = setInterval(() => {
+              if (this.navList[this.recodIndex].showHeight >= target) {
+                this.navList[this.recodIndex].showHeight = 70
+                clearInterval(this.timer)
+                return false
+              }
+              this.navList[this.recodIndex].showHeight -= 20
+            }, 30)
+          }
+        } else {
+          let num = 0
+          this.bigChild === -1 ? num = this.recodIndex : num = this.bigChild
+
+          this.showChild(num, false)
         }
-        console.log(this.recodIndex)
       }, 200)
     }
   }
@@ -286,7 +292,7 @@ export default {
         .nav-item
           background : $color-menu-background
           border-left: 8px solid $color-menu-background
-          overflow-y: hidden
+          overflow: hidden
           border-bottom: 1px solid #3B3B43
           .nav-tap
             align-items: center

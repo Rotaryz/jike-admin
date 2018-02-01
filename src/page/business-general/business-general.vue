@@ -47,30 +47,21 @@
     <div slot="shade-box" class="shade-box">
       <div class="shade-border shade-tiem">新增商圈<span class="close" @click="hideShadeBox">&times;</span>
       </div>
-      <div class="tag-city">
-        <div class="city-se-box">
-          <span class="tip">{{shadeTitle}}</span>
-          <input class="city-select" placeholder="请输入" v-model="name">
-        </div>
+      <div class="shade-city">
+        <span class="city-name">商家名称</span>
+        <input type="text" class="shade-city-select" placeholder="请输入" v-model="name">
       </div>
-      <div class="tag-city">
-        <div class="city-se-box" v-for="(item, index) in cityList"
-             :key="index" @click="checkCity(index)">
-          <span class="tip">{{item.tip}}</span>
-          <div class="city-select">
-            <div class="city-show">
-              {{item.title}}
-              <div class="city-tap">
-                <span class="city-tap-top"></span>
-              </div>
-            </div>
-            <ul class="city-box" v-show="item.show">
-              <li class="city-box-item" v-for="(items, idx) in item.data"
-                  :class="{'city-box-item-active':item.index === idx}"
-                  :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}
-              </li>
-            </ul>
-          </div>
+      <div class="shade-city"  v-for="(item, index) in cityList"
+           :key="index" @click="checkCity(index)">
+        <span class="city-name">{{item.tip}}</span>
+        <div class="shade-city-select shade-after">
+          {{item.title}}
+          <span :class="item.show && item.data.length > 0 ? 'shade-bottom' : 'shade-top'"></span>
+          <ul class="shade-city-box"  v-show="item.show && item.data.length > 0">
+            <li class="shade-city-tiem"  v-for="(items, idx) in item.data"
+                :class="{'shade-city-tiem-active':item.index === idx}"
+                :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}</li>
+          </ul>
         </div>
       </div>
       <div class="ok">
@@ -150,13 +141,16 @@ export default {
       this.heightIndex = -1
     },
     checkCity(index) {
+      if (index > 0 && this.prams[index - 1] === '') {
+        return false
+      }
       this.cityIndex = index
+      this.cityList[index].show = !this.cityList[index].show
       for (let i = 0; i < this.prams.length; i++) {
         if (i >= index) {
           this.prams[i] = ''
         }
       }
-      this.cityList[index].show = !this.cityList[index].show
       this.showCity()
     },
     showCity() {
@@ -210,7 +204,6 @@ export default {
         this.$refs.order.showContent(`${tip}名称不能为空`)
         return false
       }
-      console.log(this.insId)
       if (this.type === 'circles') {
         for (let i = 0; i < this.prams.length; i++) {
           if (this.prams[i] === '') {
@@ -309,86 +302,6 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
-  .tag-city
-    display: block
-    font-size: $font-size-medium
-    color: $color-text
-    margin:10px 0 30px 30px
-    .city-se-box
-      margin-top :20px
-      display :flex
-      .tip
-        width :56px
-        line-height :30px
-      .city-title
-        line-height: 17px
-        no-wrap()
-      input.city-select
-        width :120px
-        color :$color-text-little
-        padding-left :10px
-      input.city-select::-webkit-input-placeholder
-        color :$color-text-little
-      .city-select
-        cursor: pointer
-        min-width :160px
-        height: 30px
-        margin-left: 56px
-        border: 1px solid $color-icon-line
-        border-radius: 3px
-        font-size: $font-size-medium
-        color: $color-text-little
-        transform: translateY(0)
-        .city-box
-          max-height :120px
-          overflow-y:auto
-          min-width :101%
-          border-radius: 3px
-          box-shadow: 0 1px 5px 0 rgba(12, 6, 14, 0.20)
-          margin-top: 4px
-          .city-box-item
-            background :$color-white
-            height :30px
-            line-height: 30px
-            text-align :center
-            border-bottom :0.5px solid $color-icon-line
-        .city-show
-          padding: 8px 49px 8px 10px
-          no-wrap()
-          position: relative
-          z-index :0
-          .city-tap
-            position: absolute
-            right: 0
-            top: 0
-            height: 100%
-            width: 24px
-            border-left: 1px solid $color-icon-line
-            .city-tap-top
-              height: 0
-              border: 6px solid $color-text-little
-              border-bottom: 6px solid transparent
-              border-left: 6px solid transparent
-              border-right: 6px solid transparent
-              row-center()
-              top: 42%
-            .city-tap-top-two
-              height: 0
-              border: 6px solid $color-text
-              border-bottom: 6px solid transparent
-              border-left: 6px solid transparent
-              border-right: 6px solid transparent
-              row-center()
-              top: 42%
-            .city-tap-bottom
-              height: 0
-              border: 6px solid $color-text
-              border-top: 6px solid transparent
-              border-left: 6px solid transparent
-              border-right: 6px solid transparent
-              row-center()
-              top: 24%
-
   .form-list
     height: 100%
     .list-header, .list-box
@@ -443,8 +356,6 @@ export default {
       display: flex
       color: $color-text
       position: relative
-      .shade-text:disabled
-        background: $color-white
       .shade-text
         width: 52%
       .shade-title
@@ -462,6 +373,75 @@ export default {
           right: 30px
           color: #979797
           font-size: 24px
+    .shade-city
+      padding-left :30px
+      margin-top :20px
+      .city-name
+        display :inline-block
+        min-width :56px
+        font-size :$font-size-medium
+        transform :translateY(-50%)
+      .shade-city-select
+        padding-left :10px
+        font-size :$font-size-medium
+        display :inline-block
+        height :30px
+        line-height: 30px
+        width :160px
+        border-radius :3px
+        border :1px solid $color-icon-line
+        color: $color-text-icon
+        margin-left :56px
+        .shade-top
+          position: absolute
+          right: 6px
+          top: 42%
+          display: inline-block
+          height: 0
+          border: 5px solid $color-text
+          border-bottom: 5px solid transparent
+          border-left: 5px solid transparent
+          border-right: 5px solid transparent
+        .shade-bottom
+          right: 6px
+          position: absolute
+          top: 11%
+          display: inline-block
+          height: 0
+          border: 5px solid $color-text
+          border-top: 5px solid transparent
+          border-left: 5px solid transparent
+          border-right: 5px solid transparent
+        .shade-city-box
+          box-shadow: 0 1px 5px 0 rgba(12,6,14,0.20)
+          position: absolute
+          width :101%
+          left: -1px
+          top: 32px
+          z-index :1000
+          max-height :90px
+          overflow-y :auto
+          background :$color-white
+          border :1px solid $color-icon-line
+          border-radius :3px
+          .shade-city-tiem
+            color :$color-text-little
+            padding:0 10px
+            height :26px
+            line-height: 26px
+          .shade-city-tiem-active
+            background :$color-big-background
+            color :$color-text
+      .shade-after
+        position: relative
+        &::after
+          content :''
+          position: absolute
+          right: 23px
+          width :1px
+          height :100%
+          top: 0
+          background :$color-icon-line
     .ok
       height: 100px
       display: flex
@@ -477,6 +457,7 @@ export default {
         background: $color-nomal
   .tap
     display :flex
+    margin: 20px 0 10px
     .tap-first
       margin-left :37.5px
       display :flex
