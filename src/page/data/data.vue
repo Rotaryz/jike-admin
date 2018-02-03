@@ -6,17 +6,17 @@
           {{item}}
         </div>
       </div>
-      <ul class="list">
-        <li class="list-box" v-for="(item,index) in datasList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
-          <div class="list-item list-text">{{item.date}}</div>
-          <div class="list-item list-text">{{item.merchant_count}}</div>
-          <div class="list-item list-text">{{item.user_count}}</div>
-          <div class="list-item list-text">{{item.customer_count}}</div>
-          <div class="list-item list-text">{{item.customer_count}}</div>
-          <div class="list-item list-text">{{item.money_total}}</div>
-        </li>
-      </ul>
-    </div>
+        <ul class="list">
+          <li class="list-box" v-for="(item,index) in datasList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
+            <div class="list-item list-text">{{item.date}}</div>
+            <div class="list-item list-text">{{item.merchant_count}}</div>
+            <div class="list-item list-text">{{item.user_count}}</div>
+            <div class="list-item list-text">{{item.customer_count}}</div>
+            <div class="list-item list-text">{{item.customer_count}}</div>
+            <div class="list-item list-text">{{item.money_total}}</div>
+          </li>
+        </ul>
+      </div>
     <toast></toast>
   </form-box>
 </template>
@@ -141,6 +141,7 @@ export default {
     .list-header
       height: 9.5%
       border-bottom: 1px solid #979797
+      background :#eee
     .list
       height: 90.5%
       display: flex

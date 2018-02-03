@@ -19,7 +19,7 @@
           <div class="list-item list-text">{{item.nickname}}</div>
           <div class="list-item list-text">{{item.total}}</div>
           <div class="list-item list-text">{{item.created_at}}</div>
-          <div class="list-item list-text">{{item.status}}</div>
+          <div class="list-item list-text">{{item.status === 1 ? '支付成功' : item.status === 3 ? '退款中' : '退款完成'}}</div>
           <div class="list-item"><span class="showDetail" @click="showDetail(item.id)">查看</span></div>
         </li>
       </ul>
@@ -48,7 +48,7 @@
         </div>
       <div class="shade-border shade-tiem">
         <span class="shade-title">订单状态</span>
-        <span class="shade-text">{{orderDetail.status}}</span>
+        <span class="shade-text">{{orderDetail.status === 1 ? '支付成功' : orderDetail.status === 3 ? '退款中' : '退款完成'}}</span>
         </div>
       <div class="shade-border shade-exprent">
         备注
@@ -200,17 +200,16 @@ export default {
       border-bottom :1px solid #DADADA
       font-size :$font-size-medium
       padding-left :30px
-      height :50px
-      line-height: 50px
       display :flex
+      height :5.01vh
+      align-items :center
       color :$color-text
       .shade-title
         width :112px
         no-wrap()
       &:first-child
+        height :7.01vh
         font-size :$font-size-medium-x
-        height :60px
-        line-height: 60px
         position: relative
         .close
           cursor: pointer
@@ -220,13 +219,14 @@ export default {
           color: #979797
           font-size :24px
     .shade-exprent
-      height : 144px
+      height : 14.42vh
       display: block
+      padding-top :10px
       #exprent
         padding : 8px
-        transform :translateY(-12px)
+        transform :translateY(4px)
         display :block
-        height :74px
+        height :7.41vh
         width :88.764%
         border :0.5px solid $color-icon-line
     .ok
@@ -247,7 +247,7 @@ export default {
     font-size :$font-size-medium
     color :$color-text
     line-height :30px
-    margin-left :70px
+    margin-left :3.535vw
     transform: translateY(-25%)
     .select-title
       no-wrap()

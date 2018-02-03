@@ -24,39 +24,47 @@
         <div class="tag-city" v-if="isCity">
           <span class="city-title">地域筛选</span>
           <div class="city-select" v-for="(item, index) in cityList"
-               :key="index" @click="checkCity(index)">
+               :key="index" @click="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
                 <span class="city-tap-top" :class="{'city-tap-bottom':item.show && item.active,'city-tap-top-two': !item.show && item.active}"></span>
               </div>
             </div>
-            <ul class="city-box" v-show="item.show">
-              <li class="city-box-item" v-for="(items, idx) in item.data"
-                  :class="{'city-box-item-active':item.index === idx}"
-                  :key="idx" @click.stop="showCityList(idx,index,items)">{{items}}
-              </li>
-            </ul>
+              <div class="city-big-box">
+                <transition name="fade">
+                  <ul class="city-box" v-show="item.show" >
+                    <li class="city-box-item" v-for="(items, idx) in item.data"
+                        :class="{'city-box-item-active':item.index === idx}"
+                        :key="idx" @click.stop="showCityList(idx,index,items)">{{items}}
+                    </li>
+                  </ul>
+                </transition>
+              </div>
           </div>
         </div>
         <div class="tag-industry" v-if="isIndustrie">
           <span class="city-title">行业筛选</span>
           <div class="city-select" v-for="(item, index) in industrieList"
-               :key="index" @click="industrie(index)">
+               :key="index" @click="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
                 <span class="city-tap-top" :class="{'city-tap-bottom':item.show && item.active,'city-tap-top-two': !item.show && item.active}"></span>
               </div>
             </div>
-            <ul class="city-box" v-show="item.show">
-              <li class="city-box-item" v-for="(items, idx) in item.data"
-                  :key="idx"
-                  :class="{'city-box-item-active':item.index === idx}"
-                  @click.stop="industrieDetail(idx,index,items.name,items.id)">
-                {{items.name}}
-              </li>
-            </ul>
+            <div class="city-big-box">
+              <transition name="fade">
+                <ul class="city-box" v-show="item.show">
+                  <li class="city-box-item" v-for="(items, idx) in item.data"
+                      :key="idx"
+                      :class="{'city-box-item-active':item.index === idx}"
+                      @click.stop="industrieDetail(idx,index,items.name,items.id)">
+                    {{items.name}}
+                  </li>
+                </ul>
+              </transition>
+            </div>
           </div>
         </div>
         <slot name="tag-sel"></slot>
@@ -65,41 +73,45 @@
     </div>
     <div class="data">
       <div class="data-content">
-        <div class="data-detail">
-          <slot name="form-list"></slot>
-        </div>
-        <div class="total">
-          <div>每页{{pageDtail[0].per_page}}条，共{{pageDtail[0].total}}条数据</div>
-          <div class="page">
-            <div class="page-icon" @click="subtract">
-            </div>
-            <div class="pade-detail">{{page}}/{{pageDtail[0].total_page}}</div>
-            <div class="page-icon page-icon-two" @click="addPage">
-            </div>
-            <div class="border-page page-total" @click.stop="showPageDetail">
-              {{page}}/{{pageDtail[0].total_page}}
-              <span class="page-tap">
+        <div class="data-content-box">
+          <div class="data-detail">
+            <slot name="form-list"></slot>
+          </div>
+          <div class="total">
+            <div>每页{{pageDtail[0].per_page}}条，共{{pageDtail[0].total}}条数据</div>
+            <div class="page">
+              <div class="page-icon" @click="subtract">
+              </div>
+              <div class="pade-detail">{{page}}/{{pageDtail[0].total_page}}</div>
+              <div class="page-icon page-icon-two" @click="addPage">
+              </div>
+              <div class="border-page page-total" @click.stop="showPageDetail">
+                {{page}}/{{pageDtail[0].total_page}}
+                <span class="page-tap">
                 <i class="page-top"></i>
               </span>
-              <ul class="page-list" v-show="pageDetail">
-                <li class="page-item" v-for="item in pageDtail[0].total_page"
-                    :key="item"
-                    :class="{'page-item-active': pageIndex === item}"
-                    @click.stop="detailPage(item)">
-                  {{item}}/{{pageDtail[0].total_page}}
-                </li>
-              </ul>
+                <ul class="page-list" v-show="pageDetail">
+                  <li class="page-item" v-for="item in pageDtail[0].total_page"
+                      :key="item"
+                      :class="{'page-item-active': pageIndex === item}"
+                      @click.stop="detailPage(item)">
+                    {{item}}/{{pageDtail[0].total_page}}
+                  </li>
+                </ul>
+              </div>
+              <input type="text" class="border-page" v-model="pageInput"/>
+              <div class="border-page" @click="goPage">跳转</div>
             </div>
-            <input type="text" class="border-page" v-model="pageInput"/>
-            <div class="border-page" @click="goPage">跳转</div>
           </div>
         </div>
       </div>
-      <div class="shade-win" @click.stop="hideShade" v-show="isShade">
-        <div class="shade-detail" @click.stop>
-          <slot name="shade-box"></slot>
+      <transition name="fade">
+        <div class="shade-win" @click.stop="hideShade" v-show="isShade">
+          <div class="shade-detail" @click.stop>
+            <slot name="shade-box"></slot>
+          </div>
         </div>
-      </div>
+      </transition>
     </div>
     <toast ref="toast"></toast>
   </div>
@@ -158,37 +170,37 @@ export default {
       prams: ['', '', '', ''],
       cityIndex: 0,
       industrieList: [{
-        title: '请选择行业',
+        title: '行业',
         data: [],
         show: false,
         index: -1
       }, {
-        title: '请选择子行业',
+        title: '子行业',
         data: [],
         show: false,
         index: -1
       }],
       industrieId: -1,
       cityList: [{
-        title: '请选择省份',
+        title: '省',
         type: 'province',
         data: [],
         show: false,
         index: -1
       }, {
-        title: '请选择城市',
+        title: '市',
         type: 'city',
         data: [],
         show: false,
         index: -1
       }, {
-        title: '请选择市区',
+        title: '区',
         type: 'district',
         data: [],
         show: false,
         index: -1
       }, {
-        title: '请选择商圈',
+        title: '商圈',
         type: 'business_circle',
         data: [],
         show: false,
@@ -196,7 +208,8 @@ export default {
       }],
       shopIndex: 0,
       shopData: ['', ''],
-      navTitle: []
+      navTitle: [],
+      setTime: null
     }
   },
   created() {
@@ -210,9 +223,22 @@ export default {
         this.$emit('addPage', this.page)
       }
     }
-    this.navTitle = sessionStorage.getItem('title').split(',')
+    sessionStorage.getItem('title') ? this.navTitle = sessionStorage.getItem('title').split(',') : this.navTitle = this.navTitle
   },
   methods: {
+    leaveHide() {
+      this.setTime = setTimeout(() => {
+        this.cityList.forEach((item) => {
+          item.show = false
+        })
+        this.industrieList.forEach((item) => {
+          item.show = false
+        })
+      }, 1500)
+    },
+    endShow() {
+      clearTimeout(this.setTime)
+    },
     industrieDetail(idx, index, title, id) {
       this.cityList[index].index = idx
       setTimeout(() => {
@@ -224,7 +250,7 @@ export default {
         this.shopData.forEach((item, idx) => {
           if (idx > index) {
             if (idx === 1) {
-              this.industrieList[idx].title = '请选择子行业'
+              this.industrieList[idx].title = '子行业'
             }
           }
         })
@@ -245,6 +271,11 @@ export default {
       })
     },
     industrie(index) {
+      this.industrieList.forEach((item, idx) => {
+        if (idx !== index) {
+          item.show = false
+        }
+      })
       if (index === 0) {
         this.industrieId = -1
         this.shopData[1] = ''
@@ -296,19 +327,17 @@ export default {
     },
     checkCity(index) {
       for (let i = 0; i < this.prams.length; i++) {
-        if (i >= index) {
-          this.prams[i] = ''
-        }
+        this.prams[i] = this.cityList[i].title.replace(/^[(市)|(区)|(商圈)]/, '')
       }
-      if (index > 0 && this.prams[index - 1] === '') {
-        return false
-      }
-      this.cityIndex = index
       this.cityList.forEach((item, idx) => {
         if (idx !== index) {
           item.show = false
         }
       })
+      if (index > 0 && this.prams[index - 1] === '') {
+        return false
+      }
+      this.cityIndex = index
       this.cityList[index].show = !this.cityList[index].show
       this.cityList[index].active = true
       this.showCity()
@@ -324,11 +353,11 @@ export default {
         this.prams.forEach((item, idx) => {
           if (idx > index) {
             if (idx === 1) {
-              this.cityList[idx].title = '请选择城市'
+              this.cityList[idx].title = '市'
             } else if (idx === 2) {
-              this.cityList[idx].title = '请选择市区'
+              this.cityList[idx].title = '区'
             } else if (idx === 3) {
-              this.cityList[idx].title = '请选择商圈'
+              this.cityList[idx].title = '商圈'
             }
           }
         })
@@ -397,6 +426,8 @@ export default {
   @import '~common/stylus/mixin'
   .form-box
     height: 100%
+    min-height: 720px
+    overflow-y :auto
     display: flex
     flex-direction: column
     .tag
@@ -404,7 +435,7 @@ export default {
       position: relative
       z-index: 150
       .tag-title
-        padding :37.5px 0 17px 0
+        padding :3.47vh 0 1.57vh 0
         font-size: $font-size-large
         color: $color-text-little
         text-indent: 41px
@@ -413,7 +444,7 @@ export default {
           content: ''
           position: absolute
           background: $color-nomal
-          top: 37.5px
+          top: 3.47vh
           height: 20px
           width: 6px
           left: 25px
@@ -431,7 +462,7 @@ export default {
             cursor: pointer
             display: inline-block
             position: relative
-            margin-left: 30px
+            margin-left: 1.5625vw
             padding-bottom: 10px
             font-size: $font-size-medium
             color: $color-text
@@ -447,14 +478,12 @@ export default {
               .block
                 position: absolute
                 bottom: -40px
-                transform: translateX(-50%)
-                .el-date-editor .el-range-separator
-                  width: 10%
+                transform: translateX(-20%)
           .time-title-active
             &:before
               background: $color-nomal
       .tag-city, .tag-industry
-        margin-left: 70px
+        margin-left: 3.535vw
         display: flex
         font-size: $font-size-medium
         color: $color-text
@@ -472,8 +501,7 @@ export default {
           transform: translateY(-25%)
           position: relative
           .city-show
-            min-width: 128.99px
-            padding: 8px 49px 8px 10px
+            padding: 8px 39px 8px 10px
             no-wrap()
             .city-tap
               position: absolute
@@ -490,6 +518,8 @@ export default {
                 border-right: 6px solid transparent
                 row-center()
                 top: 42%
+                transform : rotate(0deg) translateX(-43%)
+                transform-origin:  1px 3px
               .city-tap-top-two
                 height: 0
                 border: 6px solid $color-text
@@ -498,26 +528,56 @@ export default {
                 border-right: 6px solid transparent
                 row-center()
                 top: 42%
+                transform-origin:  1px 3px
+                transform : rotate(0deg) translateX(-43%)
+                transition : all 0.2s
               .city-tap-bottom
-                height: 0
-                border: 6px solid $color-text
-                border-top: 6px solid transparent
+                border: 6px solid  $color-text
+                border-bottom: 6px solid transparent
                 border-left: 6px solid transparent
                 border-right: 6px solid transparent
                 row-center()
-                top: 20%
+                top: 42%
+                transform-origin:  1px 3px
+                transform : rotate(180deg) translateX(-43%)
+                transition : all 0.2s
+            &:hover
+              color: $color-text
+              transition :color 0.2s
+              .city-tap-top
+                border: 6px solid $color-text
+                border-bottom: 6px solid transparent
+                border-left: 6px solid transparent
+                border-right: 6px solid transparent
+                top: 42%
+              .city-tap-bottom
+                border: 6px solid  $color-text
+                border-bottom: 6px solid transparent
+                border-left: 6px solid transparent
+                border-right: 6px solid transparent
+                row-center()
+                top: 42%
+                transform-origin:  1px 3px
+                transform : rotate(180deg) translateX(-43%)
+                transition : all 0.2s
           .city-show-active
             color: $color-text
-          .city-box
+          .city-big-box
+            position: absolute
             min-width: 100%
+            z-index: 100
+          .city-box
+            width: 100%
             border-radius: 3px
             box-shadow: 0 1px 5px 0 rgba(12, 6, 14, 0.20)
             background: $color-white
-            position: absolute
-            z-index: 100
             margin-top: 4px
             max-height :228px
             overflow-y :auto
+            &.fade-enter, &.fade-leave-to
+              opacity: 0
+            &.fade-enter-to, &.fade-leave-to
+              transition: all .2s ease-in-out
             .city-box-item
               no-wrap()
               padding: 0 10px
@@ -525,6 +585,8 @@ export default {
               height: 26px
               line-height: 26px
               font-size: $font-size-medium
+              &:hover
+                background: $color-big-background
               &:last-child
                 margin-bottom: 13px
               &:first-child
@@ -535,7 +597,6 @@ export default {
           color: $color-text
     .data
       flex: 9
-      min-height: 700px
       padding: 25px
       position: relative
       .data-content
@@ -544,6 +605,10 @@ export default {
         background: $color-white
         display: flex
         flex-direction: column
+        padding : 20px 20px 0
+        box-shadow: 0 0 5px 0 rgba(12,6,14,0.10)
+        .data-content-box
+          height :100%
         .data-detail
           height: 92.4%
         .total
@@ -635,11 +700,14 @@ export default {
         position: absolute
         top: 0
         left: 0
+        &.fade-enter, &.fade-leave-to
+          opacity: 0
+        &.fade-enter-to, &.fade-leave-to
+         transition: all .2s ease-in-out
         .shade-detail
           all-center()
           box-shadow: 0 0 5px 0 rgba(12, 6, 14, 0.60)
           border-radius: 3px
           background: $color-white
           width: 33.25%
-          min-height: 50px
 </style>

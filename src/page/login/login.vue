@@ -40,6 +40,11 @@ export default {
     if (token) {
       location.href = '#/container/data'
     }
+    window.onkeydown = (e) => {
+      if (e.keyCode === 13) {
+        this.login()
+      }
+    }
   },
   methods: {
     remenberPassWord() {

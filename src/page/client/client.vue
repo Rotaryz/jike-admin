@@ -195,9 +195,8 @@ export default {
       flex: 1
       .showDetail
         cursor: pointer
-        height: 25px
         font-size: $font-size-medium
-        padding: 8px 18px
+        padding: 4% 11%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
@@ -212,17 +211,16 @@ export default {
       border-bottom :1px solid #DADADA
       font-size :$font-size-medium
       padding-left :30px
-      height :50px
-      line-height: 50px
       display :flex
+      height :5.01vh
+      align-items :center
       color :$color-text
       .shade-title
         width :112px
         no-wrap()
       &:first-child
         font-size :$font-size-medium-x
-        height :60px
-        line-height: 60px
+        height :7.01vh
         position: relative
         .close
           cursor: pointer
@@ -232,13 +230,14 @@ export default {
           color: #979797
           font-size :24px
     .shade-exprent
-      height : 144px
+      height : 14.42vh
       display: block
+      padding-top :10px
       #exprent
         padding : 8px
-        transform :translateY(-12px)
+        transform :translateY(4px)
         display :block
-        height :74px
+        height :7.41vh
         width :88.764%
         border :0.5px solid $color-icon-line
     .ok
