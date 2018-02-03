@@ -1,17 +1,19 @@
 <template>
   <div class="container">
     <navigation ref="nav"></navigation>
-    <div class="left-side">
-      <div class="herder-peo">
+    <div class="left-side" :style="{'margin-left': width + 'px'}">
+      <div class="herder-peo" :style="{'left': width + 'px','width': offsetWhidt +'px'}">
         <img src="./icon-menu@2x.png" class="guide"
              :class="{'guide-rotate':navStatus}" @click="checkStatus">
-        <div class="user" :class="{'user-active': logout}" @click="showlogout">
+        <div class="user" :class="{'user-active': logout}" @mouseenter="showlogout" @mouseleave="hidelogout">
           <img src="./header.jpeg" class="user-header">
           <span class="nick-name">{{userName}}</span>
-          <i :class="logout ? 'icons-bottom': 'icons-top' "></i>
-          <div class="logout" v-show="logout" @click.stop="isLogout">
-            <span class="logout-icons"></span>
-            退出登录
+          <i class="icons-top" :class="logout ? 'icons-bottom': '' "></i>
+          <div class="logout-box" v-show="logout" @mouseenter="showlogout">
+            <div class="logout" @click.stop="isLogout" >
+              <span class="logout-icons"></span>
+              退出登录
+            </div>
           </div>
         </div>
       </div>
@@ -33,10 +35,15 @@ export default {
       userName: localStorage.getItem('userName') || sessionStorage.getItem('userName'),
       logout: false,
       showOut: false,
-      dataStatus: ''
+      dataStatus: '',
+      width: 230,
+      offsetWhidt: document.body.clientWidth - 230
     }
   },
   created() {
+    window.onresize = () => {
+      this.offsetWhidt = document.body.clientWidth - this.width
+    }
     let token = localStorage.getItem('token') || sessionStorage.getItem('token')
     if (!token) {
       location.href = '#/login'
@@ -56,10 +63,15 @@ export default {
   },
   methods: {
     showlogout() {
-      this.logout = !this.logout
+      this.logout = true
+    },
+    hidelogout() {
+      this.logout = false
     },
     checkStatus() {
-      this.$refs.nav.isShowBig()
+      let res = this.$refs.nav.isShowBig()
+      this.width = res
+      this.offsetWhidt = document.body.clientWidth - this.width
       this.navStatus = !this.navStatus
     },
     hideNav() {
@@ -90,40 +102,56 @@ export default {
     height: 100vh
     display: flex
     .left-side
+      position: relative
       flex: 1
+      width :100%
       display: flex
       flex-direction: column
       .herder-peo
+        position: fixed
+        top: 0
+        z-index :800
+        left: 0
+        width :100%
         background: $color-white
         display: flex
-        padding: 20px 0 20px 24px
+        height :65px
         align-items: center
         justify-content: space-between
         border-bottom: 1px solid $color-icon-line
         .guide
+          margin-left :26px
           cursor: pointer
           height: 26px
           width: 26px
           transform: rotateY(180deg)
-          transition: all 0.3s
+          transition: all 0.5s
         .guide-rotate
           transform: rotateY(0deg)
+          transition: all 0.5s
         .user
           height: 100%
           display: flex
           align-items: center
           padding: 0 41px 0 33px
           position: relative
-          .logout
-            border-radius: 3px
+          z-index :1500
+          .logout-box
             position: absolute
+            right: 9px
+            bottom: -58px
+            height :58px
             width: 90%
+            z-index :1500
+          .logout
+            background-color:$color-white
+            margin-top :4px
+            border-radius: 3px
+            width: 100%
             text-indent: 64px
             height: 50px
             box-shadow: 0 1px 5px 0 rgba(12, 6, 14, 0.20)
             line-height: 50px
-            bottom: -58px
-            right: 9px
             z-index: 200
             .logout-icons
               position: absolute
@@ -133,6 +161,8 @@ export default {
               icon-image('icon-exit')
               col-center()
           .logout:active
+            background: $color-background
+          .logout:hover
             background: $color-background
           .user-header
             height: 40px
@@ -149,18 +179,17 @@ export default {
             border-right: 8px solid transparent
             position: absolute
             right: 28px
-            top: 50%
+            top: 47%
+            transform-origin:  7px 3px
+            transform : rotate(0deg)
+            transition : all 0.2s
           .icons-bottom
-            height: 0px
-            border: 8px solid $color-text-icon
-            border-top: 8px solid transparent
-            border-left: 8px solid transparent
-            border-right: 8px solid transparent
-            position: absolute
-            right: 28px
-            col-center()
+            transform-origin:  7px 3px
+            transform : rotate(180deg)
+            transition : all 0.2s
         .user-active
           background: $color-background
       .content
+        margin-top :65px
         flex: 1
 </style>

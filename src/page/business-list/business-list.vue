@@ -286,11 +286,12 @@ export default {
     .shade-border
       font-size: $font-size-medium
       padding-left: 30px
-      height: 50px
-      line-height: 50px
-      display: flex
+      display :flex
+      height :5.01vh
+      align-items :center
       color: $color-text
       position: relative
+      no-wrap()
       &:before
         content: ''
         background: $color-icon-line
@@ -306,12 +307,11 @@ export default {
       .shade-text
         width: 52%
       .shade-title
-        width: 112px
+        min-width: 112px
         no-wrap()
       &:first-child
         font-size: $font-size-medium-x
-        height: 60px
-        line-height: 60px
+        height :7.01vh
         position: relative
         .close
           cursor: pointer

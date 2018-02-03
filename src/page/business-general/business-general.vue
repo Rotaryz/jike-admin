@@ -351,9 +351,9 @@ export default {
       border-bottom: 1px solid #DADADA
       font-size: $font-size-medium
       padding-left: 30px
-      height: 50px
-      line-height: 50px
+      height :5.01vh
       display: flex
+      align-items :center
       color: $color-text
       position: relative
       .shade-text
@@ -363,8 +363,7 @@ export default {
         no-wrap()
       &:first-child
         font-size: $font-size-medium-x
-        height: 60px
-        line-height: 60px
+        height :7.01vh
         position: relative
         .close
           cursor: pointer
