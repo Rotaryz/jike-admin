@@ -3,7 +3,7 @@
     <div class="selects" slot="tag-sel">
       <span class="city-title">订单</span>
       <div class="select-box">
-        <span class="select-item" v-for="(item, index) in statusList" :class="{'select-item-active': status === item.status}" :key="index" @click="orderStatus(item.status)">{{item.title}}</span>
+        <span class="select-item hand" v-for="(item, index) in statusList" :class="{'select-item-active': status === item.status}" :key="index" @click="orderStatus(item.status)">{{item.title}}</span>
       </div>
     </div>
     <div slot="form-list" class="form-list">
@@ -22,7 +22,7 @@
       </ul>
     </div>
     <div slot="shade-box" class="shade-box">
-      <div class="shade-border shade-tiem">客户信息<span class="close" @click="hideShadeBox">&times;</span></div>
+      <div class="shade-border">客户信息<span class="close" @click="hideShadeBox">&times;</span></div>
       <div class="shade-border shade-tiem">
         <span class="shade-title">客户账号</span>
         <span class="shade-text">{{customersDetail.user}}</span>
@@ -43,7 +43,7 @@
         <span class="shade-title">消费金额</span>
         <span class="shade-text">{{customersDetail.order_money_total}}</span>
       </div>
-      <div class="shade-border shade-exprent">
+      <div class="shade-border shade-exprent shade-tiem">
         备注
         <textarea id="exprent" placeholder="请输入" v-model="customersDetail.remark"></textarea>
       </div>
@@ -175,14 +175,15 @@ export default {
       padding-left: 43px
     .list-header
       height: 9.5%
-      border-bottom: 1px solid #979797
+      border-bottom: 1px solid $color-big-background
+      background :$color-big-background
     .list
       height: 90.5%
       display: flex
       flex-direction: column
       .list-box
         height: 10%
-        border-bottom: 1px solid $color-icon-line
+        border-bottom: 1px solid $color-big-background
         .list-item
           line-height: 16px
           font-size: $font-size-medium
@@ -208,7 +209,7 @@ export default {
       background: $color-background
   .shade-box
     .shade-border
-      border-bottom :1px solid #DADADA
+      border-bottom :1px solid $color-icon-line
       font-size :$font-size-medium
       padding-left :30px
       display :flex
@@ -253,13 +254,23 @@ export default {
         text-align :center
         line-height:40px
         background :$color-nomal
+        &:hover
+          background :$color-hover
+        &:active
+          background :$color-active
+  .shade-tiem:hover
+    background :$color-background
+    textarea.shade-text
+      background: $color-background
   .selects
     display :flex
     font-size :$font-size-medium
     color :$color-text
     line-height :30px
     transform: translateY(-25%)
-    margin-left :70px
+    margin-left :4.5vw
+    .city-title
+      white-space: nowrap
     .select-box
       display :flex
       margin-left :10px

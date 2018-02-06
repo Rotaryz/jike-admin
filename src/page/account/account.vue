@@ -1,6 +1,6 @@
 <template>
   <form-box ref="order" @addPage="addPage" :pageDtail="pageDtail" :chioce="chioce" :isIndustrie="isIndustrie">
-    <div slot="form-list" class="form-box">
+    <div slot="money">
       <div class="money">
         <div class="monry-item">
           <div class="monty-title">累计充值<span class="unit">单位：元</span></div>
@@ -13,21 +13,22 @@
       </div>
       <div class="check-tip">
         <div class="tap-first">
-          <div class="tap-item" v-for="(item, index) in timeList"
-               :key="index" >{{item.title}}</div>
+          <div class="tap-item" v-for="(item, index) in timeList"  :class="{'tap-item-active' : timeIndex === index}" :key="index" @click="timeCheck(index, item.type)">{{item.title}}</div>
         </div>
         <div class="selects">
           <div class="select-title">交易类型</div>
-          <div class="select-box">
+          <div class="select-box hand">
             <span class="select-item" :class="{'select-item-active':tapIndex === index,'select-item-none':index - 1 === tapIndex}" v-for="(item,index) in tapList" :key="index" @click="checkTap(index)">{{item.title}}</span>
           </div>
         </div>
         <div class="search">
           <input type="text" class="search-input" placeholder="商家ID">
-          <span class="search-title">搜索</span>
+          <span class="search-title hand">搜索</span>
         </div>
-        <div class="down-excel">下载Excel</div>
+        <div class="down-excel hand">下载Excel</div>
       </div>
+    </div>
+    <div slot="form-list" class="form-box-small" >
       <div class="form-list">
         <div class="list-header">
           <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
@@ -92,6 +93,7 @@ const titleListSec = ['行业类型名称', '所属行业', '操作']
 export default {
   data() {
     return {
+      timeIndex: 0,
       chioce: false,
       isDate: false,
       tapList: [{title: '新增', type: ''}, {title: '充值', type: ''}, {title: '提现', type: ''}, {title: '授权', type: ''}],
@@ -147,6 +149,9 @@ export default {
     this.showList()
   },
   methods: {
+    timeCheck(index, type) {
+      this.timeIndex = index
+    },
     showHeight(index) {
       this.heightIndex = index
     },
@@ -298,42 +303,44 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
-  .form-box
+  .money
+    background :$color-white
+    margin:24px 24px 0
+    height :15.74vh
+    min-height :130px
     display :flex
-    height: 100%
-    flex-direction :column
-    background :$color-background
-    .money
-      background :$color-white
-      margin-bottom :24px
-      height :170px
-      display :flex
-      position: relative
-      &:before
-        content: ''
-        width :1px
-        height :134px
-        background: $color-icon-line
-        all-center()
-      .monry-item
-        flex :1
-        padding:0 60px 0 30px
-        .monty-title
-          color: $color-text
-          font-size: $font-size-medium-x
-          display :flex
-          justify-content :space-between
-          margin :33px 0 21px 0
-          .unit
-            color :$color-text-icon
-        .money-detail
-          color :$color-text-icon
-          font-size: $font-money-size
-          line-height: 60px
-          font-weight :600
-          font-family :'ZegoeUI-Bold'
-    .form-list
+    position: relative
+    &:before
+      content: ''
+      width :1px
+      height :12.407vh
+      background: $color-icon-line
+      all-center()
+    .monry-item
       flex :1
+      padding:0 5.5vw 0 2.8vw
+      .monty-title
+        color: $color-text
+        font-size: $font-size-medium-x
+        display :flex
+        justify-content :space-between
+        margin :3.056vh 0 2.037vh 0
+        .unit
+          color :$color-text-icon
+      .money-detail
+        color :$color-text-icon
+        font-size: $font-money-size
+        line-height: 60px
+        font-weight :600
+        font-family :'ZegoeUI-Bold'
+  .form-box-small
+    min-height :380px !important
+    display :flex
+    height: 90%
+    flex-direction :column
+    background :$color-white
+    .form-list
+      height :95%
       background :$color-white
       .list-header, .list-box
         display: flex
@@ -341,15 +348,17 @@ export default {
         padding-left: 43px
       .list-header
         height: 14.5%
-        border-bottom: 1px solid #979797
+        border-bottom: 1px solid $color-big-background
+        background :$color-big-background
       .list
         height: 85.5%
         display: flex
         flex-direction: column
         .list-box
           height: 14.2857%
-          border-bottom: 1px solid $color-icon-line
+          border-bottom: 1px solid $color-big-background
           .list-item
+            white-space :nowrap
             line-height: 16px
             font-size: $font-size-medium
       .list-text
@@ -415,19 +424,19 @@ export default {
 .check-tip
   display :flex
   background :$color-white
-  margin-bottom :24px
+  margin:24px 24px 0
   height :90px
   align-items :center
   .tap-first
     margin-left :37.5px
     display :flex
-    width:300px
+    white-space :nowrap
     .tap-item
       font-size :$font-size-medium
       color:$color-text
       cursor: pointer
       line-height :20px
-      margin-right :30px
+      margin-right: 1.5625vw
       position: relative
       &:before
         row-center()
@@ -445,7 +454,7 @@ export default {
     color: $color-text
     line-height: 30px
     transform: translateY(-1%)
-    margin-left :50px
+    margin-left: 3.535vw
     .select-title
       no-wrap()
       font-size :$font-size-medium
@@ -455,7 +464,7 @@ export default {
       margin-left: 10px
       .select-item
         box-sizing: border-box
-        width: 76px
+        width: 3.958vw
         height: 30px
         line-height: 30px
         text-align center
@@ -477,7 +486,7 @@ export default {
         color: $color-white
   .search
     height :30px
-    margin-left :80px
+    margin-left :3.535vw
     display :flex
     font-size :$font-size-medium
     .search-input
@@ -486,7 +495,7 @@ export default {
       border-top-left-radius: 3px
       border-bottom-left-radius: 3px
       border-right:none
-      width :154px
+      width :8.02vw
       padding-left :10px
       &::-webkit-input-placeholder
         color :$color-text-little
@@ -499,14 +508,22 @@ export default {
       line-height: 30px
       border-top-right-radius: 3px
       border-bottom-right-radius: 3px
+      &:hover
+        background :$color-hover
+      &:active
+        background :$color-active
   .down-excel
     font-size :$font-size-medium
     height :30px
     line-height: 30px
     text-align :center
-    margin-left :80px
+    margin-left :3.535vw
     border-radius :3px
     background :$color-nomal
     color :$color-white
-    width :108px
+    width :5.625vw
+    &:hover
+      background :$color-hover
+    &:active
+      background :$color-active
 </style>

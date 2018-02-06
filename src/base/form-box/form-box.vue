@@ -24,7 +24,7 @@
         <div class="tag-city" v-if="isCity">
           <span class="city-title">地域筛选</span>
           <div class="city-select" v-for="(item, index) in cityList"
-               :key="index" @click="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow">
+               :key="index" @click.stop="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
@@ -46,7 +46,7 @@
         <div class="tag-industry" v-if="isIndustrie">
           <span class="city-title">行业筛选</span>
           <div class="city-select" v-for="(item, index) in industrieList"
-               :key="index" @click="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow">
+               :key="index" @click.stop="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
@@ -71,6 +71,7 @@
       </div>
       <slot name="tap"></slot>
     </div>
+    <slot name="money"></slot>
     <div class="data">
       <div class="data-content">
         <div class="data-content-box">
@@ -88,16 +89,18 @@
               <div class="border-page page-total" @click.stop="showPageDetail">
                 {{page}}/{{pageDtail[0].total_page}}
                 <span class="page-tap">
-                <i class="page-top"></i>
+                <i class="page-top" :class="{'page-bottom':pageDetail}"></i>
               </span>
-                <ul class="page-list" v-show="pageDetail">
-                  <li class="page-item" v-for="item in pageDtail[0].total_page"
-                      :key="item"
-                      :class="{'page-item-active': pageIndex === item}"
-                      @click.stop="detailPage(item)">
-                    {{item}}/{{pageDtail[0].total_page}}
-                  </li>
-                </ul>
+                <transition name="fade">
+                  <ul class="page-list" v-show="pageDetail">
+                    <li class="page-item" v-for="item in pageDtail[0].total_page"
+                        :key="item"
+                        :class="{'page-item-active': pageIndex === item}"
+                        @click.stop="detailPage(item)">
+                      {{item}}/{{pageDtail[0].total_page}}
+                    </li>
+                  </ul>
+                </transition>
               </div>
               <input type="text" class="border-page" v-model="pageInput"/>
               <div class="border-page" @click="goPage">跳转</div>
@@ -216,11 +219,13 @@ export default {
     this.showCity()
     window.onkeydown = (e) => {
       if (e.keyCode === 13) {
-        if (this.pageInput > this.pageDtail[0].total_page) {
-          this.pageInput = this.pageDtail[0].total_page
+        if (this.pageInput !== '') {
+          if (this.pageInput > this.pageDtail[0].total_page) {
+            this.pageInput = this.pageDtail[0].total_page
+          }
+          this.page = this.pageInput
+          this.$emit('addPage', this.page)
         }
-        this.page = this.pageInput
-        this.$emit('addPage', this.page)
       }
     }
     sessionStorage.getItem('title') ? this.navTitle = sessionStorage.getItem('title').split(',') : this.navTitle = this.navTitle
@@ -228,13 +233,16 @@ export default {
   methods: {
     leaveHide() {
       this.setTime = setTimeout(() => {
-        this.cityList.forEach((item) => {
-          item.show = false
-        })
-        this.industrieList.forEach((item) => {
-          item.show = false
-        })
+        this.clickHide()
       }, 1500)
+    },
+    clickHide() {
+      this.cityList.forEach((item) => {
+        item.show = false
+      })
+      this.industrieList.forEach((item) => {
+        item.show = false
+      })
     },
     endShow() {
       clearTimeout(this.setTime)
@@ -303,6 +311,7 @@ export default {
       this.pageDetail = !this.pageDetail
     },
     hidePageDetail() {
+      this.clickHide()
       this.pageDetail = false
     },
     detailPage(page) {
@@ -326,9 +335,7 @@ export default {
       })
     },
     checkCity(index) {
-      for (let i = 0; i < this.prams.length; i++) {
-        this.prams[i] = this.cityList[i].title.replace(/^[(市)|(区)|(商圈)]/, '')
-      }
+      this.regPrams()
       this.cityList.forEach((item, idx) => {
         if (idx !== index) {
           item.show = false
@@ -347,9 +354,6 @@ export default {
       setTimeout(() => {
         this.cityList[index].show = false
         this.cityList[index].title = title
-        this.prams[index] = title
-        this.page = 1
-        this.$emit('showCity', this.prams, this.page)
         this.prams.forEach((item, idx) => {
           if (idx > index) {
             if (idx === 1) {
@@ -361,7 +365,15 @@ export default {
             }
           }
         })
+        this.regPrams()
+        this.page = 1
+        this.$emit('showCity', this.prams, this.page)
       }, 100)
+    },
+    regPrams() {
+      for (let i = 0; i < this.prams.length; i++) {
+        this.prams[i] = this.cityList[i].title.replace(/^(市)|^(区)|^(商圈)/g, '')
+      }
     },
     infoData(res) {
       let data = {
@@ -409,10 +421,12 @@ export default {
   watch: {
     moreTime(newVal) {
       let time = []
-      newVal.forEach((item) => {
-        time.push(item.toLocaleDateString().replace(/\//g, '-'))
-      })
-      this.$emit('checkTime', time, 1)
+      if (Array.isArray(newVal)) {
+        newVal.forEach((item) => {
+          time.push(item.toLocaleDateString().replace(/\//g, '-'))
+        })
+        this.$emit('checkTime', time, 1)
+      }
     }
   },
   components: {
@@ -438,15 +452,15 @@ export default {
         padding :3.47vh 0 1.57vh 0
         font-size: $font-size-large
         color: $color-text-little
-        text-indent: 41px
+        text-indent: 30px
         position: relative
         &:before
           content: ''
           position: absolute
           background: $color-nomal
           top: 3.47vh
-          height: 20px
-          width: 6px
+          height: 18px
+          width: 4px
           left: 25px
         .title-item
           margin-left: 7px
@@ -466,6 +480,8 @@ export default {
             padding-bottom: 10px
             font-size: $font-size-medium
             color: $color-text
+            &:hover
+              color: $color-nomal
             &:before
               row-center()
               bottom: 0px
@@ -480,6 +496,7 @@ export default {
                 bottom: -40px
                 transform: translateX(-20%)
           .time-title-active
+            color: $color-nomal
             &:before
               background: $color-nomal
       .tag-city, .tag-industry
@@ -494,7 +511,7 @@ export default {
           cursor: pointer
           height: 30px
           margin-left: 10px
-          border: 1px solid $color-icon-line
+          border: 1px solid $color-line
           border-radius: 3px
           font-size: $font-size-medium
           color: $color-text-little
@@ -509,7 +526,7 @@ export default {
               top: 0
               height: 100%
               width: 24px
-              border-left: 1px solid $color-icon-line
+              border-left: 1px solid $color-line
               .city-tap-top
                 height: 0
                 border: 6px solid $color-text-little
@@ -577,7 +594,7 @@ export default {
             &.fade-enter, &.fade-leave-to
               opacity: 0
             &.fade-enter-to, &.fade-leave-to
-              transition: all .2s ease-in-out
+              transition: opacity .2s ease-in-out
             .city-box-item
               no-wrap()
               padding: 0 10px
@@ -638,13 +655,15 @@ export default {
               align-items: center
               border-radius: 3px
               margin-right: 10px
-              border: 1px solid $color-icon-line
+              border: 1px solid $color-line
               font-size: $font-size-medium
             div.border-page
               padding: 0 15px
               height: 25px
               line-height: 25px
+              cursor: pointer
             div.page-total
+              cursor: pointer
               padding-right: 33px
               position: relative
               .page-tap
@@ -654,25 +673,25 @@ export default {
                 height: 23px
                 display: inline-block
                 width: 18px
-                border-left: 1px solid $color-icon-line
+                border-left: 1px solid $color-line
                 .page-top
                   row-center()
-                  top: 42%
+                  top: 44%
                   display: inline-block
                   height: 0
                   border: 5px solid $color-text
                   border-bottom: 5px solid transparent
                   border-left: 5px solid transparent
                   border-right: 5px solid transparent
+                  transform-origin:  0.5px 2px
+                  transform : rotate(0deg) translateX(-43%)
+                  transition : all 0.2s
                 .page-bottom
-                  row-center()
-                  top: 11%
                   display: inline-block
                   height: 0
-                  border: 5px solid $color-text
-                  border-top: 5px solid transparent
-                  border-left: 5px solid transparent
-                  border-right: 5px solid transparent
+                  transform-origin:  0.5px 2px
+                  transform : rotate(180deg) translateX(-43%)
+                  transition : all 0.2s
               .page-list
                 position: absolute
                 width: 100%
@@ -684,9 +703,18 @@ export default {
                 bottom: 30px
                 font-size: $font-size-medium
                 color: $color-text-little
+                max-height :290px
+                overflow-y :auto
+                &.fade-enter, &.fade-leave-to
+                  opacity: 0
+                &.fade-enter-to, &.fade-leave-to
+                  transition: all .2s ease-in-out
                 .page-item
+                  cursor: pointer
                   height: 29px
                   line-height: 29px
+                  &:hover
+                    background: $color-big-background
                 .page-item-active
                   background: $color-big-background
             input.border-page
@@ -703,11 +731,12 @@ export default {
         &.fade-enter, &.fade-leave-to
           opacity: 0
         &.fade-enter-to, &.fade-leave-to
-         transition: all .2s ease-in-out
+         transition: opacity .2s ease-in-out
         .shade-detail
           all-center()
           box-shadow: 0 0 5px 0 rgba(12, 6, 14, 0.60)
           border-radius: 3px
           background: $color-white
-          width: 33.25%
+          width: 40%
+          min-width :420px
 </style>
