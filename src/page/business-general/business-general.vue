@@ -49,7 +49,7 @@
         <div class="shade-border shade-tiem">新增商圈<span class="close" @click="hideShadeBox">&times;</span>
         </div>
         <div class="shade-city">
-          <span class="city-name">商家名称</span>
+          <span class="city-name">商圈名称</span>
           <input type="text" class="shade-city-select" placeholder="请输入" v-model="name">
         </div>
         <div class="shade-city"  v-for="(item, index) in cityList"
