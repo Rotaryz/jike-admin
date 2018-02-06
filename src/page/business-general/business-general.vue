@@ -46,10 +46,10 @@
         </ul>
       </div>
       <div slot="shade-box" class="shade-box" @click="hideCity">
-        <div class="shade-border shade-tiem">新增商圈<span class="close" @click="hideShadeBox">&times;</span>
+        <div class="shade-border shade-tiem">新增{{shadeTitle}}<span class="close" @click="hideShadeBox">&times;</span>
         </div>
         <div class="shade-city">
-          <span class="city-name">商圈名称</span>
+          <span class="city-name">{{shadeTitle}}名称</span>
           <input type="text" class="shade-city-select" placeholder="请输入" v-model="name">
         </div>
         <div class="shade-city"  v-for="(item, index) in cityList"
@@ -80,7 +80,7 @@ import FormBox from 'base/form-box/form-box'
 import {circlesDetail, industryDetail, addCircle, indestryAdd} from 'api/merchant'
 import {businessCircle, industrie} from 'api/globals'
 import {ERR_OK} from 'api/config'
-const titleList = ['商家名称', '省', '市', '区', '操作']
+const titleList = ['商圈名称', '省', '市', '区', '操作']
 const cityInfo = [{tip: '省', title: '请选择省份', type: 'province', data: [], show: false, index: -1}, {tip: '市', title: '请选择城市', type: 'city', data: [], show: false, index: -1}, {tip: '区', title: '请选择市区', type: 'district', data: [], show: false, index: -1}]
 const isIndustrieInfo = [{tip: '所属行业', title: '请选择行业', type: '', data: [], show: false, index: -1}]
 const titleListSec = ['行业类型名称', '所属行业', '操作']
@@ -93,7 +93,7 @@ export default {
         title: '行业信息',
         type: 'industry'
       }],
-      shadeTitle: '商家名称',
+      shadeTitle: '商圈名称',
       tapIndex: 0,
       cityList: [{
         tip: '省',
@@ -213,7 +213,7 @@ export default {
     },
     setData() {
       let tip = ''
-      this.type === 'circles' ? tip = '行业' : tip = '商家'
+      this.type === 'circles' ? tip = '行业' : tip = '商圈'
       if (this.name === '') {
         this.$refs.order.showContent(`${tip}名称不能为空`)
         return false
@@ -288,11 +288,11 @@ export default {
       this.insId = 0
       this.$refs.order.showShade()
       if (this.type === 'industry') {
-        this.shadeTitle = '行业名称'
+        this.shadeTitle = '行业'
         this.cityList = JSON.parse(JSON.stringify(isIndustrieInfo))
         return false
       }
-      this.shadeTitle = '商家名称'
+      this.shadeTitle = '商圈'
       this.cityList = JSON.parse(JSON.stringify(cityInfo))
     },
     checkTap(index, value) {

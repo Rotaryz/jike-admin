@@ -93,7 +93,7 @@ const navList = [
       title: '商家列表',
       url: '#/container/businessList'
     }, {
-      title: '商家概况',
+      title: '商圈概况',
       url: '#/container/businessGeneral'
     }],
     showHeight: height
