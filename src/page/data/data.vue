@@ -140,15 +140,15 @@ export default {
       padding-left: 43px
     .list-header
       height: 9.5%
-      border-bottom: 1px solid #979797
-      background :#eee
+      border-bottom: 1px solid $color-big-background
+      background :$color-big-background
     .list
       height: 90.5%
       display: flex
       flex-direction: column
       .list-box
         height: 10%
-        border-bottom: 1px solid $color-icon-line
+        border-bottom: 1px solid $color-big-background
         .list-item
           line-height: 16px
           font-size: $font-size-medium
@@ -183,7 +183,7 @@ export default {
         border :1px solid $color-nomal
         border-radius :3px
     .ok
-      height :100px
+      height: 9.26vh
       display :flex
       justify-content :center
       align-items :center

@@ -1,74 +1,78 @@
 <template>
-  <form-box ref="order" @addPage="addPage"
-             :pageDtail="pageDtail" :chioce="chioce"
-            :isIndustrie="isIndustrie">
-    <div class="tap" slot="tap">
-      <div class="tap-first">
-        <div class="tap-item" v-for="(item, index) in tapList" :class="{'tap-item-active':tapIndex === index}" :key="index" @click="checkTap(index,item.type)">{{item.title}}</div>
-      </div>
-      <div slot="tag-sel" class="selects">
-        <div class="select-box">
-          <span class="select-item" @click="showDetail()">+ 新增</span>
+  <transition>
+    <form-box ref="order" @addPage="addPage"
+              :pageDtail="pageDtail" :chioce="chioce"
+              :isIndustrie="isIndustrie">
+      <div class="tap" slot="tap">
+        <div class="tap-first">
+          <div class="tap-item" v-for="(item, index) in tapList" :class="{'tap-item-active':tapIndex === index}" :key="index" @click="checkTap(index,item.type)">{{item.title}}</div>
         </div>
-      </div>
-    </div>
-    <div slot="form-list" class="form-list" v-show="type === 'industry'">
-      <div class="list-header list-industry">
-        <div class="list-item" v-for="(item, index) in titleList" :key="index">
-          {{item}}
-        </div>
-      </div>
-      <ul class="list">
-        <li class="list-box list-industry" v-for="(item,index) in industryList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
-          <div class="list-item list-text">{{item.name}}</div>
-          <div class="list-item list-text">{{item.parent_name}}</div>
-          <div class="list-item"><span class="showDetail" @click="showDetail()">查看</span>
+        <div slot="tag-sel" class="selects">
+          <div class="select-box">
+            <span class="select-item hand" @click="showDetail()">+ 新增</span>
           </div>
-        </li>
-      </ul>
-    </div>
-    <div slot="form-list" class="form-list" v-show="type === 'circles'">
-      <div class="list-header">
-        <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
-          {{item}}
         </div>
       </div>
-      <ul class="list">
-        <li class="list-box" v-for="(item,idx) in merchanList" :class="{'list-box-active': heightIndex === idx}" :key="item.id" @mouseenter="showHeight(idx)" @mouseleave="hideHeight">
-          <div class="list-item list-text">{{item.name}}</div>
-          <div class="list-item list-text">{{item.province}}</div>
-          <div class="list-item list-text">{{item.city}}</div>
-          <div class="list-item list-text">{{item.district}}</div>
-          <div class="list-item"><span class="showDetail" @click="showDetail()">查看</span>
+      <div slot="form-list" class="form-list" v-show="type === 'industry'">
+        <div class="list-header list-industry">
+          <div class="list-item" v-for="(item, index) in titleList" :key="index">
+            {{item}}
           </div>
-        </li>
-      </ul>
-    </div>
-    <div slot="shade-box" class="shade-box">
-      <div class="shade-border shade-tiem">新增商圈<span class="close" @click="hideShadeBox">&times;</span>
+        </div>
+        <ul class="list">
+          <li class="list-box list-industry" v-for="(item,index) in industryList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
+            <div class="list-item list-text">{{item.name}}</div>
+            <div class="list-item list-text">{{item.parent_name}}</div>
+            <div class="list-item"><span class="showDetail" @click="showDetail()">查看</span>
+            </div>
+          </li>
+        </ul>
       </div>
-      <div class="shade-city">
-        <span class="city-name">商家名称</span>
-        <input type="text" class="shade-city-select" placeholder="请输入" v-model="name">
+      <div slot="form-list" class="form-list" v-show="type === 'circles'">
+        <div class="list-header">
+          <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
+            {{item}}
+          </div>
+        </div>
+        <ul class="list">
+          <li class="list-box" v-for="(item,idx) in merchanList" :class="{'list-box-active': heightIndex === idx}" :key="item.id" @mouseenter="showHeight(idx)" @mouseleave="hideHeight">
+            <div class="list-item list-text">{{item.name}}</div>
+            <div class="list-item list-text">{{item.province}}</div>
+            <div class="list-item list-text">{{item.city}}</div>
+            <div class="list-item list-text">{{item.district}}</div>
+            <div class="list-item"><span class="showDetail" @click="showDetail()">查看</span>
+            </div>
+          </li>
+        </ul>
       </div>
-      <div class="shade-city"  v-for="(item, index) in cityList"
-           :key="index" @click="checkCity(index)">
-        <span class="city-name">{{item.tip}}</span>
-        <div class="shade-city-select shade-after">
-          {{item.title}}
-          <span :class="item.show && item.data.length > 0 ? 'shade-bottom' : 'shade-top'"></span>
-          <ul class="shade-city-box"  v-show="item.show && item.data.length > 0">
-            <li class="shade-city-tiem"  v-for="(items, idx) in item.data"
-                :class="{'shade-city-tiem-active':item.index === idx}"
-                :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}</li>
-          </ul>
+      <div slot="shade-box" class="shade-box" @click="hideCity">
+        <div class="shade-border shade-tiem">新增{{shadeTitle}}<span class="close" @click="hideShadeBox">&times;</span>
+        </div>
+        <div class="shade-city">
+          <span class="city-name">{{shadeTitle}}名称</span>
+          <input type="text" class="shade-city-select" placeholder="请输入" v-model="name">
+        </div>
+        <div class="shade-city"  v-for="(item, index) in cityList"
+             :key="index" @click.stop="checkCity(index)">
+          <span class="city-name">{{item.tip}}</span>
+          <div class="shade-city-select shade-after hand">
+            {{item.title}}
+            <span :class="item.show && item.data.length > 0 ? 'shade-bottom' : 'shade-top'"></span>
+            <transition name="fade">
+              <ul class="shade-city-box"  v-show="item.show && item.data.length > 0">
+                <li class="shade-city-tiem"  v-for="(items, idx) in item.data"
+                    :class="{'shade-city-tiem-active':item.index === idx}"
+                    :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}</li>
+              </ul>
+            </transition>
+          </div>
+        </div>
+        <div class="ok">
+          <span class="submit" @click="setData">保存</span>
         </div>
       </div>
-      <div class="ok">
-        <span class="submit" @click="setData">保存</span>
-      </div>
-    </div>
-  </form-box>
+    </form-box>
+  </transition>
 </template>
 
 <script type="text/ecmascript-6">
@@ -76,7 +80,7 @@ import FormBox from 'base/form-box/form-box'
 import {circlesDetail, industryDetail, addCircle, indestryAdd} from 'api/merchant'
 import {businessCircle, industrie} from 'api/globals'
 import {ERR_OK} from 'api/config'
-const titleList = ['商家名称', '省', '市', '区', '操作']
+const titleList = ['商圈名称', '省', '市', '区', '操作']
 const cityInfo = [{tip: '省', title: '请选择省份', type: 'province', data: [], show: false, index: -1}, {tip: '市', title: '请选择城市', type: 'city', data: [], show: false, index: -1}, {tip: '区', title: '请选择市区', type: 'district', data: [], show: false, index: -1}]
 const isIndustrieInfo = [{tip: '所属行业', title: '请选择行业', type: '', data: [], show: false, index: -1}]
 const titleListSec = ['行业类型名称', '所属行业', '操作']
@@ -89,7 +93,7 @@ export default {
         title: '行业信息',
         type: 'industry'
       }],
-      shadeTitle: '商家名称',
+      shadeTitle: '商圈名称',
       tapIndex: 0,
       cityList: [{
         tip: '省',
@@ -140,17 +144,25 @@ export default {
     hideHeight() {
       this.heightIndex = -1
     },
+    hideCity() {
+      this.cityList.forEach((item, idx) => {
+        item.show = false
+      })
+    },
     checkCity(index) {
+      for (let i = 0; i < this.cityList.length; i++) {
+        this.prams[i] = this.cityList[i].title.replace(/^(请选择.{2})/g, '')
+      }
+      this.cityList.forEach((item, idx) => {
+        if (idx !== index) {
+          item.show = false
+        }
+      })
       if (index > 0 && this.prams[index - 1] === '') {
         return false
       }
       this.cityIndex = index
       this.cityList[index].show = !this.cityList[index].show
-      for (let i = 0; i < this.prams.length; i++) {
-        if (i >= index) {
-          this.prams[i] = ''
-        }
-      }
       this.showCity()
     },
     showCity() {
@@ -158,7 +170,9 @@ export default {
       if (this.type === 'circles') {
         businessCircle(data).then((res) => {
           if (res.error === ERR_OK) {
-            this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]
+            if (res.data.filter[this.cityList[this.cityIndex].type]) {
+              this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]
+            }
           }
         })
         return false
@@ -199,7 +213,7 @@ export default {
     },
     setData() {
       let tip = ''
-      this.type === 'circles' ? tip = '行业' : tip = '商家'
+      this.type === 'circles' ? tip = '行业' : tip = '商圈'
       if (this.name === '') {
         this.$refs.order.showContent(`${tip}名称不能为空`)
         return false
@@ -274,11 +288,11 @@ export default {
       this.insId = 0
       this.$refs.order.showShade()
       if (this.type === 'industry') {
-        this.shadeTitle = '行业名称'
+        this.shadeTitle = '行业'
         this.cityList = JSON.parse(JSON.stringify(isIndustrieInfo))
         return false
       }
-      this.shadeTitle = '商家名称'
+      this.shadeTitle = '商圈'
       this.cityList = JSON.parse(JSON.stringify(cityInfo))
     },
     checkTap(index, value) {
@@ -310,14 +324,15 @@ export default {
       padding-left: 43px
     .list-header
       height: 9.5%
-      border-bottom: 1px solid #979797
+      border-bottom: 1px solid $color-big-background
+      background :$color-big-background
     .list
       height: 90.5%
       display: flex
       flex-direction: column
       .list-box
         height: 10%
-        border-bottom: 1px solid $color-icon-line
+        border-bottom: 1px solid $color-big-background
         .list-item
           line-height: 16px
           font-size: $font-size-medium
@@ -332,7 +347,7 @@ export default {
         cursor: pointer
         height: 25px
         font-size: $font-size-medium
-        padding: 8px 18px
+        padding: 4% 11%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
@@ -423,11 +438,17 @@ export default {
           background :$color-white
           border :1px solid $color-icon-line
           border-radius :3px
+          &.fade-enter, &.fade-leave-to
+            opacity: 0
+          &.fade-enter-to, &.fade-leave-to
+            transition: all .2s
           .shade-city-tiem
             color :$color-text-little
             padding:0 10px
             height :26px
             line-height: 26px
+            &:hover
+              background :$color-big-background
           .shade-city-tiem-active
             background :$color-big-background
             color :$color-text
@@ -442,7 +463,7 @@ export default {
           top: 0
           background :$color-icon-line
     .ok
-      height: 100px
+      height: 9.26vh
       display: flex
       justify-content: center
       align-items: center
@@ -454,6 +475,10 @@ export default {
         text-align: center
         line-height: 40px
         background: $color-nomal
+        &:hover
+          background :$color-hover
+        &:active
+          background :$color-active
   .tap
     display :flex
     margin: 20px 0 10px
@@ -464,6 +489,8 @@ export default {
         cursor: pointer
         margin-right :30px
         position: relative
+        &:hover
+          color :$color-nomal
         &:before
           row-center()
           bottom: 0px
@@ -472,6 +499,7 @@ export default {
           width: 32px
           background: $color-white
       .tap-item-active
+        color :$color-nomal
         &:before
           background: $color-nomal
     .selects
@@ -492,4 +520,8 @@ export default {
           color: $color-white
           border-radius: 3px
           background: $color-nomal
+          &:hover
+            background :$color-hover
+          &:active
+            background: $color-nomal
 </style>

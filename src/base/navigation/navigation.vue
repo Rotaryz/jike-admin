@@ -39,8 +39,7 @@
         <span class="icon"></span>
       </div>
       <ul class="nav-small" @mouseover.stop>
-        <li class="nav-item"
-            :class=" index === hoverIndex ? 'nav-small-active' : '' "
+        <li class="nav-item" :class=" index === smallIndex ? 'nav-small-active' : '' "
             v-for="(item ,  index) in navList" :key="index"
             @mouseover="hoverChild(index)">
           <a href="javaScript:;" class="nav-tap">
@@ -63,60 +62,61 @@
 </template>
 
 <script type="text/ecmascript-6">
+const height = 60
 const navList = [
   {
     title: '首页',
     url: 'javaScript:;',
     icon: require('./icon-home@2x.png'),
-    childrenIndex: 0,
+    childrenIndex: -1,
     children: [{
       title: '首页',
       url: 'javaScript:;'
     }],
-    showHeight: 60
+    showHeight: height
   }, {
     title: '数据概况',
     url: '#/container/data',
     icon: require('./icon-data@2x.png'),
-    childrenIndex: 0,
+    childrenIndex: -1,
     children: [{
       title: '数据概况',
       url: '#/container/data'
     }],
-    showHeight: 60
+    showHeight: height
   }, {
     title: '商家管理',
     url: '#/container/businessList',
     icon: require('./icon-shop@2x.png'),
-    childrenIndex: 0,
+    childrenIndex: -1,
     children: [{
       title: '商家列表',
       url: '#/container/businessList'
     }, {
-      title: '商家概况',
+      title: '商圈概况',
       url: '#/container/businessGeneral'
     }],
-    showHeight: 60
+    showHeight: height
   }, {
     title: '客户管理',
     icon: require('./icon-guest@2x.png'),
     url: '#/container/client',
-    childrenIndex: 0,
+    childrenIndex: -1,
     children: [{
       title: '客户管理',
       url: '#/container/client'
     }],
-    showHeight: 60
+    showHeight: height
   }, {
     title: '订单管理',
     icon: require('./icon-indent@2x.png'),
     url: '#/container/order',
-    childrenIndex: 0,
+    childrenIndex: -1,
     children: [{
       title: '订单管理',
       url: '#/container/order'
     }],
-    showHeight: 60
+    showHeight: height
   }, {
     title: '账户管理',
     icon: require('./icon-account@2x.png'),
@@ -125,18 +125,19 @@ const navList = [
       title: '账户管理',
       url: '#/container/account'
     }],
-    showHeight: 60
+    showHeight: height
   }]
 export default {
   data() {
     return {
+      smallIndex: 0,
       title: '赞播管理后台',
       navList: navList,
       hoverIndex: -1,
       hoverChildIndex: 0,
       isBig: true,
       bigChild: 1,
-      showHeight: 60,
+      showHeight: height,
       timer: null,
       clickChild: 0,
       recodIndex: 2,
@@ -164,11 +165,12 @@ export default {
   },
   methods: {
     showChild(index, status = true) {
+      this.smallIndex = index
       clearInterval(this.timer)
       if (this.navList[index].children.length === 1) {
         this.timer = setInterval(() => {
-          if (this.navList[this.recodIndex].showHeight <= 60) {
-            this.navList[this.recodIndex].showHeight = 60
+          if (this.navList[this.recodIndex].showHeight <= height) {
+            this.navList[this.recodIndex].showHeight = height
             clearInterval(this.timer)
             return false
           }
@@ -177,12 +179,14 @@ export default {
         this.bigChild = index
         sessionStorage.setItem('title', [this.navList[index].title])
       } else if (this.navList[index].children.length > 1) {
-        sessionStorage.setItem('title', [this.navList[index].title, this.navList[index].children[this.navList[index].childrenIndex].title])
+        let childCode = this.navList[index].childrenIndex === -1 ? 0 : this.navList[index].childrenIndex
+        this.navList[this.recodIndex].childrenIndex = childCode
+        sessionStorage.setItem('title', [this.navList[index].title, this.navList[index].children[childCode].title])
         this.bigChild = -1
         this.recodIndex = index
         let num = this.navList[index].children.length
-        if (this.navList[index].showHeight === 60) {
-          let target = (num + 1) * 60
+        if (this.navList[index].showHeight === height) {
+          let target = (num + 1) * height
           this.timer = setInterval(() => {
             if (this.navList[index].showHeight >= target) {
               this.navList[index].showHeight = target
@@ -194,8 +198,8 @@ export default {
         } else {
           if (status) {
             this.timer = setInterval(() => {
-              if (this.navList[index].showHeight <= 60) {
-                this.navList[index].showHeight = 60
+              if (this.navList[index].showHeight <= height) {
+                this.navList[index].showHeight = height
                 clearInterval(this.timer)
                 return false
               }
@@ -220,9 +224,15 @@ export default {
       this.hoverIndex = -1
     },
     hoverDetail(index, parent) {
+      this.smallIndex = parent
       this.hoverChildIndex = index
       this.hoverIndex = parent
       this.navList[parent].childrenIndex = index
+      this.navList.forEach((item, idx) => {
+        if (idx !== parent) {
+          item.childrenIndex = -1
+        }
+      })
       if (this.navList[parent].children.length > 1) {
         this.showChild(parent, false)
         this.navList[parent].childrenIndex = index
@@ -233,16 +243,16 @@ export default {
     isShowBig() {
       this.showAnimation = !this.showAnimation
       let marWidth = 0
-      this.showAnimation ? marWidth = 79 : marWidth = 230
+      this.showAnimation ? marWidth = 79 : marWidth = 200
       this.title = '' || '赞播管理后台'
       setTimeout(() => {
         this.isBig = !this.isBig
         if (!this.isBig) {
-          if (this.navList[this.recodIndex].showHeight > 60) {
-            let target = 60
+          if (this.navList[this.recodIndex].showHeight > height) {
+            let target = height
             this.timer = setInterval(() => {
               if (this.navList[this.recodIndex].showHeight >= target) {
-                this.navList[this.recodIndex].showHeight = 60
+                this.navList[this.recodIndex].showHeight = height
                 clearInterval(this.timer)
                 return false
               }
@@ -276,9 +286,9 @@ export default {
     height :100vh
     overflow-y ：scroll
     .big-show
-      width: 230px
+      width: 200px
       .herder
-        padding-left: 68px
+        padding-left: 60px
         height: 65px
         overflow: hidden
         line-height: 65px
@@ -290,7 +300,7 @@ export default {
           icon-image('pic-logo_menu')
           height: 36.4px
           width: 33.6px
-          left: 20px
+          left: 18px
           transform: translateY(-55%)
       .nav-big
         .nav-item
@@ -299,7 +309,7 @@ export default {
           border-bottom: 1px solid #3B3B43
           .nav-tap
             transition :all 0.2s
-            border-left: 8px solid $color-menu-background
+            border-left: 6px solid $color-menu-background
             align-items: center
             color: $color-white
             display: flex
@@ -308,7 +318,7 @@ export default {
             position: relative
             .nav-icon
               height: 100%
-              width: 64px
+              width: 58px
               position: relative
               .nav-pic
                 height: 20px
@@ -328,22 +338,22 @@ export default {
               icon-image('icon-pressed')
             &:hover
               background: $color-menu-select
-              border-left: 8px solid $color-menu-select
+              border-left: 6px solid $color-menu-select
               transition :all 0.2s
           .nav-tap-active
             background: $color-menu-select
-            border-left: 8px solid $color-nomal !important
+            border-left: 6px solid $color-nomal !important
           .nav-item-no-border
-            border-left: 8px solid $color-menu-background
+            border-left: 6px solid $color-menu-background
         .nav-big-child
           .nav-tap
             .nav-icon
-              width :50px
+              width :46px
           .nav-title
             margin-left: 20px
           .nav-big-active
             background: $color-menu-select
-            border-left: 8px solid $color-nomal !important
+            border-left: 6px solid $color-nomal !important
     .big-hide
       width: 79px
       transition: all .2s
@@ -366,7 +376,7 @@ export default {
           height: 60px
           border-bottom: 1px solid #3B3B43
           position: relative
-          border-left: 8px solid $color-menu-background
+          border-left: 6px solid $color-menu-background
           .nav-tap
             display: block
             height: 100%
@@ -381,25 +391,33 @@ export default {
             position: absolute
             right: -177px
             top: 5px
-            padding: 10px 0
             background: $color-menu-background
             border-radius: 4px
             z-index :300
             .nav-item
-              height: 40px
+              height: 46px
               border: none
+              &:first-child
+                border-top-right-radius :3px
+                border-top-left-radius :3px
+              &:last-child
+                border-bottom-right-radius :3px
+                border-bottom-left-radius :3px
               .nav-tap
-                font-size: $font-size-large-s
+                font-size: $font-size-medium-x
                 padding: 0 70px 0 20px
                 .small-title
                   min-width: 84px
             .nav-item-active
               background: $color-menu-select
+          &:hover
+            background: $color-menu-select
+            border-left: 6px solid $color-nomal
         .nav-small-active
           background: $color-menu-select
-          border-left: 8px solid $color-nomal
+          border-left: 6px solid $color-nomal
     .small-hide
-      width: 230px
+      width: 200px
       transition: all .2s
 
 </style>

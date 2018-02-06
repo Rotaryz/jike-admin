@@ -23,7 +23,7 @@
       </ul>
     </div>
     <div slot="shade-box" class="shade-box">
-      <div class="shade-border shade-tiem">商家属性<span class="close"
+      <div class="shade-border">商家属性<span class="close"
                                                      @click="hideShadeBox">&times;</span>
       </div>
       <div class="shade-border shade-tiem">
@@ -51,25 +51,22 @@
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在位置</span>
-        <input class="shade-text" v-model="merchantDetail.particular_address"
-               name="change"
-               :disabled="disableds"/>
+        <textarea name="" id="" class="shade-text" v-model="merchantDetail.particular_address" :disabled="disableds"></textarea>
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在商圈</span>
         <input class="shade-text" v-model="merchantDetail.business_circle_name"
-               name="change"
-               :disabled="disableds"/>
+               name="change" :disabled="disableds"/>
       </div>
       <div class="shade-border shade-tiem">
         <span class="shade-title">商家属性</span>
         <div class="radios" @click="level('single')">
-          <span class="icon"
+          <span class="icon hand"
                 :class="{'icon-active': merchantDetail.reseller_level === 0}"></span>
           <span class="title">单店</span>
         </div>
         <div class="radios" @click="level">
-          <span class="icon"
+          <span class="icon hand"
                 :class="{'icon-active': merchantDetail.reseller_level === 1}"></span>
           <span class="title">连锁门店</span>
         </div>
@@ -77,19 +74,19 @@
       <div class="shade-border shade-tiem">
         <span class="shade-title">商家角色</span>
         <div class="radios" @click="leader('leader')">
-          <span class="icon"
+          <span class="icon hand"
                 :class="{'icon-active': merchantDetail.is_leader === 0}"></span>
           <span class="title">普通</span>
         </div>
         <div class="radios" @click="leader">
-          <span class="icon"
+          <span class="icon hand"
                 :class="{'icon-active': merchantDetail.is_leader === 1}"></span>
           <span class="title">盟主</span>
         </div>
       </div>
       <div class="ok">
-        <span class="submit change" @click="change">修改</span>
-        <span class="submit"
+        <span class="submit change hand" @click="change">修改</span>
+        <span class="submit sure"
               @click="merchantMessage(merchantDetail.id)">保存</span>
       </div>
     </div>
@@ -103,7 +100,6 @@ import {merchanList, merchantDetail, merchantMessage} from 'api/merchant'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
 const titleList = ['商家账号', '商家名称', '商家类型', '用户数', '客户数', '订单数', '操作']
-const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
 export default {
   data() {
     return {
@@ -117,7 +113,6 @@ export default {
       isIndustrie: true,
       address: {},
       status: 1,
-      statusList: statusList,
       shopId: {},
       heightIndex: -1
     }
@@ -127,7 +122,7 @@ export default {
   },
   methods: {
     change() {
-      this.disableds = false
+      this.disableds = !this.disableds
     },
     showIndustrie(res) {
       this.shopId = res
@@ -179,8 +174,7 @@ export default {
       let data = {}
       data = Object.assign({}, {
         time: this.time,
-        page: this.page,
-        status: this.status
+        page: this.page
       }, this.address, this.shopId)
       merchanList(data).then((res) => {
         if (res.error === ERR_OK) {
@@ -222,10 +216,6 @@ export default {
       this.page = page
       this.showList()
     },
-    orderStatus(status) {
-      this.status = status
-      this.showList()
-    },
     showCity(prams, page) {
       this.address = this.$refs.order.infoData(prams)
       this.page = page
@@ -251,14 +241,15 @@ export default {
       padding-left: 43px
     .list-header
       height: 9.5%
-      border-bottom: 1px solid #979797
+      border-bottom: 1px solid $color-big-background
+      background :$color-big-background
     .list
       height: 90.5%
       display: flex
       flex-direction: column
       .list-box
         height: 10%
-        border-bottom: 1px solid $color-icon-line
+        border-bottom: 1px solid $color-big-background
         .list-item
           line-height: 16px
           font-size: $font-size-medium
@@ -271,9 +262,8 @@ export default {
       flex: 1
       .showDetail
         cursor: pointer
-        height: 25px
         font-size: $font-size-medium
-        padding: 8px 18px
+        padding: 4% 11%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
@@ -302,10 +292,18 @@ export default {
         bottom: 0
       .shade-text:disabled
         background: $color-white
-      input.shade-text
-        height: 97%
+      input.shade-text,textarea.shade-text
+        transform :translateX(-10px)
+        height: 60%
+        padding-left :10px
+        border: 0.5px solid $color-white
+      textarea.shade-text
+        width :62%
+        height: 48%
+        padding-top :2px
+        font-size :$font-size-medium
       .shade-text
-        width: 52%
+        width: 65%
       .shade-title
         min-width: 112px
         no-wrap()
@@ -357,11 +355,12 @@ export default {
         width: 88.764%
         border: 0.5px solid $color-icon-line
     .shade-input
-      background: #F1F4F7
-      .shade-text
-        background: #F1F4F7
+      input.shade-text,textarea.shade-text
+        background :$color-white
+        border: 1px solid $color-background
+        border-radius :3px
     .ok
-      height: 100px
+      height: 9.26vh
       display: flex
       justify-content: center
       align-items: center
@@ -376,9 +375,22 @@ export default {
       .change
         margin-right: 20px
         background: $color-white
-        border: 1px solid $color-nomal
-        color: $color-nomal
+        border: 1px solid $color-line
+        color: $color-text
+        &:hover
+          color :$color-nomal
+          border: 1px solid $color-nomal
+      .sure
+        &:hover
+          background :$color-hover
+        &:active
+          background :$color-active
 
+    .shade-tiem:hover
+      background :$color-background
+      input.shade-text:disabled,textarea.shade-text:disabled
+        background: $color-background
+        border: 0.5px solid $color-background
   .selects
     display: flex
     font-size: $font-size-medium

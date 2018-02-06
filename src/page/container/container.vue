@@ -9,12 +9,14 @@
           <img src="./header.jpeg" class="user-header">
           <span class="nick-name">{{userName}}</span>
           <i class="icons-top" :class="logout ? 'icons-bottom': '' "></i>
-          <div class="logout-box" v-show="logout" @mouseenter="showlogout">
-            <div class="logout" @click.stop="isLogout" >
-              <span class="logout-icons"></span>
-              退出登录
+          <transition name="fade">
+            <div class="logout-box" v-show="logout" @mouseenter="showlogout">
+              <div class="logout" @click.stop="isLogout" >
+                <span class="logout-icons"></span>
+                退出登录
+              </div>
             </div>
-          </div>
+          </transition>
         </div>
       </div>
       <div class="content" @mouseover="hideNav">
@@ -36,8 +38,8 @@ export default {
       logout: false,
       showOut: false,
       dataStatus: '',
-      width: 230,
-      offsetWhidt: document.body.clientWidth - 230
+      width: 200,
+      offsetWhidt: document.body.clientWidth - 200
     }
   },
   created() {
@@ -118,7 +120,7 @@ export default {
         height :65px
         align-items: center
         justify-content: space-between
-        border-bottom: 1px solid $color-icon-line
+        border-bottom: 1px solid #eee
         .guide
           margin-left :26px
           cursor: pointer
@@ -130,6 +132,7 @@ export default {
           transform: rotateY(0deg)
           transition: all 0.5s
         .user
+          cursor: pointer
           height: 100%
           display: flex
           align-items: center
@@ -138,11 +141,15 @@ export default {
           z-index :1500
           .logout-box
             position: absolute
-            right: 9px
+            right: 2px
             bottom: -58px
             height :58px
-            width: 90%
+            width: 99%
             z-index :1500
+            &.fade-enter, &.fade-leave-to
+              opacity: 0
+            &.fade-enter-to, &.fade-leave-to
+              transition: all .2s ease-in-out
           .logout
             background-color:$color-white
             margin-top :4px
@@ -150,7 +157,7 @@ export default {
             width: 100%
             text-indent: 64px
             height: 50px
-            box-shadow: 0 1px 5px 0 rgba(12, 6, 14, 0.20)
+            box-shadow: 0 3px 8px 0 rgba(12, 6, 14, 0.20)
             line-height: 50px
             z-index: 200
             .logout-icons
@@ -161,8 +168,6 @@ export default {
               icon-image('icon-exit')
               col-center()
           .logout:active
-            background: $color-background
-          .logout:hover
             background: $color-background
           .user-header
             height: 40px

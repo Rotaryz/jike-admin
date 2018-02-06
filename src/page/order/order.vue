@@ -3,7 +3,7 @@
     <div class="selects" slot="tag-sel">
       <span class="select-title">订单</span>
       <div class="select-box">
-        <span class="select-item" v-for="(item, index) in statusList" :class="{'select-item-active': status === item.status}" :key="index" @click="orderStatus(item.status)">{{item.title}}</span>
+        <span class="select-item hand" v-for="(item, index) in statusList" :class="{'select-item-active': status === item.status}" :key="index" @click="orderStatus(item.status)">{{item.title}}</span>
       </div>
     </div>
     <div slot="form-list" class="form-list">
@@ -50,7 +50,7 @@
         <span class="shade-title">订单状态</span>
         <span class="shade-text">{{orderDetail.status === 1 ? '支付成功' : orderDetail.status === 3 ? '退款中' : '退款完成'}}</span>
         </div>
-      <div class="shade-border shade-exprent">
+      <div class="shade-border shade-exprent shade-tiem">
         备注
         <textarea id="exprent" placeholder="请输入" v-model="orderDetail.reamrk"></textarea>
       </div>
@@ -165,14 +165,15 @@ export default {
       padding-left: 43px
     .list-header
       height: 9.5%
-      border-bottom: 1px solid #979797
+      border-bottom: 1px solid $color-big-background
+      background :$color-big-background
     .list
       height: 90.5%
       display: flex
       flex-direction: column
       .list-box
         height: 10%
-        border-bottom: 1px solid $color-icon-line
+        border-bottom: 1px solid $color-big-background
         .list-item
           line-height: 16px
           font-size: $font-size-medium
@@ -185,9 +186,8 @@ export default {
       flex: 1
       .showDetail
         cursor: pointer
-        height: 25px
         font-size: $font-size-medium
-        padding: 8px 18px
+        padding: 4% 11%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
@@ -197,7 +197,7 @@ export default {
       background: $color-background
   .shade-box
     .shade-border
-      border-bottom :1px solid #DADADA
+      border-bottom :1px solid $color-icon-line
       font-size :$font-size-medium
       padding-left :30px
       display :flex
@@ -223,6 +223,7 @@ export default {
       display: block
       padding-top :10px
       #exprent
+        resize: none
         padding : 8px
         transform :translateY(4px)
         display :block
@@ -230,7 +231,7 @@ export default {
         width :88.764%
         border :0.5px solid $color-icon-line
     .ok
-      height :100px
+      height: 9.26vh
       display :flex
       justify-content :center
       align-items :center
@@ -242,6 +243,14 @@ export default {
         text-align :center
         line-height:40px
         background :$color-nomal
+        &:hover
+          background :$color-hover
+        &:active
+          background :$color-active
+  .shade-tiem:hover
+    background :$color-background
+    textarea.shade-text
+      background: $color-background
   .selects
     display :flex
     font-size :$font-size-medium
