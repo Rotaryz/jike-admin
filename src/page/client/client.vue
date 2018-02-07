@@ -207,6 +207,9 @@ export default {
         flex :0.5
     .list-box-active
       background: $color-background
+  .list-header
+    .list-item:last-child
+      transform :translateX(7%)
   .shade-box
     .shade-border
       border-bottom :1px solid $color-icon-line

@@ -271,6 +271,9 @@ export default {
         flex: 1.2
     .list-box-active
       background: $color-background
+  .list-header
+    .list-item:last-child
+      transform :translateX(8%)
 
   .shade-box
     .shade-border
@@ -298,7 +301,7 @@ export default {
         padding-left :10px
         border: 0.5px solid $color-white
       textarea.shade-text
-        width :62%
+        width :62.5%
         height: 48%
         padding-top :2px
         font-size :$font-size-medium
@@ -357,7 +360,7 @@ export default {
     .shade-input
       input.shade-text,textarea.shade-text
         background :$color-white
-        border: 1px solid $color-background
+        border: 1px solid $color-line
         border-radius :3px
     .ok
       height: 9.26vh
