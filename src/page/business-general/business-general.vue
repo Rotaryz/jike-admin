@@ -347,7 +347,7 @@ export default {
         cursor: pointer
         height: 25px
         font-size: $font-size-medium
-        padding: 4% 11%
+        padding: 5% 14%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
@@ -360,6 +360,9 @@ export default {
   .list-industry
     .list-item:nth-child(2)
       flex :2.9
+  .list-header
+    .list-item:last-child
+      transform :translateX(9%)
 
   .shade-box
     .shade-border
@@ -408,24 +411,30 @@ export default {
         margin-left :56px
         .shade-top
           position: absolute
-          right: 6px
-          top: 42%
+          right: 3px
+          top: 44%
           display: inline-block
           height: 0
           border: 5px solid $color-text
           border-bottom: 5px solid transparent
           border-left: 5px solid transparent
           border-right: 5px solid transparent
+          transform-origin:  1px 2px
+          transform : rotate(0deg) translateX(-43%)
+          transition : all 0.2s
         .shade-bottom
-          right: 6px
+          right: 3px
           position: absolute
-          top: 11%
+          top: 44%
           display: inline-block
           height: 0
           border: 5px solid $color-text
-          border-top: 5px solid transparent
+          border-bottom: 5px solid transparent
           border-left: 5px solid transparent
           border-right: 5px solid transparent
+          transform-origin:  1px 2px
+          transform : rotate(180deg) translateX(-43%)
+          transition : all 0.2s
         .shade-city-box
           box-shadow: 0 1px 5px 0 rgba(12,6,14,0.20)
           position: absolute

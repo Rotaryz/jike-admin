@@ -341,7 +341,7 @@ export default {
           item.show = false
         }
       })
-      if (index > 0 && this.prams[index - 1] === '') {
+      if (index > 0 && (this.prams[index - 1] === '' || this.prams[index - 1].length === 1)) {
         return false
       }
       this.cityIndex = index

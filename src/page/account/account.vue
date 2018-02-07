@@ -438,6 +438,8 @@ export default {
       line-height :20px
       margin-right: 1.5625vw
       position: relative
+      &:hover
+        color :$color-nomal
       &:before
         row-center()
         bottom: -8px
@@ -446,6 +448,7 @@ export default {
         width: 32px
         background: $color-white
     .tap-item-active
+      color :$color-nomal
       &:before
         background: $color-nomal
   .selects
