@@ -73,10 +73,15 @@
     </div>
     <slot name="money"></slot>
     <div class="data">
+      <toast ref="toast"></toast>
       <div class="data-content">
         <div class="data-content-box">
           <div class="data-detail">
             <slot name="form-list"></slot>
+            <div class="blank" v-show="showBlank">
+              <div class="blank-icon"></div>
+              <div class="blank-title">暂无相关数据</div>
+            </div>
           </div>
           <div class="total">
             <div>每页{{pageDtail[0].per_page}}条，共{{pageDtail[0].total}}条数据</div>
@@ -102,7 +107,7 @@
                   </ul>
                 </transition>
               </div>
-              <input type="text" class="border-page" v-model="pageInput"/>
+              <input type="number" class="border-page" v-model="pageInput"/>
               <div class="border-page" @click="goPage">跳转</div>
             </div>
           </div>
@@ -116,7 +121,6 @@
         </div>
       </transition>
     </div>
-    <toast ref="toast"></toast>
   </div>
 </template>
 
@@ -162,6 +166,7 @@ export default {
   },
   data() {
     return {
+      showBlank: false,
       moreTime: '',
       pageInput: '',
       TimeIndex: 0,
@@ -223,7 +228,9 @@ export default {
           if (this.pageInput > this.pageDtail[0].total_page) {
             this.pageInput = this.pageDtail[0].total_page
           }
+          this.pageInput = Math.floor(this.pageInput * 1)
           this.page = this.pageInput
+          console.log(this.page)
           this.$emit('addPage', this.page)
         }
       }
@@ -231,6 +238,13 @@ export default {
     sessionStorage.getItem('title') ? this.navTitle = sessionStorage.getItem('title').split(',') : this.navTitle = this.navTitle
   },
   methods: {
+    isBlank(res) {
+      if (res.length === 0) {
+        this.showBlank = true
+      } else {
+        this.showBlank = false
+      }
+    },
     leaveHide() {
       this.setTime = setTimeout(() => {
         this.clickHide()
@@ -300,7 +314,7 @@ export default {
       this.showIndustrie()
     },
     goPage() {
-      this.pageInput = this.pageInput * 1
+      this.pageInput = Math.floor(this.pageInput * 1)
       if (this.pageInput > this.pageDtail[0].total_page) {
         this.pageInput = this.pageDtail[0].total_page
       }
@@ -628,6 +642,17 @@ export default {
           height :100%
         .data-detail
           height: 92.4%
+          position: relative
+          .blank
+            all-center()
+            text-align :center
+            .blank-icon
+              icon-image('icon-null')
+              width :140px
+              height :89px
+              margin-bottom :30px
+            .blank-title
+              color :$color-text-little
         .total
           width: 100%
           height: 7.6%
