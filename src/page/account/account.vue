@@ -444,7 +444,7 @@ export default {
         row-center()
         bottom: -8px
         content: ''
-        height: 3px
+        height: 2px
         width: 32px
         background: $color-white
     .tap-item-active

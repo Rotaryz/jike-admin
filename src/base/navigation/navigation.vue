@@ -288,19 +288,19 @@ export default {
     .big-show
       width: 200px
       .herder
-        padding-left: 60px
+        padding-left: 57px
         height: 65px
         overflow: hidden
-        line-height: 65px
+        line-height: 67px
         font-size: 20px
         background: $color-menu-select
         position: relative
         .icon
           col-center()
           icon-image('pic-logo_menu')
-          height: 36.4px
-          width: 33.6px
-          left: 18px
+          height: 32px
+          width: 30px
+          left: 22px
           transform: translateY(-55%)
       .nav-big
         .nav-item
@@ -309,7 +309,7 @@ export default {
           border-bottom: 1px solid #3B3B43
           .nav-tap
             transition :all 0.2s
-            border-left: 6px solid $color-menu-background
+            border-left: 4px solid $color-menu-background
             align-items: center
             color: $color-white
             display: flex
@@ -338,13 +338,13 @@ export default {
               icon-image('icon-pressed')
             &:hover
               background: $color-menu-select
-              border-left: 6px solid $color-menu-select
+              border-left: 4px solid $color-menu-select
               transition :all 0.2s
           .nav-tap-active
             background: $color-menu-select
-            border-left: 6px solid $color-nomal !important
+            border-left: 4px solid $color-nomal !important
           .nav-item-no-border
-            border-left: 6px solid $color-menu-background
+            border-left: 4px solid $color-menu-background
         .nav-big-child
           .nav-tap
             .nav-icon
@@ -353,7 +353,7 @@ export default {
             margin-left: 20px
           .nav-big-active
             background: $color-menu-select
-            border-left: 6px solid $color-nomal !important
+            border-left: 4px solid $color-nomal !important
     .big-hide
       width: 79px
       transition: all .2s
@@ -366,17 +366,17 @@ export default {
         position: relative
         .icon
           icon-image('pic-logo_menu')
-          height: 36.4px
-          width: 33.6px
+          height: 32px
+          width: 30px
           col-center()
           transform: translateY(-55%)
-          left: 20px
+          left: 22px
       .nav-small
         .nav-item
           height: 60px
           border-bottom: 1px solid #3B3B43
           position: relative
-          border-left: 6px solid $color-menu-background
+          border-left: 4px solid $color-menu-background
           .nav-tap
             display: block
             height: 100%
@@ -412,10 +412,10 @@ export default {
               background: $color-menu-select
           &:hover
             background: $color-menu-select
-            border-left: 6px solid $color-nomal
+            border-left: 4px solid $color-nomal
         .nav-small-active
           background: $color-menu-select
-          border-left: 6px solid $color-nomal
+          border-left: 4px solid $color-nomal
     .small-hide
       width: 200px
       transition: all .2s

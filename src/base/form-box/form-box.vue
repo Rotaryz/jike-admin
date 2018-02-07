@@ -500,7 +500,7 @@ export default {
               row-center()
               bottom: 0px
               content: ''
-              height: 3px
+              height: 2px
               width: 32px
               background: $color-white
             &:last-child
