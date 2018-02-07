@@ -105,6 +105,7 @@ export default {
       customers(data).then((res) => {
         if (res.error === ERR_OK) {
           this.customers = res.data
+          this.$refs.order.isBlank(res.data)
           let pages = res.meta
           this.pageDtail = [{total: pages.total, per_page: pages.per_page, total_page: pages.last_page}]
         }

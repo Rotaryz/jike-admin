@@ -40,8 +40,8 @@
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">联系方式</span>
-        <input class="shade-text" v-model="merchantDetail.mobile" name="change"
-               :disabled="disableds"/>
+        <input type="number" class="shade-text" maxlength="11" v-model="merchantDetail.mobile" name="change"
+               :disabled="disableds" @input="onPhone"/>
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在行业</span>
@@ -121,6 +121,12 @@ export default {
     this.showList()
   },
   methods: {
+    onPhone() {
+      if (this.merchantDetail.mobile.length > 11) {
+        this.merchantDetail.mobile = this.merchantDetail.mobile.slice(0, 11)
+        return false
+      }
+    },
     change() {
       this.disableds = !this.disableds
     },
@@ -129,6 +135,11 @@ export default {
       this.showList()
     },
     merchantMessage(id) {
+      let reg = /^1[3|4|5|7|8][0-9]{9}$/
+      if (!reg.test(this.merchantDetail.mobile)) {
+        this.$refs.order.showContent('请输入正确的手机号码')
+        return false
+      }
       let data = {
         mobile: this.merchantDetail.mobile,
         industry_id: this.merchantDetail.industry_id,
@@ -179,6 +190,7 @@ export default {
       merchanList(data).then((res) => {
         if (res.error === ERR_OK) {
           this.merchanList = res.data
+          this.$refs.order.isBlank(res.data)
           let pages = res.meta
           this.pageDtail = [{
             total: pages.total,

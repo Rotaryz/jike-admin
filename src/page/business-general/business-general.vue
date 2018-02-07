@@ -258,6 +258,7 @@ export default {
         circlesDetail(data).then((res) => {
           if (res.error === ERR_OK) {
             this.merchanList = res.data
+            this.$refs.order.isBlank(res.data)
             let pages = res.meta
             this.pageDtail = [{
               total: pages.total,
