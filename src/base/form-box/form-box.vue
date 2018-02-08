@@ -25,7 +25,7 @@
           <span class="city-title">地域筛选</span>
           <div class="city-select" v-for="(item, index) in cityList" :class="{'city-select-active': item.show}"
                :key="index" @click.stop="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow">
-            <div class="city-show">
+            <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
                 <span class="city-tap-top" :class="{'city-tap-bottom':item.show && item.active,'city-tap-top-two': !item.show && item.active}"></span>
@@ -593,11 +593,15 @@ export default {
                 transform-origin:  1px 3px
                 transform : rotate(180deg) translateX(-43%)
                 transition : all 0.2s
+          .city-show-active
+            color :$color-text
           &:hover
             transition :color 0.2s
             .city-show
               color: $color-text
               border :1px solid $color-text-little
+              .city-tap
+                border-left :1px solid $color-text-little
               .city-tap-top
                 border: 6px solid $color-text
                 border-bottom: 6px solid transparent

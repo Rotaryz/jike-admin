@@ -4,17 +4,13 @@
     <div class="login-box">
       <img src="./pic-logo_login@2x.png" class="logo">
       <h2 class="title">赞播管理后台信息系统</h2>
-      <div class="user input-box">
+      <div class="user input-box" :class="{'input-height': focusPhone}">
         <span class="input-icon"></span>
-        <div class="input-box" :class="{'input-height': focusPhone}">
-          <input class="inputs input-height-item" type="text" placeholder="请输入用户名" v-model="user" @click.stop="focusPhone = !focusPhone"/>
-        </div>
+        <input class="inputs input-height-item" value="asd" type="text" placeholder="请输入用户名" v-model="user" @click.stop="focusPhone = !focusPhone" @blur="focusPhone = false"/>
       </div>
-      <div class="passward input-box">
+      <div class="passward input-box" :class="{'input-height': focusPass}">
         <span class="input-icon"></span>
-        <div class="input-box" :class="{'input-height': focusPass}">
-          <input class="inputs input-height-item" type="password" placeholder="请输入密码" v-model="password" @click.stop="focusPass = !focusPass"/>
-        </div>
+        <input class="inputs input-height-item" type="password" placeholder="请输入密码" v-model="password" @click.stop="focusPass = !focusPass" @blur="focusPass = false"/>
         </div>
       <div class="remenber" @click="remenberPassWord">
         <i class="check" :class="{'check-yes' : remenber}"></i>
@@ -127,17 +123,18 @@ export default {
         margin: 4.59% auto
         height: 9.225%
         width: 72.47%
-        font-size: 2.853%
+        font-size: $font-size-small
         position: relative
-        .input-box
-          height :100%
-          width: 100%
+        border :2px solid $color-white
         .inputs
           text-indent: 8.856%
           height: 100%
           width: 100%
           border-radius: 3px
           border: 1px solid #D1D1D1
+          &::placeholder
+            opacity:1
+            color :$color-text-little
         .input-icon
           height: 44%
           width: 6.01%
@@ -153,19 +150,25 @@ export default {
         justify-content: right
         margin-left: 13.7795%
         height: 1.0416vw
+        position: relative
         .check
+          position: absolute
+          left: 2px
           cursor: pointer
-          height: 100%
-          width: 1.0416vw
+          height: 12px
+          width: 12px
           border: 1px solid #979797
           border-radius: 4px
         .check-yes
           border: none
           icon-image('icon-select')
         .tip
+          display :inline-block
+          position: absolute
+          left: 10px
           line-height: 1.0416vw
           margin-left: 2.853%
-          font-size: 2.853%
+          font-size: $font-size-small
           color: #9B9B9B
       .submit-no
         background: $color-nomal

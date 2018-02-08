@@ -50,25 +50,29 @@
         </div>
         <div class="shade-city">
           <span class="city-name">{{shadeTitle}}名称</span>
-          <input type="text" class="shade-city-select" placeholder="请输入" v-model="name">
+          <div class="input-box" :class="{'input-height': inputCirent}">
+            <input type="text" class="shade-city-select input-height-item" placeholder="请输入" v-model="name" @click="inputCirent = true">
+          </div>
         </div>
         <div class="shade-city"  v-for="(item, index) in cityList"
-             :key="index" @click.stop="checkCity(index)">
+             :key="index">
           <span class="city-name">{{item.tip}}</span>
-          <div class="shade-city-select shade-after hand">
-            {{item.title}}
-            <span :class="item.show && item.data.length > 0 ? 'shade-bottom' : 'shade-top'"></span>
-            <transition name="fade">
-              <ul class="shade-city-box"  v-show="item.show && item.data.length > 0">
-                <li class="shade-city-tiem"  v-for="(items, idx) in item.data"
-                    :class="{'shade-city-tiem-active':item.index === idx}"
-                    :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}</li>
-              </ul>
-            </transition>
+          <div class="input-box" :class="{'input-height': item.show}">
+            <div class="shade-city-select shade-after hand input-height-item" @click.stop="checkCity(index)">
+              {{item.title}}
+              <span :class="item.show && item.data.length > 0 ? 'shade-bottom' : 'shade-top'"></span>
+              <transition name="fade">
+                <ul class="shade-city-box"  v-show="item.show && item.data.length > 0">
+                  <li class="shade-city-tiem"  v-for="(items, idx) in item.data"
+                      :class="{'shade-city-tiem-active':item.index === idx}"
+                      :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}</li>
+                </ul>
+              </transition>
+            </div>
           </div>
         </div>
         <div class="ok">
-          <span class="submit" @click="setData">保存</span>
+          <span class="submit hand" @click="setData">保存</span>
         </div>
       </div>
     </form-box>
@@ -87,6 +91,7 @@ const titleListSec = ['行业类型名称', '所属行业', '操作']
 export default {
   data() {
     return {
+      inputCirent: false,
       chioce: false,
       isDate: false,
       tapList: [{title: '商圈信息', type: 'circles'}, {
@@ -151,6 +156,7 @@ export default {
       })
     },
     checkCity(index) {
+      this.inputCirent = false
       for (let i = 0; i < this.cityList.length; i++) {
         this.prams[i] = this.cityList[i].title.replace(/^(请选择.{2})/g, '')
       }
@@ -402,6 +408,16 @@ export default {
         min-width :56px
         font-size :$font-size-medium
         transform :translateY(-50%)
+      .input-box
+        display: inline-block
+        margin-left :56px
+        border :2px solid $color-white
+        width: 164px
+        height: 34px
+        border-radius :5px
+      .input-height
+        .input-height-item
+          border :1px solid $color-text-little
       .shade-city-select
         padding-left :10px
         font-size :$font-size-medium
@@ -412,7 +428,6 @@ export default {
         border-radius :3px
         border :1px solid $color-icon-line
         color: $color-text-icon
-        margin-left :56px
         .shade-top
           position: absolute
           right: 3px
@@ -475,6 +490,9 @@ export default {
           height :100%
           top: 0
           background :$color-icon-line
+        &:hover
+          &::after
+            background :$color-text-little
     .ok
       height: 9.26vh
       display: flex
