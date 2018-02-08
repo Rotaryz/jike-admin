@@ -55,7 +55,7 @@
         <textarea id="exprent" class="input-height-item" placeholder="请输入" v-model="orderDetail.reamrk"></textarea>
       </div>
       <div class="ok" @click="orderManage(orderDetail.id)">
-        <span class="submit">保存</span>
+        <span class="submit hand">保存</span>
       </div>
     </div>
   </form-box>

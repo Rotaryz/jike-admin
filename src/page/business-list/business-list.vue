@@ -92,7 +92,7 @@
       </div>
       <div class="ok">
         <span class="submit change hand" @click="change">修改</span>
-        <span class="submit sure"
+        <span class="submit sure hand"
               @click="merchantMessage(merchantDetail.id)">保存</span>
       </div>
     </div>
