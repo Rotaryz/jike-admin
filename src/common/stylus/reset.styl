@@ -35,8 +35,8 @@ input
   -moz-user-select: none
   -webkit-appearance:none
   border: none
-  outline-color: #EF705D
-  &::-webkit-inner-spin-button
+  outline: none
+  &::-webkit-inner-spin-button,&::-moz-inner-spin-button
     -webkit-appearance: none !important
 body
   line-height: 1
@@ -67,5 +67,5 @@ body
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
 
 textarea
+  outline-color: #999
   resize: none
-  outline-color: #EF705D

@@ -1,5 +1,5 @@
 <template>
-  <div class="form-box" @click="hidePageDetail">
+  <div class="form-box">
     <div class="tag">
       <div class="tag-title">
         <span class="title-item" v-for="(item,index) in navTitle" :key="index">{{index > 0 ? '/' : ''}} {{item}}</span>
@@ -23,7 +23,7 @@
         </div>
         <div class="tag-city" v-if="isCity">
           <span class="city-title">地域筛选</span>
-          <div class="city-select" v-for="(item, index) in cityList"
+          <div class="city-select" v-for="(item, index) in cityList" :class="{'city-select-active': item.show}"
                :key="index" @click.stop="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
@@ -45,9 +45,9 @@
         </div>
         <div class="tag-industry" v-if="isIndustrie">
           <span class="city-title">行业筛选</span>
-          <div class="city-select" v-for="(item, index) in industrieList"
+          <div class="city-select" v-for="(item, index) in industrieList" :class="{'city-select-active': item.show}"
                :key="index" @click.stop="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow">
-            <div class="city-show" :class="{'city-show-active':item.active}">
+            <div class="city-show">
               {{item.title}}
               <div class="city-tap">
                 <span class="city-tap-top" :class="{'city-tap-bottom':item.show && item.active,'city-tap-top-two': !item.show && item.active}"></span>
@@ -91,24 +91,28 @@
               <div class="pade-detail">{{page}}/{{pageDtail[0].total_page}}</div>
               <div class="page-icon page-icon-two" @click="addPage">
               </div>
-              <div class="border-page page-total" @click.stop="showPageDetail">
-                {{page}}/{{pageDtail[0].total_page}}
-                <span class="page-tap">
+              <div class="page-box" :class="{'input-height': pageDetail}">
+                <div class="border-page page-total input-height-item" @click.stop="showPageDetail">
+                  {{page}}/{{pageDtail[0].total_page}}
+                  <span class="page-tap">
                 <i class="page-top" :class="{'page-bottom':pageDetail}"></i>
               </span>
-                <transition name="fade">
-                  <ul class="page-list" v-show="pageDetail">
-                    <li class="page-item" v-for="item in pageDtail[0].total_page"
-                        :key="item"
-                        :class="{'page-item-active': pageIndex === item}"
-                        @click.stop="detailPage(item)">
-                      {{item}}/{{pageDtail[0].total_page}}
-                    </li>
-                  </ul>
-                </transition>
+                  <transition name="fade">
+                    <ul class="page-list" v-show="pageDetail">
+                      <li class="page-item" v-for="item in pageDtail[0].total_page"
+                          :key="item"
+                          :class="{'page-item-active': pageIndex === item}"
+                          @click.stop="detailPage(item)">
+                        {{item}}/{{pageDtail[0].total_page}}
+                      </li>
+                    </ul>
+                  </transition>
+                </div>
               </div>
-              <input type="number" class="border-page" v-model="pageInput"/>
-              <div class="border-page" @click="goPage">跳转</div>
+              <div class="input-box" :class="{'input-height': focus}">
+                <input type="number" class="border-page input-height-item" v-model="pageInput" :focus="focus" @click.stop="focus = !focus"/>
+              </div>
+              <div class="border-page input-height-item" @click="goPage">跳转</div>
             </div>
           </div>
         </div>
@@ -166,6 +170,7 @@ export default {
   },
   data() {
     return {
+      focus: false,
       showBlank: false,
       moreTime: '',
       pageInput: '',
@@ -235,6 +240,9 @@ export default {
         }
       }
     }
+    window.onclick = () => {
+      this.hidePageDetail()
+    }
     sessionStorage.getItem('title') ? this.navTitle = sessionStorage.getItem('title').split(',') : this.navTitle = this.navTitle
   },
   methods: {
@@ -293,6 +301,9 @@ export default {
       })
     },
     industrie(index) {
+      this.cityList.forEach((item) => {
+        item.show = false
+      })
       this.industrieList.forEach((item, idx) => {
         if (idx !== index) {
           item.show = false
@@ -314,12 +325,14 @@ export default {
       this.showIndustrie()
     },
     goPage() {
-      this.pageInput = Math.floor(this.pageInput * 1)
-      if (this.pageInput > this.pageDtail[0].total_page) {
-        this.pageInput = this.pageDtail[0].total_page
+      if (this.pageInput !== '') {
+        this.pageInput = Math.floor(this.pageInput * 1)
+        if (this.pageInput > this.pageDtail[0].total_page) {
+          this.pageInput = this.pageDtail[0].total_page
+        }
+        this.page = this.pageInput
+        this.$emit('addPage', this.page)
       }
-      this.page = this.pageInput
-      this.$emit('addPage', this.page)
     },
     showPageDetail() {
       this.pageDetail = !this.pageDetail
@@ -327,6 +340,7 @@ export default {
     hidePageDetail() {
       this.clickHide()
       this.pageDetail = false
+      this.focus = false
     },
     detailPage(page) {
       this.page = page
@@ -349,6 +363,9 @@ export default {
       })
     },
     checkCity(index) {
+      this.industrieList.forEach((item) => {
+        item.show = false
+      })
       this.regPrams()
       this.cityList.forEach((item, idx) => {
         if (idx !== index) {
@@ -454,7 +471,7 @@ export default {
   @import '~common/stylus/mixin'
   .form-box
     height: 100%
-    min-height: 720px
+    min-height: 700px
     overflow-y :auto
     display: flex
     flex-direction: column
@@ -525,14 +542,18 @@ export default {
           cursor: pointer
           height: 30px
           margin-left: 10px
-          border: 1px solid $color-line
-          border-radius: 3px
+          border :1px solid $color-white
+          border-radius: 4px
           font-size: $font-size-medium
           color: $color-text-little
           transform: translateY(-25%)
           position: relative
           .city-show
-            padding: 8px 39px 8px 10px
+            border: 1px solid $color-line
+            border-radius :2px
+            padding: 0 39px 0 10px
+            line-height :30px
+            height :100%
             no-wrap()
             .city-tap
               position: absolute
@@ -572,9 +593,15 @@ export default {
                 transform-origin:  1px 3px
                 transform : rotate(180deg) translateX(-43%)
                 transition : all 0.2s
-            &:hover
+          .city-show-active
+            color :$color-text
+          &:hover
+            transition :color 0.2s
+            .city-show
               color: $color-text
-              transition :color 0.2s
+              border :1px solid $color-text-little
+              .city-tap
+                border-left :1px solid $color-text-little
               .city-tap-top
                 border: 6px solid $color-text
                 border-bottom: 6px solid transparent
@@ -591,8 +618,6 @@ export default {
                 transform-origin:  1px 3px
                 transform : rotate(180deg) translateX(-43%)
                 transition : all 0.2s
-          .city-show-active
-            color: $color-text
           .city-big-box
             position: absolute
             min-width: 100%
@@ -626,8 +651,11 @@ export default {
               background: $color-big-background
         .city-select-active
           color: $color-text
+          border :2px solid rgba(102,102,102,.2)
+          .city-show
+            border :1px solid $color-text-little
     .data
-      flex: 9
+      flex: 1
       padding: 25px
       position: relative
       .data-content
@@ -673,8 +701,12 @@ export default {
               margin-right: 10px
               height: 25px
               width: 25px
+              &:hover
+                icon-image('icon-before_hover')
             .page-icon-two
               icon-image('icon-later')
+              &:hover
+                icon-image('icon-later_hover')
             .border-page
               display: flex
               align-items: center
@@ -683,6 +715,7 @@ export default {
               border: 1px solid $color-line
               font-size: $font-size-medium
             div.border-page
+              margin-right :0
               padding: 0 15px
               height: 25px
               line-height: 25px
@@ -746,6 +779,16 @@ export default {
               height: 25px
               width: 39px
               text-align: center
+            .input-box
+              border:2px solid $color-white
+              height:29px
+              width :43px
+              margin-right: 10px
+            .page-box
+              border:2px solid $color-white
+              height :29px
+              width :73px
+              margin-right: 10px
       .shade-win
         height: 100%
         width: 100%

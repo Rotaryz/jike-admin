@@ -2,7 +2,7 @@
   <form-box ref="order" @checkTime="checkTime" @addPage="addPage"
             @showCity="showCity" @showIndustrie="showIndustrie"
             :pageDtail="pageDtail" :isIndustrie="isIndustrie">
-    <div slot="form-list" class="form-list">
+    <div slot="form-list" class="form-list" v-show="showContent">
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -40,23 +40,29 @@
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">联系方式</span>
-        <input type="number" class="shade-text" maxlength="11" v-model="merchantDetail.mobile" name="change"
-               :disabled="disableds" @input="onPhone"/>
+        <div class="input-box" :class="{'input-height': heightType === 0}">
+          <input type="number" :class="{'input-height-item': !disableds}" class="shade-text" maxlength="11" v-model="merchantDetail.mobile" name="change"
+               :disabled="disableds" @input="onPhone" @focus="isFocus(0)" @blur="heightType = -1"/>
+        </div>
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在行业</span>
-        <input class="shade-text" v-model="merchantDetail.industry_name"
-               name="change"
-               :disabled="disableds"/>
+        <div class="input-box" :class="{'input-height': heightType === 1}">
+          <input class="shade-text" :class="{'input-height-item': !disableds}" v-model="merchantDetail.industry_name"
+                 name="change" @focus="isFocus(1)" @blur="heightType = -1"
+                 :disabled="disableds"/>
+        </div>
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在位置</span>
-        <textarea name="" id="" class="shade-text" v-model="merchantDetail.particular_address" :disabled="disableds"></textarea>
+        <textarea :class="{'input-height-item': !disableds}" class="shade-text" v-model="merchantDetail.particular_address" :disabled="disableds"></textarea>
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在商圈</span>
-        <input class="shade-text" v-model="merchantDetail.business_circle_name"
-               name="change" :disabled="disableds"/>
+        <div class="input-box" :class="{'input-height': heightType === 2}">
+          <input class="shade-text" :class="{'input-height-item': !disableds}" v-model="merchantDetail.business_circle_name"
+                 name="change" :disabled="disableds" @focus="isFocus(2)" @blur="heightType = -1"/>
+        </div>
       </div>
       <div class="shade-border shade-tiem">
         <span class="shade-title">商家属性</span>
@@ -86,7 +92,7 @@
       </div>
       <div class="ok">
         <span class="submit change hand" @click="change">修改</span>
-        <span class="submit sure"
+        <span class="submit sure hand"
               @click="merchantMessage(merchantDetail.id)">保存</span>
       </div>
     </div>
@@ -103,6 +109,7 @@ const titleList = ['商家账号', '商家名称', '商家类型', '用户数', 
 export default {
   data() {
     return {
+      heightType: -1,
       disableds: true,
       titleList: titleList,
       merchanList: [],
@@ -114,7 +121,8 @@ export default {
       address: {},
       status: 1,
       shopId: {},
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -133,6 +141,10 @@ export default {
     showIndustrie(res) {
       this.shopId = res
       this.showList()
+    },
+    isFocus(num) {
+      this.heightType = num
+      console.log(num)
     },
     merchantMessage(id) {
       let reg = /^1[3|4|5|7|8][0-9]{9}$/
@@ -188,6 +200,7 @@ export default {
         page: this.page
       }, this.address, this.shopId)
       merchanList(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.merchanList = res.data
           this.$refs.order.isBlank(res.data)
@@ -308,8 +321,8 @@ export default {
       .shade-text:disabled
         background: $color-white
       input.shade-text,textarea.shade-text
-        transform :translateX(-10px)
-        height: 60%
+        height :100%
+        width :100%
         padding-left :10px
         border: 0.5px solid $color-white
       textarea.shade-text
@@ -317,8 +330,16 @@ export default {
         height: 48%
         padding-top :2px
         font-size :$font-size-medium
+        transform :translateX(-10px)
       .shade-text
         width: 65%
+      .input-box
+        position: relative
+        width: 65%
+        height: 60%
+        border:2px solid $color-white
+        border-radius :5px
+        transform :translateX(-10px)
       .shade-title
         min-width: 112px
         no-wrap()
@@ -403,6 +424,8 @@ export default {
 
     .shade-tiem:hover
       background :$color-background
+      .input-box
+        border: 2px solid $color-background
       input.shade-text:disabled,textarea.shade-text:disabled
         background: $color-background
         border: 0.5px solid $color-background

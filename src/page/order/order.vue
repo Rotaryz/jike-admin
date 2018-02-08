@@ -6,7 +6,7 @@
         <span class="select-item hand" v-for="(item, index) in statusList" :class="{'select-item-active': status === item.status}" :key="index" @click="orderStatus(item.status)">{{item.title}}</span>
       </div>
     </div>
-    <div slot="form-list" class="form-list">
+    <div slot="form-list" class="form-list" v-show="showContent">
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -52,10 +52,10 @@
         </div>
       <div class="shade-border shade-exprent shade-tiem">
         备注
-        <textarea id="exprent" placeholder="请输入" v-model="orderDetail.reamrk"></textarea>
+        <textarea id="exprent" class="input-height-item" placeholder="请输入" v-model="orderDetail.reamrk"></textarea>
       </div>
       <div class="ok" @click="orderManage(orderDetail.id)">
-        <span class="submit">保存</span>
+        <span class="submit hand">保存</span>
       </div>
     </div>
   </form-box>
@@ -81,7 +81,8 @@ export default {
       address: {},
       status: 1,
       statusList: statusList,
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -103,6 +104,7 @@ export default {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page, status: this.status}, this.address)
       orderList(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.orderList = res.data
           this.$refs.order.isBlank(res.data)

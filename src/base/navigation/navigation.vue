@@ -331,7 +331,7 @@ export default {
               font-size: $font-size-medium-x
               justify-content: space-between
             .nav
-              position: absolute
+              col-center()
               height: 18px
               width: 18px
               right: 23px

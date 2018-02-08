@@ -1,6 +1,6 @@
 <template>
   <form-box ref="order" :timeList="timeList" @checkTime="checkTime" @addPage="addPage" @showCity="showCity" @showIndustrie="showIndustrie" :pageDtail="pageDtail" :isIndustrie="isIndustrie">
-    <div slot="form-list" class="form-list">
+    <div slot="form-list" class="form-list" v-show="showContent">
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -46,7 +46,8 @@ export default {
       status: 1,
       statusList: statusList,
       shopId: {},
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -86,6 +87,7 @@ export default {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page}, this.address, this.shopId)
       datasList(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.datasList = res.data
           this.$refs.order.isBlank(res.data)
