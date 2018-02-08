@@ -635,7 +635,7 @@ export default {
             &.fade-enter-to, &.fade-leave-to
               transition: opacity .2s ease-in-out
             .city-box-item
-              no-wrap()
+              white-space :nowrap
               padding: 0 10px
               text-align:left
               height: 26px
@@ -643,10 +643,6 @@ export default {
               font-size: $font-size-medium
               &:hover
                 background: $color-big-background
-              &:last-child
-                margin-bottom: 13px
-              &:first-child
-                margin-top: 13px
             .city-box-item-active
               background: $color-big-background
         .city-select-active

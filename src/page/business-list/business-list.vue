@@ -91,7 +91,7 @@
         </div>
       </div>
       <div class="ok">
-        <span class="submit change hand" @click="change">修改</span>
+        <span class="submit change hand" @click="change">{{cancelTitle}}</span>
         <span class="submit sure hand"
               @click="merchantMessage(merchantDetail.id)">保存</span>
       </div>
@@ -122,7 +122,8 @@ export default {
       status: 1,
       shopId: {},
       heightIndex: -1,
-      showContent: false
+      showContent: false,
+      cancelTitle: '修改'
     }
   },
   created() {
@@ -137,6 +138,7 @@ export default {
     },
     change() {
       this.disableds = !this.disableds
+      this.disableds ? this.cancelTitle = '修改' : this.cancelTitle = '取消修改'
     },
     showIndustrie(res) {
       this.shopId = res
@@ -326,7 +328,7 @@ export default {
         padding-left :10px
         border: 0.5px solid $color-white
       textarea.shade-text
-        width :62.5%
+        width :61.7%
         height: 48%
         padding-top :2px
         font-size :$font-size-medium
