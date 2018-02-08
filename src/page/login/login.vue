@@ -1,23 +1,27 @@
 <template>
-  <div class="login">
+  <div class="login"  @click="hideFocus">
     <div class="bk"></div>
     <div class="login-box">
       <img src="./pic-logo_login@2x.png" class="logo">
       <h2 class="title">赞播管理后台信息系统</h2>
       <div class="user input-box">
         <span class="input-icon"></span>
-        <input class="inputs" type="text" placeholder="请输入用户名" v-model="user">
+        <div class="input-box" :class="{'input-height': focusPhone}">
+          <input class="inputs input-height-item" type="text" placeholder="请输入用户名" v-model="user" @click.stop="focusPhone = !focusPhone"/>
+        </div>
       </div>
       <div class="passward input-box">
         <span class="input-icon"></span>
-        <input class="inputs" type="password" placeholder="请输入密码" v-model="password">
-      </div>
+        <div class="input-box" :class="{'input-height': focusPass}">
+          <input class="inputs input-height-item" type="password" placeholder="请输入密码" v-model="password" @click.stop="focusPass = !focusPass"/>
+        </div>
+        </div>
       <div class="remenber" @click="remenberPassWord">
         <i class="check" :class="{'check-yes' : remenber}"></i>
         <span class="tip">记住密码</span>
       </div>
       <div class="submit-no input-box" @click="login">
-        登录
+        登陆
       </div>
     </div>
     <toast ref="toast"></toast>
@@ -30,6 +34,8 @@ import Toast from 'base/toast/toast'
 export default {
   data() {
     return {
+      focusPass: false,
+      focusPhone: false,
       user: '',
       password: '',
       remenber: true
@@ -47,6 +53,10 @@ export default {
     }
   },
   methods: {
+    hideFocus() {
+      this.focusPhone = false
+      this.focusPass = false
+    },
     remenberPassWord() {
       this.remenber = !this.remenber
     },
@@ -119,6 +129,9 @@ export default {
         width: 72.47%
         font-size: 2.853%
         position: relative
+        .input-box
+          height :100%
+          width: 100%
         .inputs
           text-indent: 8.856%
           height: 100%
@@ -131,6 +144,7 @@ export default {
           icon-image('icon-user')
           col-center()
           left: 2.5%
+          z-index :100
       .passward
         .input-icon
           icon-image('icon-password')

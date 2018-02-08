@@ -13,7 +13,7 @@
           </div>
         </div>
       </div>
-      <div slot="form-list" class="form-list" v-show="type === 'industry'">
+      <div slot="form-list" class="form-list" v-show="type === 'industry' && showContent">
         <div class="list-header list-industry">
           <div class="list-item" v-for="(item, index) in titleList" :key="index">
             {{item}}
@@ -28,7 +28,7 @@
           </li>
         </ul>
       </div>
-      <div slot="form-list" class="form-list" v-show="type === 'circles'">
+      <div slot="form-list" class="form-list" v-show="type === 'circles' && showContent">
         <div class="list-header">
           <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
             {{item}}
@@ -131,7 +131,8 @@ export default {
       prams: ['', '', ''],
       name: '',
       insId: 0,
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -256,6 +257,7 @@ export default {
       let data = {page: this.page}
       if (this.type === 'circles') {
         circlesDetail(data).then((res) => {
+          this.showContent = true
           if (res.error === ERR_OK) {
             this.merchanList = res.data
             this.$refs.order.isBlank(res.data)
@@ -270,6 +272,7 @@ export default {
         return false
       }
       industryDetail(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.industryList = res.data
           let pages = res.meta

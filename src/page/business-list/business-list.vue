@@ -2,7 +2,7 @@
   <form-box ref="order" @checkTime="checkTime" @addPage="addPage"
             @showCity="showCity" @showIndustrie="showIndustrie"
             :pageDtail="pageDtail" :isIndustrie="isIndustrie">
-    <div slot="form-list" class="form-list">
+    <div slot="form-list" class="form-list" v-show="showContent">
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -114,7 +114,8 @@ export default {
       address: {},
       status: 1,
       shopId: {},
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -188,6 +189,7 @@ export default {
         page: this.page
       }, this.address, this.shopId)
       merchanList(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.merchanList = res.data
           this.$refs.order.isBlank(res.data)

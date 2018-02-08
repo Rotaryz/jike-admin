@@ -3,8 +3,10 @@
     <navigation ref="nav"></navigation>
     <div class="left-side" :style="{'margin-left': width + 'px'}">
       <div class="herder-peo" :style="{'left': width + 'px','width': offsetWhidt +'px'}">
-        <img src="./icon-menu@2x.png" class="guide"
-             :class="{'guide-rotate':navStatus}" @click="checkStatus">
+        <div class="guild-box" @click="checkStatus">
+          <img src="./icon-menu@2x.png" class="guide"
+               :class="{'guide-rotate':navStatus}">
+        </div>
         <div class="user" :class="{'user-active': logout}" @mouseenter="showlogout" @mouseleave="hidelogout">
           <img src="./header.jpeg" class="user-header">
           <span class="nick-name">{{userName}}</span>
@@ -121,9 +123,14 @@ export default {
         align-items: center
         justify-content: space-between
         border-bottom: 1px solid #eee
+        .guild-box
+          height :100%
+          width :78px
+          position: relative
+          cursor: pointer
         .guide
           margin-left :26px
-          cursor: pointer
+          margin-top :19.5px
           height: 26px
           width: 26px
           transform: rotateY(180deg)
