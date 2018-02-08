@@ -12,7 +12,7 @@
         <span class="input-icon"></span>
         <input class="inputs input-height-item" type="password" placeholder="请输入密码" v-model="password" @click.stop="focusPass = !focusPass" @blur="focusPass = false"/>
         </div>
-      <div class="remenber" @click="remenberPassWord">
+      <div class="remenber hand" @click="remenberPassWord">
         <i class="check" :class="{'check-yes' : remenber}"></i>
         <span class="tip">记住密码</span>
       </div>
@@ -154,6 +154,7 @@ export default {
         .check
           position: absolute
           left: 2px
+          top: 0px
           cursor: pointer
           height: 12px
           width: 12px
@@ -166,8 +167,9 @@ export default {
           display :inline-block
           position: absolute
           left: 10px
-          line-height: 1.0416vw
+          top: 0px
           margin-left: 2.853%
+          line-height: 1
           font-size: $font-size-small
           color: #9B9B9B
       .submit-no
