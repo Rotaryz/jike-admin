@@ -356,6 +356,11 @@ export default {
           right: 30px
           color: #979797
           font-size: 24px
+          transform :translateY(-50%) rotate(0deg)
+          &:hover
+            transform :translateY(-50%) rotate(90deg)
+            transform-origin :50%
+            transition : transform 0.5s
       /*修改*/
       .amend
         position: absolute

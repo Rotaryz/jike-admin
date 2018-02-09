@@ -51,7 +51,7 @@
         <div class="shade-city">
           <span class="city-name">{{shadeTitle}}名称</span>
           <div class="input-box" :class="{'input-height': inputCirent}">
-            <input type="text" class="shade-city-select input-height-item" placeholder="请输入" v-model="name" @click="inputCirent = true">
+            <input type="text" class="shade-city-select input-height-item" placeholder="请输入" v-model="name" @click="inputCirent = true" @blur="inputCirent = false">
           </div>
         </div>
         <div class="shade-city"  v-for="(item, index) in cityList"
@@ -400,6 +400,10 @@ export default {
           right: 30px
           color: #979797
           font-size: 24px
+          &:hover
+            transform :translateY(-50%) rotate(90deg)
+            transform-origin :50%
+            transition : transform 0.5s
     .shade-city
       padding-left :30px
       margin-top :20px

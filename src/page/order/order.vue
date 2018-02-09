@@ -221,6 +221,10 @@ export default {
           right: 30px
           color: #979797
           font-size :24px
+          &:hover
+            transform :translateY(-50%) rotate(90deg)
+            transform-origin :50%
+            transition : transform 0.5s
     .shade-exprent
       height : 14.42vh
       display: block
