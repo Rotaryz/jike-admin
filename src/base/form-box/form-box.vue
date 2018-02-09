@@ -24,7 +24,7 @@
         <div class="tag-city" v-if="isCity">
           <span class="city-title">地域筛选</span>
           <div class="city-select" v-for="(item, index) in cityList" :class="{'city-select-active': item.show}"
-               :key="index" @click.stop="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow">
+               :key="index" @click.stop="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow" :style="{'cursor': prams[index - 1] === '' && index !== 0 ? 'not-allowed' : 'pointer'}">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
@@ -46,7 +46,7 @@
         <div class="tag-industry" v-if="isIndustrie">
           <span class="city-title">行业筛选</span>
           <div class="city-select" v-for="(item, index) in industrieList" :class="{'city-select-active': item.show}"
-               :key="index" @click.stop="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow">
+               :key="index" @click.stop="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow" :style="{'cursor': industrieId === -1 && index !== 0 ? 'not-allowed' : 'pointer'}">
             <div class="city-show">
               {{item.title}}
               <div class="city-tap">
@@ -86,10 +86,10 @@
           <div class="total">
             <div>每页{{pageDtail[0].per_page}}条，共{{pageDtail[0].total}}条数据</div>
             <div class="page">
-              <div class="page-icon" @click="subtract">
+              <div class="page-icon" @click="subtract" :style="{'cursor': isHand.handLeft}" @mouseenter="notAllowed">
               </div>
               <div class="pade-detail">{{page}}/{{pageDtail[0].total_page}}</div>
-              <div class="page-icon page-icon-two" @click="addPage">
+              <div class="page-icon page-icon-two" @click="addPage" @mouseenter="notAllowed" :style="{'cursor': isHand.handRight}">
               </div>
               <div class="page-box" :class="{'input-height': pageDetail}">
                 <div class="border-page page-total input-height-item" @click.stop="showPageDetail">
@@ -112,7 +112,7 @@
               <div class="input-box" :class="{'input-height': focus}">
                 <input type="number" class="border-page input-height-item" v-model="pageInput" :focus="focus" @click.stop="focus = !focus"/>
               </div>
-              <div class="border-page input-height-item" @click="goPage">跳转</div>
+              <div class="border-page input-height-item" @click="goPage" @mouseenter="notAllowed" :style="{'cursor': isHand.handGo}">跳转</div>
             </div>
           </div>
         </div>
@@ -222,7 +222,8 @@ export default {
       shopIndex: 0,
       shopData: ['', ''],
       navTitle: [],
-      setTime: null
+      setTime: null,
+      isHand: {handLeft: 'pointer', handRight: 'pointer', handGo: 'pointer'}
     }
   },
   created() {
@@ -235,7 +236,6 @@ export default {
           }
           this.pageInput = Math.floor(this.pageInput * 1)
           this.page = this.pageInput
-          console.log(this.page)
           this.$emit('addPage', this.page)
         }
       }
@@ -438,12 +438,19 @@ export default {
         this.page++
         this.$emit('addPage', this.page)
       }
+      this.notAllowed()
+    },
+    notAllowed() {
+      this.page === 1 ? this.isHand.handLeft = 'not-allowed' : this.isHand.handLeft = 'pointer'
+      this.page === this.pageDtail[0].total_page ? this.isHand.handRight = 'not-allowed' : this.isHand.handRight = 'pointer'
+      this.pageInput === '' ? this.isHand.handGo = 'not-allowed' : this.isHand.handGo = 'pointer'
     },
     subtract() {
       if (this.page > 1) {
         this.page--
         this.$emit('addPage', this.page)
       }
+      this.notAllowed()
     },
     showContent(content, time) {
       this.$refs.toast.show(content, time)

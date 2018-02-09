@@ -128,6 +128,8 @@ export default {
           width :78px
           position: relative
           cursor: pointer
+          &:hover
+            background :$color-background
         .guide
           margin-left :26px
           margin-top :19.5px

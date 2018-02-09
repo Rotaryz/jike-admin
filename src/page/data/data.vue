@@ -12,7 +12,7 @@
             <div class="list-item list-text">{{item.merchant_count}}</div>
             <div class="list-item list-text">{{item.user_count}}</div>
             <div class="list-item list-text">{{item.customer_count}}</div>
-            <div class="list-item list-text">{{item.customer_count}}</div>
+            <div class="list-item list-text">{{item.order_count}}</div>
             <div class="list-item list-text">{{item.money_total}}</div>
           </li>
         </ul>
