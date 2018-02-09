@@ -328,17 +328,17 @@ export default {
         padding-left :10px
         border: 0.5px solid $color-white
       textarea.shade-text
-        width :61.7%
-        height: 48%
+        width :61.2%
+        height: 53%
         padding-top :2px
         font-size :$font-size-medium
-        transform :translateX(-10px)
+        transform :translateX(-9px)
       .shade-text
         width: 65%
       .input-box
         position: relative
         width: 65%
-        height: 60%
+        height: 75%
         border:2px solid $color-white
         border-radius :5px
         transform :translateX(-10px)
