@@ -52,10 +52,12 @@
         </div>
       <div class="shade-border shade-exprent shade-tiem">
         备注
-        <textarea id="exprent" class="input-height-item" placeholder="请输入" v-model="orderDetail.reamrk"></textarea>
+        <div class="ex-box" :class="{'input-height':focus}">
+          <textarea id="exprent" class="input-height-item" @focus="focus = true" @blur="focus = false" placeholder="请输入" v-model="orderDetail.reamrk"></textarea>
+        </div>
       </div>
-      <div class="ok" @click="orderManage(orderDetail.id)">
-        <span class="submit hand">保存</span>
+      <div class="ok">
+        <span class="submit hand" @click="orderManage(orderDetail.id)">保存</span>
       </div>
     </div>
   </form-box>
@@ -71,6 +73,7 @@ const statusList = [{title: '支付成功', status: 1}, {title: '退款', status
 export default {
   data() {
     return {
+      focus: false,
       titleList: titleList,
       orderList: [],
       time: 1,
@@ -229,14 +232,18 @@ export default {
       height : 14.42vh
       display: block
       padding-top :10px
+      .ex-box
+        margin-top :2px
+        border :2px solid $color-white
+        height :75%
+        width :95.6%
       #exprent
-        resize: none
+        height :100%
+        width :100%
         padding : 8px
-        transform :translateY(4px)
-        display :block
-        height :7.41vh
-        width :88.764%
-        border :0.5px solid $color-icon-line
+        display :inline-block
+        box-sizing :border-box
+        border :1px solid $color-icon-line
     .ok
       height: 9.26vh
       display :flex
@@ -256,6 +263,8 @@ export default {
           background :$color-active
   .shade-tiem:hover
     background :$color-background
+    .ex-box
+      border : 2px solid $color-background
     textarea.shade-text
       background: $color-background
   .selects

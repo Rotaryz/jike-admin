@@ -55,13 +55,15 @@
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在位置</span>
-        <textarea :class="{'input-height-item': !disableds}" class="shade-text" v-model="merchantDetail.particular_address" :disabled="disableds"></textarea>
+        <div class="input-box" :class="{'input-height': heightType === 2}">
+          <textarea :class="{'input-height-item': !disableds}" @focus="isFocus(2)" @blur="heightType = -1" class="shade-text" v-model="merchantDetail.particular_address" :disabled="disableds"></textarea>
+        </div>
       </div>
       <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
         <span class="shade-title">所在商圈</span>
-        <div class="input-box" :class="{'input-height': heightType === 2}">
+        <div class="input-box" :class="{'input-height': heightType === 3}">
           <input class="shade-text" :class="{'input-height-item': !disableds}" v-model="merchantDetail.business_circle_name"
-                 name="change" :disabled="disableds" @focus="isFocus(2)" @blur="heightType = -1"/>
+                 name="change" :disabled="disableds" @focus="isFocus(3)" @blur="heightType = -1"/>
         </div>
       </div>
       <div class="shade-border shade-tiem">
@@ -328,11 +330,10 @@ export default {
         padding-left :10px
         border: 0.5px solid $color-white
       textarea.shade-text
-        width :61.2%
-        height: 53%
         padding-top :2px
         font-size :$font-size-medium
-        transform :translateX(-9px)
+        box-sizing :border-box
+        outline :none
       .shade-text
         width: 65%
       .input-box

@@ -47,7 +47,7 @@
           <span class="city-title">行业筛选</span>
           <div class="city-select" v-for="(item, index) in industrieList" :class="{'city-select-active': item.show}"
                :key="index" @click.stop="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow" :style="{'cursor': industrieId === -1 && index !== 0 ? 'not-allowed' : 'pointer'}">
-            <div class="city-show">
+            <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
                 <span class="city-tap-top" :class="{'city-tap-bottom':item.show && item.active,'city-tap-top-two': !item.show && item.active}"></span>
@@ -233,6 +233,8 @@ export default {
         if (this.pageInput !== '') {
           if (this.pageInput > this.pageDtail[0].total_page) {
             this.pageInput = this.pageDtail[0].total_page
+          } else if (this.pageInput === '0') {
+            this.pageInput = 1
           }
           this.pageInput = Math.floor(this.pageInput * 1)
           this.page = this.pageInput
@@ -329,6 +331,8 @@ export default {
         this.pageInput = Math.floor(this.pageInput * 1)
         if (this.pageInput > this.pageDtail[0].total_page) {
           this.pageInput = this.pageDtail[0].total_page
+        } else if (this.pageInput === 0) {
+          this.pageInput = 1
         }
         this.page = this.pageInput
         this.$emit('addPage', this.page)
@@ -712,7 +716,7 @@ export default {
                 icon-image('icon-later_hover')
             .border-page
               display: flex
-              align-items: center
+              line-height: 25px
               border-radius: 3px
               margin-right: 10px
               border: 1px solid $color-line
@@ -808,6 +812,5 @@ export default {
           box-shadow: 0 0 5px 0 rgba(12, 6, 14, 0.60)
           border-radius: 3px
           background: $color-white
-          width: 40%
-          min-width :420px
+          width :450px
 </style>

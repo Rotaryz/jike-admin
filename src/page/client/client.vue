@@ -46,7 +46,9 @@
       <div class="shade-border shade-exprent shade-tiem">
         备注
         <div class="exprent-box" >
-          <textarea id="exprent" placeholder="请输入" v-model="customersDetail.remark"></textarea>
+          <div class="ex-box" :class="{'input-height':focus}">
+            <textarea id="exprent" class="input-height-item" @focus="focus = true" @blur="focus = false" placeholder="请输入" v-model="customersDetail.remark"></textarea>
+          </div>
         </div>
       </div>
       <div class="ok">
@@ -252,11 +254,17 @@ export default {
         height :10.2vh
         width :88%
         border :2px solid $color-white
-        #exprent
-          padding : 8px
-          display :block
-          height :77.8%
+        .ex-box
+          margin-top :2px
+          border :2px solid $color-white
+          height :100%
           width :95.6%
+        #exprent
+          height :100%
+          width :100%
+          padding : 8px
+          display :inline-block
+          box-sizing :border-box
           border :1px solid $color-icon-line
       .text-height
         border:2px solid rgba(102,102,102,.2) !important
@@ -283,6 +291,8 @@ export default {
     background :$color-background
     .exprent-box
       border :2px solid $color-background
+      .ex-box
+        border : 2px solid $color-background
       textarea#exprent
         border :1px solid $color-text-icon
   .selects

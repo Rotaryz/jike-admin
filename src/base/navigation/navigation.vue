@@ -45,16 +45,17 @@
           <a href="javaScript:;" class="nav-tap">
             <span class="nav-icon"><img :src="item.icon" class="nav-pic"></span>
           </a>
-          <ul class="nav-small-child" v-if="item.children"
-              v-show="index === hoverIndex">
-            <li class="nav-item" v-for="(items , idx) in item.children"
-                :class="hoverChildIndex === idx ? 'nav-item-active' : ''"
-                :key="idx" @click.stop="hoverDetail(idx,index)">
-              <a :href="items.url" class="nav-tap">
-                <div class="small-title">{{items.title}}</div>
-              </a>
-            </li>
-          </ul>
+          <div class="nav-small-box">
+            <ul class="nav-small-child" v-if="item.children" v-show="index === hoverIndex">
+              <li class="nav-item" v-for="(items , idx) in item.children"
+                  :class="hoverChildIndex === idx ? 'nav-item-active' : ''"
+                  :key="idx" @click.stop="hoverDetail(idx,index)">
+                <a :href="items.url" class="nav-tap">
+                  <div class="small-title">{{items.title}}</div>
+                </a>
+              </li>
+            </ul>
+          </div>
         </li>
       </ul>
     </div>
@@ -387,10 +388,13 @@ export default {
             height: 20px
             col-center()
             left: 20px
-          .nav-small-child
+          .nav-small-box
             position: absolute
             right: -177px
             top: 5px
+            padding-left :3px
+            background :$color-white
+          .nav-small-child
             background: $color-menu-background
             border-radius: 4px
             z-index :300
