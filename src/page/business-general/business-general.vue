@@ -428,7 +428,7 @@ export default {
         display :inline-block
         height :30px
         line-height: 30px
-        width :160px
+        width :210px
         border-radius :3px
         border :1px solid $color-icon-line
         color: $color-text-icon
