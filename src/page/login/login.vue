@@ -1,17 +1,22 @@
 <template>
-  <div class="login"  @click="hideFocus">
+  <div class="login" @click="hideFocus">
     <div class="bk"></div>
     <div class="login-box">
       <img src="./pic-logo_login@2x.png" class="logo">
       <h2 class="title">赞播管理后台信息系统</h2>
       <div class="user input-box" :class="{'input-height': focusPhone}">
         <span class="input-icon"></span>
-        <input class="inputs input-height-item" value="asd" type="text" placeholder="请输入用户名" v-model="user" @click.stop="focusPhone = !focusPhone" @blur="focusPhone = false"/>
+        <input class="inputs input-height-item" value="asd" type="text"
+               placeholder="请输入用户名" v-model="user"
+               @click.stop="focusPhone = !focusPhone"
+               @blur="focusPhone = false"/>
       </div>
       <div class="passward input-box" :class="{'input-height': focusPass}">
         <span class="input-icon"></span>
-        <input class="inputs input-height-item" type="password" placeholder="请输入密码" v-model="password" @click.stop="focusPass = !focusPass" @blur="focusPass = false"/>
-        </div>
+        <input class="inputs input-height-item" type="password"
+               placeholder="请输入密码" v-model="password"
+               @click.stop="focusPass = !focusPass" @blur="focusPass = false"/>
+      </div>
       <div class="remenber hand" @click="remenberPassWord">
         <i class="check" :class="{'check-yes' : remenber}"></i>
         <span class="tip">记住密码</span>
@@ -66,6 +71,7 @@ export default {
       }
       let data = {username: this.user, password: this.password}
       login(data).then((res) => {
+        console.log(res)
         if (!res.error) {
           this.$refs.toast.show('登陆成功')
           if (this.remenber) {
@@ -107,8 +113,8 @@ export default {
       border-radius: 3px
       height: 28.22vw
       width: 26.45vw
-      min-width :386px
-      min-height :416px
+      min-width: 386px
+      min-height: 416px
       background: $color-white
       all-center()
       text-align: center
@@ -125,7 +131,7 @@ export default {
         width: 72.47%
         font-size: $font-size-small
         position: relative
-        border :2px solid $color-white
+        border: 2px solid $color-white
         .inputs
           text-indent: 8.856%
           height: 100%
@@ -133,15 +139,15 @@ export default {
           border-radius: 3px
           border: 1px solid #D1D1D1
           &::placeholder
-            opacity:1
-            color :$color-text-little
+            opacity: 1
+            color: $color-text-little
         .input-icon
           height: 44%
           width: 6.01%
           icon-image('icon-user')
           col-center()
           left: 2.5%
-          z-index :100
+          z-index: 100
       .passward
         .input-icon
           icon-image('icon-password')
@@ -164,7 +170,7 @@ export default {
           border: none
           icon-image('icon-select')
         .tip
-          display :inline-block
+          display: inline-block
           position: absolute
           left: 10px
           top: 0px

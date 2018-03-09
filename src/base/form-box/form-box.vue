@@ -5,6 +5,7 @@
         <span class="title-item" v-for="(item,index) in navTitle" :key="index">{{index > 0 ? '/' : ''}} {{item}}</span>
       </div>
       <div class="tag-choice" v-if="chioce">
+        <slot name="order-sec"></slot>
         <div class="tag-time" v-if="isDate">
           <span class="time-title" v-for="(item, index) in timeList"
                 :key="index" :class="{'time-title-active': TimeIndex === index}"
@@ -457,7 +458,11 @@ export default {
       this.notAllowed()
     },
     showContent(content, time) {
-      this.$refs.toast.show(content, time)
+      const showTime = time || 1000
+      this.$refs.toast.show(content, showTime)
+    },
+    beginPage() {
+      this.page = 1
     }
   },
   watch: {
@@ -512,6 +517,8 @@ export default {
         display: flex
         padding: 0 10px
         margin: 20px 0 10px
+        position: relative
+        z-index :100
         .tag-time
           white-space :nowrap
           .time-title

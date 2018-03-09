@@ -116,18 +116,20 @@ const navList = [
     children: [{
       title: '订单管理',
       url: '#/container/order'
-    }],
-    showHeight: height
-  }, {
-    title: '账户管理',
-    icon: require('./icon-account@2x.png'),
-    url: '#/container/account',
-    children: [{
-      title: '账户管理',
-      url: '#/container/account'
+    }, {
+      title: '订单查询',
+      url: '#/container/order-inquiry'
     }],
     showHeight: height
   }]
+//, {
+//  title: '账户管理',
+//    icon: require('./icon-account@2x.png'),
+//    url: '#/container/account',
+//    children: [{
+//    title: '账户管理',
+//    url: '#/container/account'
+//  }
 export default {
   data() {
     return {
@@ -141,7 +143,7 @@ export default {
       showHeight: height,
       timer: null,
       clickChild: 0,
-      recodIndex: 2,
+      recodIndex: -1,
       showAnimation: false
     }
   },
@@ -180,11 +182,25 @@ export default {
         this.bigChild = index
         sessionStorage.setItem('title', [this.navList[index].title])
       } else if (this.navList[index].children.length > 1) {
+        console.log('ds')
+        clearInterval(this.timer)
         let childCode = this.navList[index].childrenIndex === -1 ? 0 : this.navList[index].childrenIndex
+        this.recodIndex = index
         this.navList[this.recodIndex].childrenIndex = childCode
         sessionStorage.setItem('title', [this.navList[index].title, this.navList[index].children[childCode].title])
         this.bigChild = -1
-        this.recodIndex = index
+//        for (let i = 0; i < this.navList.length; i++) {
+//          console.log(i !== index)
+//          if (this.navList[i].showHeight !== height) {
+//            this.timer = setInterval(() => {
+//              if (this.navList[i].showHeight <= height && i !== index) {
+//                this.navList[i].showHeight = height
+//                clearInterval(this.timer)
+//              }
+//              this.navList[i].showHeight -= 20
+//            }, 30)
+//          }
+//        }
         let num = this.navList[index].children.length
         if (this.navList[index].showHeight === height) {
           let target = (num + 1) * height
@@ -205,6 +221,7 @@ export default {
                 return false
               }
               this.navList[index].showHeight -= 20
+              console.log(this.navList[index].showHeight)
             }, 30)
           }
         }
