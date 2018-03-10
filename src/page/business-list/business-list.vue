@@ -1,38 +1,39 @@
 <template>
-  <form-box ref="order" @checkTime="checkTime" @addPage="addPage"
-            @showCity="showCity" @showIndustrie="showIndustrie"
-            :pageDtail="pageDtail" :isIndustrie="isIndustrie">
-    <div slot="tap" class="select">
-      <admin-select :select="selectList" @selectType="selectType"
-                    @setValue="setValue"></admin-select>
-    </div>
-    <div slot="form-list" class="form-list" v-show="showContent">
-      <div class="list-header">
-        <div class="list-item" v-for="(item, index) in titleList" :key="index">
-          {{item}}
-        </div>
+  <div class="buslist" @click="hideTime">
+    <form-box ref="order" @checkTime="checkTime" @addPage="addPage"
+              @showCity="showCity" @showIndustrie="showIndustrie"
+              :pageDtail="pageDtail" :isIndustrie="isIndustrie">
+      <div slot="tap" class="select">
+        <admin-select :select="selectList" @selectType="selectType"
+                      @setValue="setValue"></admin-select>
       </div>
-      <ul class="list">
-        <li class="list-box" v-for="(item,index) in merchanList"
-            :class="{'list-box-active': heightIndex === index}" :key="index"
-            @mouseenter="showHeight(index)" @mouseleave="hideHeight">
-          <div class="list-item list-text">{{item.mobile}}</div>
-          <div class="list-item list-text">{{item.shop_name}}</div>
-          <div class="list-item list-text">{{item.is_leader ? '盟主' : '普通'}}
+      <div slot="form-list" class="form-list" v-show="showContent">
+        <div class="list-header">
+          <div class="list-item" v-for="(item, index) in titleList" :key="index">
+            {{item}}
           </div>
-          <div class="list-item list-text">{{item.industry}}</div>
-          <div class="list-item list-text">{{item.user}}</div>
-          <div class="list-item list-text">{{item.customer}}</div>
-          <div class="list-item list-text">{{item.order}}</div>
-          <div class="list-item list-text">{{item.service_version ? '基础' : '试用'}}</div>
-          <div class="list-item list-text">{{item.is_disabled ? '已过期' : '使用中'}}</div>
-          <div class="list-item list-text">
-            {{item.open_type === 0 ? '支付开通' : item.open_type === 1 ? '盟主开通' : item.open_type === 2 ? '后台开通' : ''}}
-          </div>
-          <div class="list-item">
+        </div>
+        <ul class="list">
+          <li class="list-box" v-for="(item,index) in merchanList"
+              :class="{'list-box-active': heightIndex === index}" :key="index"
+              @mouseenter="showHeight(index)" @mouseleave="hideHeight">
+            <div class="list-item list-text">{{item.mobile}}</div>
+            <div class="list-item list-text">{{item.shop_name}}</div>
+            <div class="list-item list-text">{{item.is_leader ? '盟主' : '普通'}}
+            </div>
+            <div class="list-item list-text">{{item.industry}}</div>
+            <div class="list-item list-text">{{item.user}}</div>
+            <div class="list-item list-text">{{item.customer}}</div>
+            <div class="list-item list-text">{{item.order}}</div>
+            <div class="list-item list-text">{{item.service_version ? '基础' : '试用'}}</div>
+            <div class="list-item list-text">{{item.is_expiration ? '已过期' : '使用中'}}</div>
+            <div class="list-item list-text">
+              {{item.open_type === 0 ? '支付开通' : item.open_type === 1 ? '盟主开通' : item.open_type === 2 ? '后台开通' : ''}}
+            </div>
+            <div class="list-item">
             <span class="showDetail">
               <span @click="showDetail(item.id)">查看</span>
-              <span class="open" @click="openShop(item.merchant_id)">
+              <span class="open" @click.stop="openShop(item.merchant_id)">
                 | 开通
                 <div class="order-block " @click.stop v-show="item.end_time">
                   <el-date-picker
@@ -45,172 +46,165 @@
               </span>
               <span @click="frost(item)"> | {{item.is_disabled ? '解冻' : '冻结'}}</span>
             </span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div slot="shade-box" class="shade-box">
+        <div v-show="!freeze">
+          <div class="shade-border">商家属性<span class="close" @click="hideShadeBox">&times;</span>
           </div>
-        </li>
-      </ul>
-    </div>
-    <div slot="shade-box" class="shade-box">
-      <div v-show="!freeze">
-        <div class="shade-border">商家属性<span class="close" @click="hideShadeBox">&times;</span>
-        </div>
-        <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-          <span class="shade-title">姓名</span>
-          <div class="input-box" :class="{'input-height': heightType === 4}">
-            <input type="text" :class="{'input-height-item': !disableds}"
-                   class="shade-text" v-model="merchantDetail.user_name" name="change"
-                   :disabled="disableds" @input="onPhone" @focus="isFocus(4)"
-                   @blur="heightType = -1"/>
+          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
+            <span class="shade-title">姓名</span>
+            <div class="input-box" :class="{'input-height': heightType === 4}">
+              <input type="text" :class="{'input-height-item': !disableds}"
+                     class="shade-text" v-model="merchantDetail.user_name" name="change"
+                     :disabled="disableds" @input="onPhone" @focus="isFocus(4)"
+                     @blur="heightType = -1"/>
+            </div>
           </div>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">商家名称</span>
-          <span class="shade-text">{{merchantDetail.shop_name}}</span>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">商家账号</span>
-          <span class="shade-text">{{merchantDetail.account}}</span>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">注册时间</span>
-          <span class="shade-text">{{merchantDetail.register_time}}</span>
-        </div>
-        <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-          <span class="shade-title">联系方式</span>
-          <div class="input-box" :class="{'input-height': heightType === 0}">
-            <input type="number" :class="{'input-height-item': !disableds}"
-                   class="shade-text" maxlength="11"
-                   v-model="merchantDetail.mobile" name="change"
-                   :disabled="disableds" @input="onPhone" @focus="isFocus(0)"
-                   @blur="heightType = -1"/>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">商家名称</span>
+            <span class="shade-text">{{merchantDetail.shop_name}}</span>
           </div>
-        </div>
-        <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-          <span class="shade-title">所在行业</span>
-          <div class="input-box" :class="{'input-height': heightType === 1}">
-            <input class="shade-text" :class="{'input-height-item': !disableds}"
-                   v-model="merchantDetail.industry_name"
-                   name="change" @focus="isFocus(1)" @blur="heightType = -1"
-                   :disabled="disableds"/>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">商家账号</span>
+            <span class="shade-text">{{merchantDetail.account}}</span>
           </div>
-        </div>
-        <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">注册时间</span>
+            <span class="shade-text">{{merchantDetail.register_time}}</span>
+          </div>
+          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
+            <span class="shade-title">联系方式</span>
+            <div class="input-box" :class="{'input-height': heightType === 0}">
+              <input type="number" :class="{'input-height-item': !disableds}"
+                     class="shade-text" maxlength="11"
+                     v-model="merchantDetail.mobile" name="change"
+                     :disabled="disableds" @input="onPhone" @focus="isFocus(0)"
+                     @blur="heightType = -1"/>
+            </div>
+          </div>
+          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
+            <span class="shade-title">所在行业</span>
+            <div class="input-box" :class="{'input-height': heightType === 1}">
+              <input class="shade-text" :class="{'input-height-item': !disableds}"
+                     v-model="merchantDetail.industry_name"
+                     name="change" @focus="isFocus(1)" @blur="heightType = -1"
+                     :disabled="disableds"/>
+            </div>
+          </div>
+          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
 
-          <span class="shade-title">所在位置</span>
-          <div class="input-box" :class="{'input-height': heightType === 2}">
+            <span class="shade-title">所在位置</span>
+            <div class="input-box" :class="{'input-height': heightType === 2}">
           <textarea :class="{'input-height-item': !disableds}"
                     @focus="isFocus(2)" @blur="heightType = -1"
                     class="shade-text" v-model="merchantDetail.particular_address" :disabled="disableds"></textarea>
+            </div>
           </div>
-        </div>
-        <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-          <span class="shade-title">所在商圈</span>
-          <div class="input-box" :class="{'input-height': heightType === 3}">
-            <input class="shade-text" :class="{'input-height-item': !disableds}"
-                   v-model="merchantDetail.business_circle_name"
-                   name="change" :disabled="disableds" @focus="isFocus(3)"
-                   @blur="heightType = -1"/>
+          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
+            <span class="shade-title">所在商圈</span>
+            <div class="input-box" :class="{'input-height': heightType === 3}">
+              <input class="shade-text" :class="{'input-height-item': !disableds}"
+                     v-model="merchantDetail.business_circle_name"
+                     name="change" :disabled="disableds" @focus="isFocus(3)"
+                     @blur="heightType = -1"/>
+            </div>
           </div>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">开通时间</span>
-          <span class="shade-text">{{merchantDetail.open_service_log ? merchantDetail.open_service_log.created_at : ''}}</span>
-        </div>
-        <div class="shade-border shade-tiem end-time" :class="{'shade-input':!disableds}">
-          <span class="shade-title">到期时间</span>
-          <!--<div class="input-box" :class="{'input-height': heightType === 5}">-->
-          <!--<input class="shade-text" :class="{'input-height-item': !disableds}"-->
-          <!--v-model="merchantDetail.open_service_log"-->
-          <!--name="change" :disabled="disableds" @focus="isFocus(5)"-->
-          <!--@blur="heightType = -1"/>-->
-          <!--</div>-->
-          <!--<span class="shade-text" v-show="disableds">{{merchantDetail.expiration_time}}</span>-->
-          <div class="order-block input-box" :class="{'order-boder': !disableds}">
-            <el-date-picker
-              v-model="merchantDetail.expiration_time"
-              type="datetime"
-            >
-            </el-date-picker>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">开通时间</span>
+            <span class="shade-text">{{merchantDetail.open_service_log ? merchantDetail.open_service_log.created_at : ''}}</span>
           </div>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">开通方式</span>
-          <span class="shade-text" >{{!merchantDetail.open_service_log ? '' : merchantDetail.open_service_log.open_type === 0 ? '支付开通' : merchantDetail.open_service_log.open_type === 1 ? '盟主开通' : merchantDetail.open_service_log.open_type === 2 ? '后台开通' : ''}}</span>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">商家属性</span>
-          <div class="radios" @click="level('single')">
+          <div class="shade-border shade-tiem end-time" :class="{'shade-input':!disableds}">
+            <span class="shade-title">到期时间</span>
+            <div class="order-block input-box" :class="{'order-boder': !disableds}">
+              <el-date-picker
+                v-model="merchantDetail.expiration_time"
+                type="datetime"
+              >
+              </el-date-picker>
+            </div>
+          </div>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">开通方式</span>
+            <span class="shade-text" >{{!merchantDetail.open_service_log ? '' : merchantDetail.open_service_log.open_type === 0 ? '支付开通' : merchantDetail.open_service_log.open_type === 1 ? '盟主开通' : merchantDetail.open_service_log.open_type === 2 ? '后台开通' : ''}}</span>
+          </div>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">商家属性</span>
+            <div class="radios" @click="level('single')">
           <span class="icon hand"
                 :class="{'icon-active': merchantDetail.reseller_level === 0}"></span>
-            <span class="title">单店</span>
-          </div>
-          <div class="radios" @click="level">
+              <span class="title">单店</span>
+            </div>
+            <div class="radios" @click="level">
           <span class="icon hand"
                 :class="{'icon-active': merchantDetail.reseller_level === 1}"></span>
-            <span class="title">连锁门店</span>
+              <span class="title">连锁门店</span>
+            </div>
           </div>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">商家角色</span>
-          <div class="radios" @click="leader('leader')">
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">商家角色</span>
+            <div class="radios" @click="leader('leader')">
           <span class="icon hand"
                 :class="{'icon-active': merchantDetail.is_leader === 0}"></span>
-            <span class="title">普通</span>
-          </div>
-          <div class="radios" @click="leader">
+              <span class="title">普通</span>
+            </div>
+            <div class="radios" @click="leader">
           <span class="icon hand"
                 :class="{'icon-active': merchantDetail.is_leader === 1}"></span>
-            <span class="title">盟主</span>
+              <span class="title">盟主</span>
+            </div>
+          </div>
+          <div class="shade-border shade-tiem activation-code" :class="{'shade-input':!disableds}" v-show="merchantDetail.is_leader">
+            <span class="shade-title">生成激活码</span>
+            <div class="input-box" :class="{'input-height': heightType === 7}">
+              <input class="shade-text" :class="{'input-height-item': !disableds}"
+                     v-model="activationCode"
+                     name="change" :disabled="disableds" @focus="isFocus(7)"
+                     @blur="heightType = -1"/>
+              <span class="activation-tip">累计{{merchantDetail.inviter_code_count + (activationCode * 1)}}个</span>
+            </div>
+          </div>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">版本</span>
+            <span class="shade-text">{{merchantDetail.service_version ? '普通' : '试用'}}</span>
+          </div>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">账号状态</span>
+            <span class="shade-text">{{merchantDetail.is_disabled ? '已冻结' : '未冻结'}}</span>
+          </div>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">商家状态</span>
+            <span class="shade-text">{{merchantDetail.is_expiration ? '已过期' : '使用中'}}</span>
+          </div>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">冻结原因</span>
+            <span class="shade-text">{{merchantDetail.note}}</span>
+          </div>
+          <div class="ok">
+            <span class="submit change hand" @click="change">{{cancelTitle}}</span>
+            <span class="submit sure hand"
+                  @click="merchantMessage(merchantDetail.id)">保存</span>
           </div>
         </div>
-        <div class="shade-border shade-tiem activation-code" :class="{'shade-input':!disableds}" v-show="merchantDetail.is_leader">
-          <span class="shade-title">生成激活码</span>
-          <div class="input-box" :class="{'input-height': heightType === 7}">
-            <input class="shade-text" :class="{'input-height-item': !disableds}"
-                   v-model="activationCode"
-                   name="change" :disabled="disableds" @focus="isFocus(7)"
-                   @blur="heightType = -1"/>
-            <span class="activation-tip">累计{{merchantDetail.inviter_code_count + (activationCode * 1)}}个</span>
+        <div class="shade-inquiry" v-show="freeze">
+          <div class="shade-border shade-tiem">{{freezeText}}<span class="close" @click="hideShadeBox">&times;</span>
           </div>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">商家状态</span>
-          <span class="shade-text">{{merchantDetail.service_version ? '普通' : '试用'}}</span>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">商家状态</span>
-          <span class="shade-text">{{merchantDetail.is_disabled ? '冻结' : '未冻结'}}</span>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">账号状态</span>
-          <span class="shade-text">{{merchantDetail.is_expiration ? '已过期' : '使用中'}}</span>
-        </div>
-        <div class="shade-border shade-tiem">
-          <span class="shade-title">冻结原因</span>
-          <span class="shade-text">{{merchantDetail.note}}</span>
-        </div>
-        <div class="ok">
-          <span class="submit change hand" @click="change">{{cancelTitle}}</span>
-          <span class="submit sure hand"
-                @click="merchantMessage(merchantDetail.id)">保存</span>
+          <div class="shade-border shade-exprent shade-tiem">
+            备注
+            <div class="ex-box" :class="{'input-height':focus }">
+              <textarea id="exprent" :class="freezeText == '解冻' ? '' : 'input-height-item'" @focus="focus = true" :disabled="freezeText == '解冻'" @blur="focus = false" placeholder="请输入" v-model="reamrk"></textarea>
+            </div>
+          </div>
+          <div class="ok">
+            <span class="submit sure hand" @click="withdrawal">确定</span>
+          </div>
         </div>
       </div>
-      <div class="shade-inquiry" v-show="freeze">
-        <div class="shade-border shade-tiem">{{freezeText}}<span class="close" @click="hideShadeBox">&times;</span>
-        </div>
-        <div class="shade-border shade-exprent shade-tiem">
-          备注
-          <div class="ex-box" :class="{'input-height':focus }">
-            <textarea id="exprent" :class="freezeText == '解冻' ? '' : 'input-height-item'" @focus="focus = true" :disabled="freezeText == '解冻'" @blur="focus = false" placeholder="请输入" v-model="reamrk"></textarea>
-          </div>
-        </div>
-        <div class="ok">
-          <span class="submit change hand" @click="hideShadeBox">取消</span>
-          <span class="submit sure hand" @click="withdrawal">确定</span>
-        </div>
-      </div>
-    </div>
-    <toast></toast>
-  </form-box>
+      <toast></toast>
+    </form-box>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -276,7 +270,7 @@ const select = [{
   children: [{
     content: '全部',
     data: [{title: '全部', status: ''}, {title: '未冻结', status: 0}, {
-      title: '冻结',
+      title: '已冻结',
       status: 1
     }]
   }]
@@ -435,7 +429,7 @@ export default {
       this.merchantId = res.merchant_id
       this.isDisabledCode = res.is_disabled
       res.is_disabled ? this.reamrk = '' : this.reamrk = res.note
-        this.merchanList.map((item) => {
+      this.merchanList.map((item) => {
         item.end_time = false
         return item
       })
@@ -446,9 +440,9 @@ export default {
       let data = {note: this.reamrk, merchant_id: this.merchantId}
       disable(data).then((res) => {
         if (res.error === ERR_OK) {
-          let connent = ''
-          this.isDisabledCode ? connent = '解冻' : connent = '冻结'
-          this.$refs.order.showContent(connent + '开通')
+          let content = ''
+          this.isDisabledCode ? content = '解冻' : content = '冻结'
+          this.$refs.order.showContent(content + '开通')
           this.$refs.order.hideShade()
           this.showList()
           return
@@ -498,6 +492,12 @@ export default {
         }
       })
     },
+    hideTime() {
+      this.merchanList.map((item) => {
+        item.end_time = false
+        return item
+      })
+    },
     openShop(merchantId) {
       this.merchantId = merchantId
       this.merchanList.map((item) => {
@@ -510,12 +510,17 @@ export default {
       })
     },
     openServices(index) {
+      if (this.endTime === '') {
+        this.$refs.order.showContent('请选择开通时间')
+        return
+      }
       let endTime = this.RiQi(this.endTime)
       let data = {expiration_time: endTime, merchant_id: this.merchantId}
       openService(data).then((res) => {
         if (res.error === ERR_OK) {
           this.merchanList[index].end_time = false
           this.$refs.order.showContent('成功开通')
+          this.showList()
           return
         }
         this.$refs.order.showContent(res.message)
@@ -557,7 +562,8 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
-
+  .buslist
+    height: 100%
   .form-list
     height: 100%
     .list-header, .list-box
@@ -731,6 +737,9 @@ export default {
           .input-height-item
             border : 1px solid #999 !important
             background: $color-white
+      .ok
+        .submit
+          width: 220px
     .shade-input
       input.shade-text, textarea.shade-text
         background: $color-white

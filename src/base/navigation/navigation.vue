@@ -144,7 +144,8 @@ export default {
       timer: null,
       clickChild: 0,
       recodIndex: -1,
-      showAnimation: false
+      showAnimation: false,
+      sortTimer: null
     }
   },
   created() {
@@ -170,7 +171,7 @@ export default {
     showChild(index, status = true) {
       this.smallIndex = index
       clearInterval(this.timer)
-      if (this.navList[index].children.length === 1) {
+      if (this.navList[index].children.length === 1 && this.recodIndex !== -1) {
         this.timer = setInterval(() => {
           if (this.navList[this.recodIndex].showHeight <= height) {
             this.navList[this.recodIndex].showHeight = height
@@ -182,47 +183,49 @@ export default {
         this.bigChild = index
         sessionStorage.setItem('title', [this.navList[index].title])
       } else if (this.navList[index].children.length > 1) {
-        console.log('ds')
         clearInterval(this.timer)
         let childCode = this.navList[index].childrenIndex === -1 ? 0 : this.navList[index].childrenIndex
         this.recodIndex = index
         this.navList[this.recodIndex].childrenIndex = childCode
         sessionStorage.setItem('title', [this.navList[index].title, this.navList[index].children[childCode].title])
         this.bigChild = -1
-//        for (let i = 0; i < this.navList.length; i++) {
-//          console.log(i !== index)
-//          if (this.navList[i].showHeight !== height) {
-//            this.timer = setInterval(() => {
-//              if (this.navList[i].showHeight <= height && i !== index) {
-//                this.navList[i].showHeight = height
-//                clearInterval(this.timer)
-//              }
-//              this.navList[i].showHeight -= 20
-//            }, 30)
-//          }
-//        }
-        let num = this.navList[index].children.length
-        if (this.navList[index].showHeight === height) {
-          let target = (num + 1) * height
-          this.timer = setInterval(() => {
-            if (this.navList[index].showHeight >= target) {
-              this.navList[index].showHeight = target
-              clearInterval(this.timer)
-              return false
-            }
-            this.navList[index].showHeight += 20
-          }, 30)
-        } else {
-          if (status) {
-            this.timer = setInterval(() => {
-              if (this.navList[index].showHeight <= height) {
-                this.navList[index].showHeight = height
-                clearInterval(this.timer)
-                return false
+        clearInterval(this.timer)
+        for (let i = 0; i < this.navList.length; i++) {
+          if (i !== index && this.navList[i].showHeight > height) {
+            clearInterval(this.sortTimer)
+            this.sortTimer = setInterval(() => {
+              if (this.navList[i].showHeight <= height) {
+                this.navList[i].showHeight = height
+                clearInterval(this.sortTimer)
+                return
               }
-              this.navList[index].showHeight -= 20
-              console.log(this.navList[index].showHeight)
+              this.navList[i].showHeight -= 20
             }, 30)
+          } else {
+            clearInterval(this.timer)
+            let num = this.navList[index].children.length
+            if (this.navList[index].showHeight === height) {
+              let target = (num + 1) * height
+              this.timer = setInterval(() => {
+                if (this.navList[index].showHeight >= target) {
+                  this.navList[index].showHeight = target
+                  clearInterval(this.timer)
+                  return
+                }
+                this.navList[index].showHeight += 20
+              }, 30)
+            } else {
+              if (status) {
+                this.timer = setInterval(() => {
+                  if (this.navList[index].showHeight <= height) {
+                    this.navList[index].showHeight = height
+                    clearInterval(this.timer)
+                    return
+                  }
+                  this.navList[index].showHeight -= 20
+                }, 30)
+              }
+            }
           }
         }
       }

@@ -52,15 +52,18 @@
           <div class="list-item list-text">{{item.total}}</div>
           <div class="list-item list-text">{{item.created_at}}</div>
           <div class="list-item list-text">{{item.mobile}}</div>
-          <div class="list-item list-text" v-show="item.order_type=== '0' || item.status === '2'">{{item.status === 0 ? '待支付': item.status === 1? '已支付' :item.status === 2?'待评价':item.status === 3?'退款中':item.status === 4?'退款完成':item.status === 5?'已评价':item.status === 6?'逾期付款已关闭':item.status === 7?'退款失败商家余额不足': item.status === 8 ?'退款失败平台余额不足':'有效期过期关闭 提现订单状态'}}</div>
-          <div class="list-item" v-show="item.order_type === '0' || item.status === '2'"><span class="showDetail"
+          <div class="list-item list-text" v-if="item.order_type === '0'">{{item.status === 0 ? '待支付': item.status === 1? '已支付' :item.status === 2?'待评价':item.status === 3?'退款中':item.status === 4?'退款完成':item.status === 5?'已评价':item.status === 6?'逾期付款已关闭':item.status === 7?'退款失败商家余额不足': item.status === 8 ?'退款失败平台余额不足':'有效期过期关闭 提现订单状态'}}</div>
+          <div class="list-item" v-if="item.order_type === '0'"><span class="showDetail"
                                        @click="showDetail(item)">查看 | <span
+            :class="item.status === 3 ? 'audit' : 'audit-disable'"  @click.stop="inquiry(item)">审核</span></span></div>
+
+          <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
+          <div class="list-item" v-if="item.order_type === '2' || item.order_type === '3'"><span class="showDetail" @click="showDetail(item)">查看 | <span
             class="audit-disable">审核</span></span></div>
 
-          <div class="list-item list-text" v-show="item.order_type !== '0'|| item.status === '2'">{{item.status === 0 ? '未处理': item.status === 1? '提现成功' :'提现失败'}}</div>
-          <div class="list-item" v-show="item.order_type !== '0'|| item.status === '2'"><span class="showDetail"
-                                                              @click="showDetail(item)">查看 | <span
-            class="audit-disable" :class="{'audit':item.status === '0' || item.status === '2'}" @click.stop="inquiry(item)">审核</span></span></div>
+          <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '未处理': item.status === 1? '提现成功' :'提现失败'}}</div>
+          <div class="list-item" v-if="item.order_type === '1' || item.order_type === '4'"><span class="showDetail" @click="showDetail(item)">查看 |
+            <span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
           <div class="list-item list-text">{{item.operation_time}}</div>
           <div class="list-item list-text">{{item.admin_name}}</div>
         </li>
@@ -153,6 +156,7 @@
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
 import {ordersInquiry, checkWithdrawal, orderDetail} from 'api/monies'
+import {refundConfirm} from 'api/finances'
 import {ERR_OK, BASE_URL} from 'api/config'
 import Toast from 'base/toast/toast'
 import AdminSelect from 'base/admin-select/admin-select'
@@ -161,6 +165,7 @@ const statusList = [{title: '支付成功', status: 1}, {title: '退款', status
 const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}]
 const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
 const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '提现成功', status: 1}, {title: '提现失败', status: 2}]
+const ALL = [{title: '全部', status: 1}]
 const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
 let select = [{
   title: '业务类型',
@@ -211,6 +216,7 @@ export default {
       oldTime: '',
       newTime: '',
       inquiryId: '',
+      isRefund: false,
       excel: `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=&merchant_mobile=&order_type=0&order_status=&stare_time=&end_time=`
     }
   },
@@ -236,11 +242,19 @@ export default {
       this.type = type
     },
     setValue(value, idx) {
-      this.type === 'business' ? this.orderType = value.status : this.orderStatusCode = ''
+      if (this.type === 'business') {
+        this.orderType = value.status
+        value.status === 2 || value.status === 3 ? this.orderStatusCode = 1 : this.orderStatusCode = ''
+      }
       this.type === 'state' ? this.orderStatusCode = value.status : this.orderStatusCode
-      this.orderType === 0 ? this.selectList[1].children[idx].data = couponList : this.selectList[1].children[idx].data = DEPOSIT
+      if (this.orderType === 0) {
+        this.selectList[1].children[idx].data = couponList
+      } else if (this.orderType === 2 || this.orderType === 3) {
+        this.selectList[1].children[idx].data = ALL
+      } else {
+        this.selectList[1].children[idx].data = DEPOSIT
+      }
       this.type === 'business' ? this.selectList[1].children[idx].content = '全部' : this.selectList[1].children[idx].content
-      console.log(this.selectList[1].children[idx])
     },
     hideShadeBox() {
       this.$refs.order.hideShade()
@@ -260,6 +274,7 @@ export default {
       ordersInquiry(data).then((res) => {
         this.showContent = true
         if (res.error === ERR_OK) {
+          console.log(res.data)
           this.orderList = res.data
           this.$refs.order.isBlank(res.data)
           let pages = res.meta
@@ -280,21 +295,34 @@ export default {
           this.orderDetail = res.data
         }
       })
-      console.log(data)
     },
     inquiry(item) {
-      if (item.status === 0 || item.status === 2) {
+      if ((item.status === 0 && (item.order_type === '1' || item.order_type === '4')) || (item.status === 3 && item.order_type === '0')) {
+        this.reamrk = item.note
         this.$refs.order.showShade()
         this.detail = false
         this.inquiryId = item.id
-        console.log(this.inquiryId)
+        item.status === 3 ? this.isRefund = true : this.isRefund = false
       }
     },
     withdrawal(pass) {
       let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
+      if (this.isRefund) {
+        let data = {order_id: this.inquiryId, note: this.reamrk, status: pass}
+        refundConfirm(data).then((res) => {
+          if (res.error === ERR_OK) {
+            this.$refs.order.hideShade()
+            this.showList()
+          } else {
+            this.$refs.order.showContent(res.message)
+          }
+        })
+        return
+      }
       checkWithdrawal(data).then((res) => {
         if (res.error === ERR_OK) {
           this.$refs.order.hideShade()
+          this.showList()
         } else {
           this.$refs.order.showContent(res.message)
         }

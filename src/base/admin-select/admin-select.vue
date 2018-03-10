@@ -1,7 +1,7 @@
 <template>
   <div class="admin-select">
     <div class="select-item" v-for="(item,index) in select" :key="index"
-         @click="selectType(item.type, index)">
+         @click.stop="selectType(item.type, index)">
       <span class="select-title">{{item.title}}</span>
       <div class="admin-big-box" :class="{'input-height':item.select}"
            v-for="(items,idx) in item.children" :key="idx">
@@ -35,6 +35,13 @@ export default {
         show: false,
         children: [{content: '全部', data: []}]
       }]
+    }
+  },
+  created() {
+    window.onclick = () => {
+      this.select.forEach((item) => {
+        item.select = false
+      })
     }
   },
   data() {
