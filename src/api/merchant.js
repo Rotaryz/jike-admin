@@ -99,8 +99,21 @@ export function openService(params) {
  * @param params
  * @returns {Promise.<TResult>}
  */
-export function disable(params) {
+export function disable
+(params) {
   const url = `/api/merchant/disable`
+  return axios.get(url, {params: params}).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/**
+ * 删除商圈
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function delCircle(params) {
+  const url = `/api/merchant/del-circle`
   return axios.get(url, {params: params}).then((res) => {
     return Promise.resolve(res.data)
   })

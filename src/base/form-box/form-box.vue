@@ -346,6 +346,7 @@ export default {
       this.clickHide()
       this.pageDetail = false
       this.focus = false
+      this.$parent.delCancel()
     },
     detailPage(page) {
       this.page = page
@@ -801,7 +802,6 @@ export default {
             .page-box
               border:2px solid $color-white
               height :29px
-              width :73px
               margin-right: 10px
       .shade-win
         height: 100%

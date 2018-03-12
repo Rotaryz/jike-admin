@@ -54,16 +54,15 @@
           <div class="list-item list-text">{{item.mobile}}</div>
           <div class="list-item list-text" v-if="item.order_type === '0'">{{item.status === 0 ? '待支付': item.status === 1? '已支付' :item.status === 2?'待评价':item.status === 3?'退款中':item.status === 4?'退款完成':item.status === 5?'已评价':item.status === 6?'逾期付款已关闭':item.status === 7?'退款失败商家余额不足': item.status === 8 ?'退款失败平台余额不足':'有效期过期关闭 提现订单状态'}}</div>
           <div class="list-item" v-if="item.order_type === '0'"><span class="showDetail"
-                                       @click="showDetail(item)">查看 | <span
+                                       ><span @click="showDetail(item)">查看 | </span><span
             :class="item.status === 3 ? 'audit' : 'audit-disable'"  @click.stop="inquiry(item)">审核</span></span></div>
 
           <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
-          <div class="list-item" v-if="item.order_type === '2' || item.order_type === '3'"><span class="showDetail" @click="showDetail(item)">查看 | <span
+          <div class="list-item" v-if="item.order_type === '2' || item.order_type === '3'"><span class="showDetail" ><span @click="showDetail(item)">查看 | </span><span
             class="audit-disable">审核</span></span></div>
 
           <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '未处理': item.status === 1? '提现成功' :'提现失败'}}</div>
-          <div class="list-item" v-if="item.order_type === '1' || item.order_type === '4'"><span class="showDetail" @click="showDetail(item)">查看 |
-            <span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
+          <div class="list-item" v-if="item.order_type === '1' || item.order_type === '4'"><span class="showDetail" ><span @click="showDetail(item)">查看 | </span><span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
           <div class="list-item list-text">{{item.operation_time}}</div>
           <div class="list-item list-text">{{item.admin_name}}</div>
         </li>

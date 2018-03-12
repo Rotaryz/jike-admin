@@ -40,7 +40,17 @@
             <div class="list-item list-text">{{item.province}}</div>
             <div class="list-item list-text">{{item.city}}</div>
             <div class="list-item list-text">{{item.district}}</div>
-            <div class="list-item"><span class="showDetail" @click="showDetail()">查看</span>
+            <div class="list-item">
+              <span class="showDetail"><span @click="showDetail()">查看 </span>
+                <span @click.stop="delCri(item.id,idx)">| 删除</span>
+              </span>
+              <div class="del-box" v-show="idx === delIndex">
+                <div class="del-text"><img src="./icon-warn@2x.png" class="del-icon">是否删除？</div>
+                <div class="del-tip">
+                  <div class="del-btn del-cancel hand" @click="delCancel">取消</div>
+                  <div class="del-btn del-sure hand" @click="delSure">确定</div>
+                </div>
+              </div>
             </div>
           </li>
         </ul>
@@ -81,7 +91,7 @@
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {circlesDetail, industryDetail, addCircle, indestryAdd} from 'api/merchant'
+import {circlesDetail, industryDetail, addCircle, indestryAdd, delCircle} from 'api/merchant'
 import {businessCircle, industrie} from 'api/globals'
 import {ERR_OK} from 'api/config'
 const titleList = ['商圈名称', '省', '市', '区', '操作']
@@ -91,6 +101,7 @@ const titleListSec = ['行业类型名称', '所属行业', '操作']
 export default {
   data() {
     return {
+      delIndex: -1,
       inputCirent: false,
       chioce: false,
       isDate: false,
@@ -137,13 +148,30 @@ export default {
       name: '',
       insId: 0,
       heightIndex: -1,
-      showContent: false
+      showContent: false,
+      delId: 0
     }
   },
   created() {
     this.showList()
   },
   methods: {
+    delCri(id, index) {
+      this.delId = id
+      this.delIndex = index
+    },
+    delCancel() {
+      this.delIndex = -1
+    },
+    delSure() {
+      let data = {id: this.delId}
+      delCircle(data).then((res) => {
+        if (res.error === ERR_OK) {
+          this.delCancel()
+          this.showList()
+        }
+      })
+    },
     showHeight(index) {
       this.heightIndex = index
     },
@@ -364,7 +392,49 @@ export default {
       &:nth-child(1)
         flex: 2.9
       &:last-child
-        flex: 0.9
+        position: relative
+        .del-box
+          position :absolute
+          left: -14px
+          background :$color-white
+          z-index :1500
+          width:184px
+          height :113px
+          bottom: 67%
+          bg-image('bg-delete')
+          background-color:transparent
+          background-size :cover
+          text-align :center
+          .del-text
+            display :flex
+            align-items :center
+            justify-content :center
+            margin:15px 0 24px 0
+            .del-icon
+              height :15px
+              width :15px
+              margin-right :5px
+          .del-tip
+            display :flex
+            padding :0 17px
+            justify-content:space-between
+            .del-btn
+              width :64px
+              height :30px
+              line-height: 30px
+              text-align :center
+              font-size :$font-size-medium
+              border-radius :3px
+            .del-cancel
+              border :0.5px solid $color-nomal
+              color :$color-nomal
+            .del-sure
+              background :$color-nomal
+              color :$color-white
+              &:hover
+                background :$color-hover
+              &:active
+                background :$color-nomal
     .list-box-active
       background: $color-background
   .list-industry

@@ -114,7 +114,7 @@ const navList = [
     url: '#/container/order',
     childrenIndex: -1,
     children: [{
-      title: '订单管理',
+      title: '订单列表',
       url: '#/container/order'
     }, {
       title: '订单查询',
