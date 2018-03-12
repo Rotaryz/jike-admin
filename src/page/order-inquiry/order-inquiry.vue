@@ -337,7 +337,7 @@ export default {
       this.orderInput = this.orderInput !== this.orderSn ? this.orderSn : this.orderInput
       this.busInput = this.merchantMobile !== this.busInput ? this.merchantMobile : this.busInput
       this.orderType = this.orderTypes !== this.orderType ? this.orderTypes : this.orderType
-      this.orderState = this.orderState !== this.orderStatusCode ? this.orderState : this.orderState
+      this.orderState = this.orderState !== this.orderStatusCode ? this.orderStatusCode : this.orderState
       JSON.stringify(this.finalTime) !== JSON.stringify(this.sreachTime) ? this.moreTime = this.oldTime : this.moreTime = this.newTime
       let content = ''
       let contentTwo = ''
