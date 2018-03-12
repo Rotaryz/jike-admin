@@ -335,9 +335,9 @@ export default {
     },
     addPage(page) {
       this.orderInput = this.orderInput !== this.orderSn ? this.orderSn : this.orderInput
-      this.merchantMobile = this.merchantMobile !== this.busInput ? this.busInput = this.merchantMobile : this.busInput
-      this.orderTypes = this.orderTypes !== this.orderType ? this.orderType = this.orderTypes : this.orderType
-      this.orderState = this.orderState !== this.orderStatusCode ? this.orderStatusCode = this.orderState : this.orderState
+      this.busInput = this.merchantMobile !== this.busInput ? this.merchantMobile : this.busInput
+      this.orderType = this.orderTypes !== this.orderType ? this.orderTypes : this.orderType
+      this.orderState = this.orderState !== this.orderStatusCode ? this.orderState : this.orderState
       JSON.stringify(this.finalTime) !== JSON.stringify(this.sreachTime) ? this.moreTime = this.oldTime : this.moreTime = this.newTime
       let content = ''
       let contentTwo = ''
