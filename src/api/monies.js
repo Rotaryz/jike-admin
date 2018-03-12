@@ -43,4 +43,3 @@ export function orderDetail(params) {
     return Promise.resolve(res.data)
   })
 }
-
