@@ -1,10 +1,11 @@
 <template>
-  <div class="form-box" @click="hidePageDetail">
+  <div class="form-box">
     <div class="tag">
       <div class="tag-title">
         <span class="title-item" v-for="(item,index) in navTitle" :key="index">{{index > 0 ? '/' : ''}} {{item}}</span>
       </div>
       <div class="tag-choice" v-if="chioce">
+        <slot name="order-sec"></slot>
         <div class="tag-time" v-if="isDate">
           <span class="time-title" v-for="(item, index) in timeList"
                 :key="index" :class="{'time-title-active': TimeIndex === index}"
@@ -23,8 +24,8 @@
         </div>
         <div class="tag-city" v-if="isCity">
           <span class="city-title">地域筛选</span>
-          <div class="city-select" v-for="(item, index) in cityList"
-               :key="index" @click.stop="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow">
+          <div class="city-select" v-for="(item, index) in cityList" :class="{'city-select-active': item.show}"
+               :key="index" @click.stop="checkCity(index)" @mouseleave="leaveHide" @mouseenter="endShow" :style="{'cursor': prams[index - 1] === '' && index !== 0 ? 'not-allowed' : 'pointer'}">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
@@ -45,8 +46,8 @@
         </div>
         <div class="tag-industry" v-if="isIndustrie">
           <span class="city-title">行业筛选</span>
-          <div class="city-select" v-for="(item, index) in industrieList"
-               :key="index" @click.stop="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow">
+          <div class="city-select" v-for="(item, index) in industrieList" :class="{'city-select-active': item.show}"
+               :key="index" @click.stop="industrie(index)" @mouseleave="leaveHide" @mouseenter="endShow" :style="{'cursor': industrieId === -1 && index !== 0 ? 'not-allowed' : 'pointer'}">
             <div class="city-show" :class="{'city-show-active':item.active}">
               {{item.title}}
               <div class="city-tap">
@@ -73,37 +74,46 @@
     </div>
     <slot name="money"></slot>
     <div class="data">
+      <toast ref="toast"></toast>
       <div class="data-content">
         <div class="data-content-box">
           <div class="data-detail">
             <slot name="form-list"></slot>
+            <div class="blank" v-show="showBlank">
+              <div class="blank-icon"></div>
+              <div class="blank-title">暂无相关数据</div>
+            </div>
           </div>
           <div class="total">
             <div>每页{{pageDtail[0].per_page}}条，共{{pageDtail[0].total}}条数据</div>
             <div class="page">
-              <div class="page-icon" @click="subtract">
+              <div class="page-icon" @click="subtract" :style="{'cursor': isHand.handLeft}" @mouseenter="notAllowed">
               </div>
               <div class="pade-detail">{{page}}/{{pageDtail[0].total_page}}</div>
-              <div class="page-icon page-icon-two" @click="addPage">
+              <div class="page-icon page-icon-two" @click="addPage" @mouseenter="notAllowed" :style="{'cursor': isHand.handRight}">
               </div>
-              <div class="border-page page-total" @click.stop="showPageDetail">
-                {{page}}/{{pageDtail[0].total_page}}
-                <span class="page-tap">
+              <div class="page-box" :class="{'input-height': pageDetail}">
+                <div class="border-page page-total input-height-item" @click.stop="showPageDetail">
+                  {{page}}/{{pageDtail[0].total_page}}
+                  <span class="page-tap">
                 <i class="page-top" :class="{'page-bottom':pageDetail}"></i>
               </span>
-                <transition name="fade">
-                  <ul class="page-list" v-show="pageDetail">
-                    <li class="page-item" v-for="item in pageDtail[0].total_page"
-                        :key="item"
-                        :class="{'page-item-active': pageIndex === item}"
-                        @click.stop="detailPage(item)">
-                      {{item}}/{{pageDtail[0].total_page}}
-                    </li>
-                  </ul>
-                </transition>
+                  <transition name="fade">
+                    <ul class="page-list" v-show="pageDetail">
+                      <li class="page-item" v-for="item in pageDtail[0].total_page"
+                          :key="item"
+                          :class="{'page-item-active': pageIndex === item}"
+                          @click.stop="detailPage(item)">
+                        {{item}}/{{pageDtail[0].total_page}}
+                      </li>
+                    </ul>
+                  </transition>
+                </div>
               </div>
-              <input type="text" class="border-page" v-model="pageInput"/>
-              <div class="border-page" @click="goPage">跳转</div>
+              <div class="input-box" :class="{'input-height': focus}">
+                <input type="number" class="border-page input-height-item" v-model="pageInput" :focus="focus" @click.stop="focus = !focus"/>
+              </div>
+              <div class="border-page input-height-item" @click="goPage" @mouseenter="notAllowed" :style="{'cursor': isHand.handGo}">跳转</div>
             </div>
           </div>
         </div>
@@ -116,7 +126,6 @@
         </div>
       </transition>
     </div>
-    <toast ref="toast"></toast>
   </div>
 </template>
 
@@ -162,6 +171,8 @@ export default {
   },
   data() {
     return {
+      focus: false,
+      showBlank: false,
       moreTime: '',
       pageInput: '',
       TimeIndex: 0,
@@ -212,7 +223,8 @@ export default {
       shopIndex: 0,
       shopData: ['', ''],
       navTitle: [],
-      setTime: null
+      setTime: null,
+      isHand: {handLeft: 'pointer', handRight: 'pointer', handGo: 'pointer'}
     }
   },
   created() {
@@ -222,15 +234,28 @@ export default {
         if (this.pageInput !== '') {
           if (this.pageInput > this.pageDtail[0].total_page) {
             this.pageInput = this.pageDtail[0].total_page
+          } else if (this.pageInput === '0') {
+            this.pageInput = 1
           }
+          this.pageInput = Math.floor(this.pageInput * 1)
           this.page = this.pageInput
           this.$emit('addPage', this.page)
         }
       }
     }
+    window.onclick = () => {
+      this.hidePageDetail()
+    }
     sessionStorage.getItem('title') ? this.navTitle = sessionStorage.getItem('title').split(',') : this.navTitle = this.navTitle
   },
   methods: {
+    isBlank(res) {
+      if (res.length === 0) {
+        this.showBlank = true
+      } else {
+        this.showBlank = false
+      }
+    },
     leaveHide() {
       this.setTime = setTimeout(() => {
         this.clickHide()
@@ -279,6 +304,9 @@ export default {
       })
     },
     industrie(index) {
+      this.cityList.forEach((item) => {
+        item.show = false
+      })
       this.industrieList.forEach((item, idx) => {
         if (idx !== index) {
           item.show = false
@@ -300,12 +328,16 @@ export default {
       this.showIndustrie()
     },
     goPage() {
-      this.pageInput = this.pageInput * 1
-      if (this.pageInput > this.pageDtail[0].total_page) {
-        this.pageInput = this.pageDtail[0].total_page
+      if (this.pageInput !== '') {
+        this.pageInput = Math.floor(this.pageInput * 1)
+        if (this.pageInput > this.pageDtail[0].total_page) {
+          this.pageInput = this.pageDtail[0].total_page
+        } else if (this.pageInput === 0) {
+          this.pageInput = 1
+        }
+        this.page = this.pageInput
+        this.$emit('addPage', this.page)
       }
-      this.page = this.pageInput
-      this.$emit('addPage', this.page)
     },
     showPageDetail() {
       this.pageDetail = !this.pageDetail
@@ -313,6 +345,7 @@ export default {
     hidePageDetail() {
       this.clickHide()
       this.pageDetail = false
+      this.focus = false
     },
     detailPage(page) {
       this.page = page
@@ -335,13 +368,16 @@ export default {
       })
     },
     checkCity(index) {
+      this.industrieList.forEach((item) => {
+        item.show = false
+      })
       this.regPrams()
       this.cityList.forEach((item, idx) => {
         if (idx !== index) {
           item.show = false
         }
       })
-      if (index > 0 && this.prams[index - 1] === '') {
+      if (index > 0 && (this.prams[index - 1] === '' || this.prams[index - 1].length === 1)) {
         return false
       }
       this.cityIndex = index
@@ -407,15 +443,26 @@ export default {
         this.page++
         this.$emit('addPage', this.page)
       }
+      this.notAllowed()
+    },
+    notAllowed() {
+      this.page === 1 ? this.isHand.handLeft = 'not-allowed' : this.isHand.handLeft = 'pointer'
+      this.page === this.pageDtail[0].total_page ? this.isHand.handRight = 'not-allowed' : this.isHand.handRight = 'pointer'
+      this.pageInput === '' ? this.isHand.handGo = 'not-allowed' : this.isHand.handGo = 'pointer'
     },
     subtract() {
       if (this.page > 1) {
         this.page--
         this.$emit('addPage', this.page)
       }
+      this.notAllowed()
     },
     showContent(content, time) {
-      this.$refs.toast.show(content, time)
+      const showTime = time || 1000
+      this.$refs.toast.show(content, showTime)
+    },
+    beginPage() {
+      this.page = 1
     }
   },
   watch: {
@@ -440,7 +487,7 @@ export default {
   @import '~common/stylus/mixin'
   .form-box
     height: 100%
-    min-height: 720px
+    min-height: 700px
     overflow-y :auto
     display: flex
     flex-direction: column
@@ -470,6 +517,8 @@ export default {
         display: flex
         padding: 0 10px
         margin: 20px 0 10px
+        position: relative
+        z-index :100
         .tag-time
           white-space :nowrap
           .time-title
@@ -486,7 +535,7 @@ export default {
               row-center()
               bottom: 0px
               content: ''
-              height: 3px
+              height: 2px
               width: 32px
               background: $color-white
             &:last-child
@@ -511,14 +560,18 @@ export default {
           cursor: pointer
           height: 30px
           margin-left: 10px
-          border: 1px solid $color-line
-          border-radius: 3px
+          border :1px solid $color-white
+          border-radius: 4px
           font-size: $font-size-medium
           color: $color-text-little
           transform: translateY(-25%)
           position: relative
           .city-show
-            padding: 8px 39px 8px 10px
+            border: 1px solid $color-line
+            border-radius :2px
+            padding: 0 39px 0 10px
+            line-height :30px
+            height :100%
             no-wrap()
             .city-tap
               position: absolute
@@ -558,9 +611,15 @@ export default {
                 transform-origin:  1px 3px
                 transform : rotate(180deg) translateX(-43%)
                 transition : all 0.2s
-            &:hover
+          .city-show-active
+            color :$color-text
+          &:hover
+            transition :color 0.2s
+            .city-show
               color: $color-text
-              transition :color 0.2s
+              border :1px solid $color-text-little
+              .city-tap
+                border-left :1px solid $color-text-little
               .city-tap-top
                 border: 6px solid $color-text
                 border-bottom: 6px solid transparent
@@ -577,8 +636,6 @@ export default {
                 transform-origin:  1px 3px
                 transform : rotate(180deg) translateX(-43%)
                 transition : all 0.2s
-          .city-show-active
-            color: $color-text
           .city-big-box
             position: absolute
             min-width: 100%
@@ -596,7 +653,7 @@ export default {
             &.fade-enter-to, &.fade-leave-to
               transition: opacity .2s ease-in-out
             .city-box-item
-              no-wrap()
+              white-space :nowrap
               padding: 0 10px
               text-align:left
               height: 26px
@@ -604,16 +661,15 @@ export default {
               font-size: $font-size-medium
               &:hover
                 background: $color-big-background
-              &:last-child
-                margin-bottom: 13px
-              &:first-child
-                margin-top: 13px
             .city-box-item-active
               background: $color-big-background
         .city-select-active
           color: $color-text
+          border :2px solid rgba(102,102,102,.2)
+          .city-show
+            border :1px solid $color-text-little
     .data
-      flex: 9
+      flex: 1
       padding: 25px
       position: relative
       .data-content
@@ -628,6 +684,17 @@ export default {
           height :100%
         .data-detail
           height: 92.4%
+          position: relative
+          .blank
+            all-center()
+            text-align :center
+            .blank-icon
+              icon-image('icon-null')
+              width :140px
+              height :89px
+              margin-bottom :30px
+            .blank-title
+              color :$color-text-little
         .total
           width: 100%
           height: 7.6%
@@ -648,16 +715,21 @@ export default {
               margin-right: 10px
               height: 25px
               width: 25px
+              &:hover
+                icon-image('icon-before_hover')
             .page-icon-two
               icon-image('icon-later')
+              &:hover
+                icon-image('icon-later_hover')
             .border-page
               display: flex
-              align-items: center
+              line-height: 25px
               border-radius: 3px
               margin-right: 10px
               border: 1px solid $color-line
               font-size: $font-size-medium
             div.border-page
+              margin-right :0
               padding: 0 15px
               height: 25px
               line-height: 25px
@@ -721,6 +793,16 @@ export default {
               height: 25px
               width: 39px
               text-align: center
+            .input-box
+              border:2px solid $color-white
+              height:29px
+              width :43px
+              margin-right: 10px
+            .page-box
+              border:2px solid $color-white
+              height :29px
+              width :73px
+              margin-right: 10px
       .shade-win
         height: 100%
         width: 100%
@@ -737,6 +819,5 @@ export default {
           box-shadow: 0 0 5px 0 rgba(12, 6, 14, 0.60)
           border-radius: 3px
           background: $color-white
-          width: 40%
-          min-width :420px
+          width :450px
 </style>

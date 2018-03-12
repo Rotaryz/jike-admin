@@ -1,6 +1,6 @@
 <template>
   <form-box ref="order" :timeList="timeList" @checkTime="checkTime" @addPage="addPage" @showCity="showCity" @showIndustrie="showIndustrie" :pageDtail="pageDtail" :isIndustrie="isIndustrie">
-    <div slot="form-list" class="form-list">
+    <div slot="form-list" class="form-list" v-show="showContent">
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -12,7 +12,7 @@
             <div class="list-item list-text">{{item.merchant_count}}</div>
             <div class="list-item list-text">{{item.user_count}}</div>
             <div class="list-item list-text">{{item.customer_count}}</div>
-            <div class="list-item list-text">{{item.customer_count}}</div>
+            <div class="list-item list-text">{{item.order_count}}</div>
             <div class="list-item list-text">{{item.money_total}}</div>
           </li>
         </ul>
@@ -46,7 +46,8 @@ export default {
       status: 1,
       statusList: statusList,
       shopId: {},
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -86,8 +87,10 @@ export default {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page}, this.address, this.shopId)
       datasList(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.datasList = res.data
+          this.$refs.order.isBlank(res.data)
           let pages = res.meta
           this.pageDtail = [{total: pages.total, per_page: pages.per_page, total_page: pages.last_page}]
         }

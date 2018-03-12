@@ -31,7 +31,7 @@ export default {
   @import '~common/stylus/variable'
 
   .toast
-    position: fixed
+    position: absolute
     z-index: 9999
     top: 42%
     left: 50%

@@ -13,7 +13,7 @@
           </div>
         </div>
       </div>
-      <div slot="form-list" class="form-list" v-show="type === 'industry'">
+      <div slot="form-list" class="form-list" v-show="type === 'industry' && showContent">
         <div class="list-header list-industry">
           <div class="list-item" v-for="(item, index) in titleList" :key="index">
             {{item}}
@@ -28,7 +28,7 @@
           </li>
         </ul>
       </div>
-      <div slot="form-list" class="form-list" v-show="type === 'circles'">
+      <div slot="form-list" class="form-list" v-show="type === 'circles' && showContent">
         <div class="list-header">
           <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
             {{item}}
@@ -50,25 +50,29 @@
         </div>
         <div class="shade-city">
           <span class="city-name">{{shadeTitle}}名称</span>
-          <input type="text" class="shade-city-select" placeholder="请输入" v-model="name">
+          <div class="input-box" :class="{'input-height': inputCirent}">
+            <input type="text" class="shade-city-select input-height-item" placeholder="请输入" v-model="name" @click="inputCirent = true" @blur="inputCirent = false">
+          </div>
         </div>
         <div class="shade-city"  v-for="(item, index) in cityList"
-             :key="index" @click.stop="checkCity(index)">
+             :key="index">
           <span class="city-name">{{item.tip}}</span>
-          <div class="shade-city-select shade-after hand">
-            {{item.title}}
-            <span :class="item.show && item.data.length > 0 ? 'shade-bottom' : 'shade-top'"></span>
-            <transition name="fade">
-              <ul class="shade-city-box"  v-show="item.show && item.data.length > 0">
-                <li class="shade-city-tiem"  v-for="(items, idx) in item.data"
-                    :class="{'shade-city-tiem-active':item.index === idx}"
-                    :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}</li>
-              </ul>
-            </transition>
+          <div class="input-box" :class="{'input-height': item.show}">
+            <div class="shade-city-select shade-after hand input-height-item" @click.stop="checkCity(index)">
+              {{item.title}}
+              <span :class="item.show && item.data.length > 0 ? 'shade-bottom' : 'shade-top'"></span>
+              <transition name="fade">
+                <ul class="shade-city-box"  v-show="item.show && item.data.length > 0">
+                  <li class="shade-city-tiem"  v-for="(items, idx) in item.data"
+                      :class="{'shade-city-tiem-active':item.index === idx}"
+                      :key="idx" @click.stop="showCityList(idx,index,items)">{{items.name || items}}</li>
+                </ul>
+              </transition>
+            </div>
           </div>
         </div>
         <div class="ok">
-          <span class="submit" @click="setData">保存</span>
+          <span class="submit hand" @click="setData">保存</span>
         </div>
       </div>
     </form-box>
@@ -87,6 +91,7 @@ const titleListSec = ['行业类型名称', '所属行业', '操作']
 export default {
   data() {
     return {
+      inputCirent: false,
       chioce: false,
       isDate: false,
       tapList: [{title: '商圈信息', type: 'circles'}, {
@@ -131,7 +136,8 @@ export default {
       prams: ['', '', ''],
       name: '',
       insId: 0,
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -150,6 +156,7 @@ export default {
       })
     },
     checkCity(index) {
+      this.inputCirent = false
       for (let i = 0; i < this.cityList.length; i++) {
         this.prams[i] = this.cityList[i].title.replace(/^(请选择.{2})/g, '')
       }
@@ -256,8 +263,10 @@ export default {
       let data = {page: this.page}
       if (this.type === 'circles') {
         circlesDetail(data).then((res) => {
+          this.showContent = true
           if (res.error === ERR_OK) {
             this.merchanList = res.data
+            this.$refs.order.isBlank(res.data)
             let pages = res.meta
             this.pageDtail = [{
               total: pages.total,
@@ -269,6 +278,7 @@ export default {
         return false
       }
       industryDetail(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.industryList = res.data
           let pages = res.meta
@@ -347,7 +357,7 @@ export default {
         cursor: pointer
         height: 25px
         font-size: $font-size-medium
-        padding: 4% 11%
+        padding: 5% 14%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
@@ -360,6 +370,9 @@ export default {
   .list-industry
     .list-item:nth-child(2)
       flex :2.9
+  .list-header
+    .list-item:last-child
+      transform :translateX(9%)
 
   .shade-box
     .shade-border
@@ -387,6 +400,10 @@ export default {
           right: 30px
           color: #979797
           font-size: 24px
+          &:hover
+            transform :translateY(-50%) rotate(90deg)
+            transform-origin :50%
+            transition : transform 0.5s
     .shade-city
       padding-left :30px
       margin-top :20px
@@ -395,37 +412,52 @@ export default {
         min-width :56px
         font-size :$font-size-medium
         transform :translateY(-50%)
+      .input-box
+        display: inline-block
+        margin-left :56px
+        border :2px solid $color-white
+        width: 164px
+        height: 34px
+        border-radius :5px
+      .input-height
+        .input-height-item
+          border :1px solid $color-text-little
       .shade-city-select
         padding-left :10px
         font-size :$font-size-medium
         display :inline-block
         height :30px
         line-height: 30px
-        width :160px
+        width :210px
         border-radius :3px
         border :1px solid $color-icon-line
         color: $color-text-icon
-        margin-left :56px
         .shade-top
           position: absolute
-          right: 6px
-          top: 42%
+          right: 3px
+          top: 44%
           display: inline-block
           height: 0
           border: 5px solid $color-text
           border-bottom: 5px solid transparent
           border-left: 5px solid transparent
           border-right: 5px solid transparent
+          transform-origin:  1px 2px
+          transform : rotate(0deg) translateX(-43%)
+          transition : all 0.2s
         .shade-bottom
-          right: 6px
+          right: 3px
           position: absolute
-          top: 11%
+          top: 44%
           display: inline-block
           height: 0
           border: 5px solid $color-text
-          border-top: 5px solid transparent
+          border-bottom: 5px solid transparent
           border-left: 5px solid transparent
           border-right: 5px solid transparent
+          transform-origin:  1px 2px
+          transform : rotate(180deg) translateX(-43%)
+          transition : all 0.2s
         .shade-city-box
           box-shadow: 0 1px 5px 0 rgba(12,6,14,0.20)
           position: absolute
@@ -462,6 +494,9 @@ export default {
           height :100%
           top: 0
           background :$color-icon-line
+        &:hover
+          &::after
+            background :$color-text-little
     .ok
       height: 9.26vh
       display: flex

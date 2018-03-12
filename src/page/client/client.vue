@@ -6,7 +6,7 @@
         <span class="select-item hand" v-for="(item, index) in statusList" :class="{'select-item-active': status === item.status}" :key="index" @click="orderStatus(item.status)">{{item.title}}</span>
       </div>
     </div>
-    <div slot="form-list" class="form-list">
+    <div slot="form-list" class="form-list" v-show="showContent">
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -45,10 +45,14 @@
       </div>
       <div class="shade-border shade-exprent shade-tiem">
         备注
-        <textarea id="exprent" placeholder="请输入" v-model="customersDetail.remark"></textarea>
+        <div class="exprent-box" >
+          <div class="ex-box" :class="{'input-height':focus}">
+            <textarea id="exprent" class="input-height-item" @focus="focus = true" @blur="focus = false" placeholder="请输入" v-model="customersDetail.remark"></textarea>
+          </div>
+        </div>
       </div>
-      <div class="ok" @click="customerRemark">
-        <span class="submit">保存</span>
+      <div class="ok">
+        <span class="submit hand" @click="customerRemark">保存</span>
       </div>
     </div>
     <toast></toast>
@@ -65,6 +69,7 @@ const statusList = [{title: '订单客户', status: 'order_customer'}, {title: '
 export default {
   data() {
     return {
+      focus: false,
       titleList: titleList,
       customers: [],
       time: 1,
@@ -76,7 +81,8 @@ export default {
       status: 'order_customer',
       statusList: statusList,
       remarkId: 0,
-      heightIndex: -1
+      heightIndex: -1,
+      showContent: false
     }
   },
   created() {
@@ -90,6 +96,7 @@ export default {
       }
       customerRemark(data).then((res) => {
         if (res.error === ERR_OK) {
+          this.focus = false
           this.$refs.order.hideShade()
         } else {
           this.$refs.toast.show(res.message)
@@ -103,8 +110,10 @@ export default {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page, user_type: this.status}, this.address)
       customers(data).then((res) => {
+        this.showContent = true
         if (res.error === ERR_OK) {
           this.customers = res.data
+          this.$refs.order.isBlank(res.data)
           let pages = res.meta
           this.pageDtail = [{total: pages.total, per_page: pages.per_page, total_page: pages.last_page}]
         }
@@ -207,6 +216,9 @@ export default {
         flex :0.5
     .list-box-active
       background: $color-background
+  .list-header
+    .list-item:last-child
+      transform :translateX(7%)
   .shade-box
     .shade-border
       border-bottom :1px solid $color-icon-line
@@ -230,17 +242,34 @@ export default {
           right: 30px
           color: #979797
           font-size :24px
+          &:hover
+            transform :translateY(-50%) rotate(90deg)
+            transform-origin :50%
+            transition : transform 0.5s
     .shade-exprent
       height : 14.42vh
       display: block
       padding-top :10px
-      #exprent
-        padding : 8px
-        transform :translateY(4px)
-        display :block
-        height :7.41vh
-        width :88.764%
-        border :0.5px solid $color-icon-line
+      .exprent-box
+        height :10.2vh
+        width :88%
+        border :2px solid $color-white
+        .ex-box
+          margin-top :2px
+          border :2px solid $color-white
+          height :100%
+          width :95.6%
+        #exprent
+          height :100%
+          width :100%
+          padding : 8px
+          display :inline-block
+          box-sizing :border-box
+          border :1px solid $color-icon-line
+      .text-height
+        border:2px solid rgba(102,102,102,.2) !important
+        #exprent
+          border :1px solid $color-text-icon
     .ok
       height :100px
       display :flex
@@ -260,8 +289,12 @@ export default {
           background :$color-active
   .shade-tiem:hover
     background :$color-background
-    textarea.shade-text
-      background: $color-background
+    .exprent-box
+      border :2px solid $color-background
+      .ex-box
+        border : 2px solid $color-background
+      textarea#exprent
+        border :1px solid $color-text-icon
   .selects
     display :flex
     font-size :$font-size-medium

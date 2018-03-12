@@ -45,16 +45,17 @@
           <a href="javaScript:;" class="nav-tap">
             <span class="nav-icon"><img :src="item.icon" class="nav-pic"></span>
           </a>
-          <ul class="nav-small-child" v-if="item.children"
-              v-show="index === hoverIndex">
-            <li class="nav-item" v-for="(items , idx) in item.children"
-                :class="hoverChildIndex === idx ? 'nav-item-active' : ''"
-                :key="idx" @click.stop="hoverDetail(idx,index)">
-              <a :href="items.url" class="nav-tap">
-                <div class="small-title">{{items.title}}</div>
-              </a>
-            </li>
-          </ul>
+          <div class="nav-small-box">
+            <ul class="nav-small-child" v-if="item.children" v-show="index === hoverIndex">
+              <li class="nav-item" v-for="(items , idx) in item.children"
+                  :class="hoverChildIndex === idx ? 'nav-item-active' : ''"
+                  :key="idx" @click.stop="hoverDetail(idx,index)">
+                <a :href="items.url" class="nav-tap">
+                  <div class="small-title">{{items.title}}</div>
+                </a>
+              </li>
+            </ul>
+          </div>
         </li>
       </ul>
     </div>
@@ -115,18 +116,20 @@ const navList = [
     children: [{
       title: '订单管理',
       url: '#/container/order'
-    }],
-    showHeight: height
-  }, {
-    title: '账户管理',
-    icon: require('./icon-account@2x.png'),
-    url: '#/container/account',
-    children: [{
-      title: '账户管理',
-      url: '#/container/account'
+    }, {
+      title: '订单查询',
+      url: '#/container/order-inquiry'
     }],
     showHeight: height
   }]
+//, {
+//  title: '账户管理',
+//    icon: require('./icon-account@2x.png'),
+//    url: '#/container/account',
+//    children: [{
+//    title: '账户管理',
+//    url: '#/container/account'
+//  }
 export default {
   data() {
     return {
@@ -140,8 +143,9 @@ export default {
       showHeight: height,
       timer: null,
       clickChild: 0,
-      recodIndex: 2,
-      showAnimation: false
+      recodIndex: -1,
+      showAnimation: false,
+      sortTimer: null
     }
   },
   created() {
@@ -167,7 +171,7 @@ export default {
     showChild(index, status = true) {
       this.smallIndex = index
       clearInterval(this.timer)
-      if (this.navList[index].children.length === 1) {
+      if (this.navList[index].children.length === 1 && this.recodIndex !== -1) {
         this.timer = setInterval(() => {
           if (this.navList[this.recodIndex].showHeight <= height) {
             this.navList[this.recodIndex].showHeight = height
@@ -179,32 +183,49 @@ export default {
         this.bigChild = index
         sessionStorage.setItem('title', [this.navList[index].title])
       } else if (this.navList[index].children.length > 1) {
+        clearInterval(this.timer)
         let childCode = this.navList[index].childrenIndex === -1 ? 0 : this.navList[index].childrenIndex
+        this.recodIndex = index
         this.navList[this.recodIndex].childrenIndex = childCode
         sessionStorage.setItem('title', [this.navList[index].title, this.navList[index].children[childCode].title])
         this.bigChild = -1
-        this.recodIndex = index
-        let num = this.navList[index].children.length
-        if (this.navList[index].showHeight === height) {
-          let target = (num + 1) * height
-          this.timer = setInterval(() => {
-            if (this.navList[index].showHeight >= target) {
-              this.navList[index].showHeight = target
-              clearInterval(this.timer)
-              return false
-            }
-            this.navList[index].showHeight += 20
-          }, 30)
-        } else {
-          if (status) {
-            this.timer = setInterval(() => {
-              if (this.navList[index].showHeight <= height) {
-                this.navList[index].showHeight = height
-                clearInterval(this.timer)
-                return false
+        clearInterval(this.timer)
+        for (let i = 0; i < this.navList.length; i++) {
+          if (i !== index && this.navList[i].showHeight > height) {
+            clearInterval(this.sortTimer)
+            this.sortTimer = setInterval(() => {
+              if (this.navList[i].showHeight <= height) {
+                this.navList[i].showHeight = height
+                clearInterval(this.sortTimer)
+                return
               }
-              this.navList[index].showHeight -= 20
+              this.navList[i].showHeight -= 20
             }, 30)
+          } else {
+            clearInterval(this.timer)
+            let num = this.navList[index].children.length
+            if (this.navList[index].showHeight === height) {
+              let target = (num + 1) * height
+              this.timer = setInterval(() => {
+                if (this.navList[index].showHeight >= target) {
+                  this.navList[index].showHeight = target
+                  clearInterval(this.timer)
+                  return
+                }
+                this.navList[index].showHeight += 20
+              }, 30)
+            } else {
+              if (status) {
+                this.timer = setInterval(() => {
+                  if (this.navList[index].showHeight <= height) {
+                    this.navList[index].showHeight = height
+                    clearInterval(this.timer)
+                    return
+                  }
+                  this.navList[index].showHeight -= 20
+                }, 30)
+              }
+            }
           }
         }
       }
@@ -288,19 +309,19 @@ export default {
     .big-show
       width: 200px
       .herder
-        padding-left: 60px
+        padding-left: 57px
         height: 65px
         overflow: hidden
-        line-height: 65px
+        line-height: 67px
         font-size: 20px
         background: $color-menu-select
         position: relative
         .icon
           col-center()
           icon-image('pic-logo_menu')
-          height: 36.4px
-          width: 33.6px
-          left: 18px
+          height: 32px
+          width: 30px
+          left: 22px
           transform: translateY(-55%)
       .nav-big
         .nav-item
@@ -309,7 +330,7 @@ export default {
           border-bottom: 1px solid #3B3B43
           .nav-tap
             transition :all 0.2s
-            border-left: 6px solid $color-menu-background
+            border-left: 4px solid $color-menu-background
             align-items: center
             color: $color-white
             display: flex
@@ -331,20 +352,20 @@ export default {
               font-size: $font-size-medium-x
               justify-content: space-between
             .nav
-              position: absolute
+              col-center()
               height: 18px
               width: 18px
               right: 23px
               icon-image('icon-pressed')
             &:hover
               background: $color-menu-select
-              border-left: 6px solid $color-menu-select
+              border-left: 4px solid $color-menu-select
               transition :all 0.2s
           .nav-tap-active
             background: $color-menu-select
-            border-left: 6px solid $color-nomal !important
+            border-left: 4px solid $color-nomal !important
           .nav-item-no-border
-            border-left: 6px solid $color-menu-background
+            border-left: 4px solid $color-menu-background
         .nav-big-child
           .nav-tap
             .nav-icon
@@ -353,7 +374,7 @@ export default {
             margin-left: 20px
           .nav-big-active
             background: $color-menu-select
-            border-left: 6px solid $color-nomal !important
+            border-left: 4px solid $color-nomal !important
     .big-hide
       width: 79px
       transition: all .2s
@@ -366,17 +387,17 @@ export default {
         position: relative
         .icon
           icon-image('pic-logo_menu')
-          height: 36.4px
-          width: 33.6px
+          height: 32px
+          width: 30px
           col-center()
           transform: translateY(-55%)
-          left: 20px
+          left: 22px
       .nav-small
         .nav-item
           height: 60px
           border-bottom: 1px solid #3B3B43
           position: relative
-          border-left: 6px solid $color-menu-background
+          border-left: 4px solid $color-menu-background
           .nav-tap
             display: block
             height: 100%
@@ -387,10 +408,13 @@ export default {
             height: 20px
             col-center()
             left: 20px
-          .nav-small-child
+          .nav-small-box
             position: absolute
             right: -177px
             top: 5px
+            padding-left :3px
+            background :$color-white
+          .nav-small-child
             background: $color-menu-background
             border-radius: 4px
             z-index :300
@@ -412,10 +436,10 @@ export default {
               background: $color-menu-select
           &:hover
             background: $color-menu-select
-            border-left: 6px solid $color-nomal
+            border-left: 4px solid $color-nomal
         .nav-small-active
           background: $color-menu-select
-          border-left: 6px solid $color-nomal
+          border-left: 4px solid $color-nomal
     .small-hide
       width: 200px
       transition: all .2s
