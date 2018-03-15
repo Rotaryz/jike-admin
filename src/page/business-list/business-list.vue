@@ -159,7 +159,7 @@
           <div class="shade-border shade-tiem activation-code" :class="{'shade-input':!disableds}" v-show="merchantDetail.is_leader">
             <span class="shade-title">生成激活码</span>
             <div class="input-box" :class="{'input-height': heightType === 7}">
-              <input class="shade-text" :class="{'input-height-item': !disableds}"
+              <input class="shade-text" :class="{'input-height-item': !disableds}" type="number"
                      v-model="activationCode"
                      name="change" :disabled="disableds" @focus="isFocus(7)"
                      @blur="heightType = -1"/>
@@ -442,7 +442,7 @@ export default {
         if (res.error === ERR_OK) {
           let content = ''
           this.isDisabledCode ? content = '解冻' : content = '冻结'
-          this.$refs.order.showContent(content + '开通')
+          this.$refs.order.showContent(content + '成功')
           this.$refs.order.hideShade()
           this.showList()
           return
@@ -519,8 +519,9 @@ export default {
       openService(data).then((res) => {
         if (res.error === ERR_OK) {
           this.merchanList[index].end_time = false
-          this.$refs.order.showContent('成功开通')
+          this.$refs.order.showContent('开通成功')
           this.showList()
+          this.endTime = ''
           return
         }
         this.$refs.order.showContent(res.message)
@@ -594,7 +595,7 @@ export default {
       .showDetail
         cursor: pointer
         font-size: $font-size-medium
-        padding: 4% 7%
+        padding: 5% 7%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
