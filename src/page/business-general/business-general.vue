@@ -730,10 +730,10 @@
     .del-tip
       margin-bottom :25.281px
       display: flex
-      padding: 0 17px
+      padding: 0 7.49%
       justify-content: space-between
       .del-btn
-        width: 41.20%
+        width: 47%
         height: 33.708px
         line-height: 33.708px
         text-align: center
