@@ -83,3 +83,38 @@ export function indestryAdd(params) {
     return Promise.resolve(res.data)
   })
 }
+/**
+ * 开通商家服务
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function openService(params) {
+  const url = `/api/merchant/open-service`
+  return axios.get(url, {params: params}).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+/**
+ * 冻结商家服务
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function disable
+(params) {
+  const url = `/api/merchant/disable`
+  return axios.get(url, {params: params}).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/**
+ * 删除商圈
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function delCircle(params) {
+  const url = `/api/merchant/del-circle`
+  return axios.get(url, {params: params}).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

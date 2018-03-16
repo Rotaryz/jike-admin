@@ -206,7 +206,7 @@ export default {
       .showDetail
         cursor: pointer
         font-size: $font-size-medium
-        padding: 4% 11%
+        padding: 5% 11%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
