@@ -336,6 +336,8 @@ export default {
         this.isDisabled = res.status
         break
       }
+      this.page = 1
+      this.$refs.order.beginPage()
       this.showList()
     },
     onPhone() {
