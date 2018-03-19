@@ -336,6 +336,8 @@ export default {
         this.isDisabled = res.status
         break
       }
+      this.page = 1
+      this.$refs.order.beginPage()
       this.showList()
     },
     onPhone() {
@@ -344,7 +346,7 @@ export default {
         return false
       }
     },
-    RiQi(time) {
+    riQi(time) {
       let now = new Date(time)
       let year = now.getFullYear()
       let month = now.getMonth() + 1
@@ -352,7 +354,8 @@ export default {
       let hour = now.getHours()
       let minute = now.getMinutes()
       let second = now.getSeconds()
-      return year + '-' + month + '-' + date + '   ' + hour + ':' + minute + ':' + second
+      let res = year + '-' + month + '-' + date + '   ' + hour + ':' + minute + ':' + second
+      return res
     },
     change() {
       this.disableds = !this.disableds
@@ -366,7 +369,7 @@ export default {
       this.heightType = num
     },
     merchantMessage(id) {
-      let date = this.RiQi(this.merchantDetail.expiration_time)
+      let date = this.riQi(this.merchantDetail.expiration_time)
       let reg = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/
       if (!reg.test(this.merchantDetail.mobile)) {
         this.$refs.order.showContent('请输入正确的手机号码')
@@ -514,7 +517,7 @@ export default {
         this.$refs.order.showContent('请选择开通时间')
         return
       }
-      let endTime = this.RiQi(this.endTime)
+      let endTime = this.riQi(this.endTime)
       let data = {expiration_time: endTime, merchant_id: this.merchantId}
       openService(data).then((res) => {
         if (res.error === ERR_OK) {
