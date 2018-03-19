@@ -418,6 +418,7 @@
         this.page = 1
         this.$refs.order.beginPage()
         this.showList()
+//        console.log()
       },
       addPage(page) {
         this.page = page
