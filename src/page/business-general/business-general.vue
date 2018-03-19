@@ -416,7 +416,8 @@
         this.tapIndex = index
         this.type = value
         this.page = 1
-        this.showList()
+        this.$refs.order.beginPage()
+        this.showkList()
       },
       addPage(page) {
         this.page = page
