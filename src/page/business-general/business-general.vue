@@ -417,7 +417,7 @@
         this.type = value
         this.page = 1
         this.$refs.order.beginPage()
-        this.showkList()
+        this.showList()
       },
       addPage(page) {
         this.page = page
