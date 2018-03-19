@@ -279,7 +279,7 @@ export default {
         this.industrieList[index].title = title
         this.shopData[index] = id
         this.industrieId = id
-        this.page = 1
+        this.beginPage()
         this.shopData.forEach((item, idx) => {
           if (idx > index) {
             if (idx === 1) {
@@ -402,7 +402,7 @@ export default {
           }
         })
         this.regPrams()
-        this.page = 1
+        this.beginPage()
         this.$emit('showCity', this.prams, this.page)
       }, 100)
     },
@@ -423,7 +423,7 @@ export default {
     checkTime(index, type) {
       this.hideShade()
       this.TimeIndex = index
-      this.page = 1
+      this.beginPage()
       if (type === '') {
         this.moreTime = ''
         this.showPicker = true
