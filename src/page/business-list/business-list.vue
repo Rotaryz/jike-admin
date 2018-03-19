@@ -338,6 +338,7 @@ export default {
       }
       this.page = 1
       this.$refs.order.beginPage()
+      console.log('aaa')
       this.showList()
     },
     onPhone() {
