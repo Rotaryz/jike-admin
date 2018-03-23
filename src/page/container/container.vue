@@ -31,7 +31,7 @@
 <script type="text/ecmascript-6">
 import Navigation from 'base/navigation/navigation'
 import {datasList} from 'api/datas'
-import {initAxios} from 'common/js/config'
+
 export default {
   data() {
     return {
@@ -54,7 +54,6 @@ export default {
       localStorage.clear()
       sessionStorage.clear()
     } else {
-      initAxios()
       datasList().then((res) => {
         this.dataStatus = res.message
         if (this.dataStatus === '凭证已失效') {

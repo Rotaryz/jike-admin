@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import {initAxios} from 'common/js/config'
+import http from './common/js/http'
 import 'element-ui/lib/theme-chalk/index.css'
 import {DatePicker} from 'element-ui'
 
 import 'common/stylus/index.styl'
 
 Vue.use(DatePicker)
+http.setDefaults()
 
-initAxios()
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
