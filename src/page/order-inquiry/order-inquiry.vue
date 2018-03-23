@@ -34,7 +34,7 @@
         </el-date-picker>
       </div>
       <div class="order-btn hand" @click="search">搜索</div>
-      <a :href="excel"><div class="down-excel">下载Excel</div></a>
+      <a :href="excel" target="_blank"><div class="down-excel">下载Excel</div></a>
     </div>
     <div slot="form-list" class="form-list" v-show="showContent">
       <div class="list-header">
@@ -220,6 +220,7 @@ export default {
     }
   },
   created() {
+    this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=&merchant_mobile=&order_type=0&order_status=&stare_time=&end_time=`
     this.showList()
   },
   methods: {
@@ -243,9 +244,9 @@ export default {
     setValue(value, idx) {
       if (this.type === 'business') {
         this.orderType = value.status
-        value.status === 2 || value.status === 3 ? this.orderStatusCode = 1 : this.orderStatusCode = ''
+        this.orderStatusCode = value.status === 2 || value.status === 3 ? 1 : ''
       }
-      this.type === 'state' ? this.orderStatusCode = value.status : this.orderStatusCode
+      this.orderStatusCode = this.type === 'state' ? value.status : this.orderStatusCode
       if (this.orderType === 0) {
         this.selectList[1].children[idx].data = couponList
       } else if (this.orderType === 2 || this.orderType === 3) {
@@ -253,7 +254,7 @@ export default {
       } else {
         this.selectList[1].children[idx].data = DEPOSIT
       }
-      this.type === 'business' ? this.selectList[1].children[idx].content = '全部' : this.selectList[1].children[idx].content
+      this.selectList[1].children[idx].content = this.type === 'business' ? '全部' : this.selectList[1].children[idx].content
     },
     hideShadeBox() {
       this.$refs.order.hideShade()
@@ -334,10 +335,10 @@ export default {
       this.heightIndex = -1
     },
     addPage(page) {
-      this.orderInput !== this.orderSn ? this.orderInput = this.orderSn : this.orderInput
-      this.merchantMobile !== this.busInput ? this.busInput = this.merchantMobile : this.busInput
-      this.orderTypes !== this.orderType ? this.orderType = this.orderTypes : this.orderType
-      this.orderState !== this.orderStatusCode ? this.orderStatusCode = this.orderState : this.orderState
+      this.orderInput = this.orderInput !== this.orderSn ? this.orderSn : this.orderInput
+      this.busInput = this.merchantMobile !== this.busInput ? this.merchantMobile : this.busInput
+      this.orderType = this.orderTypes !== this.orderType ? this.orderTypes : this.orderType
+      this.orderState = this.orderState !== this.orderStatusCode ? this.orderStatusCode : this.orderState
       JSON.stringify(this.finalTime) !== JSON.stringify(this.sreachTime) ? this.moreTime = this.oldTime : this.moreTime = this.newTime
       let content = ''
       let contentTwo = ''
@@ -411,7 +412,7 @@ export default {
       .showDetail
         cursor: pointer
         font-size: $font-size-medium
-        padding: 4% 8%
+        padding: 5% 8%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal

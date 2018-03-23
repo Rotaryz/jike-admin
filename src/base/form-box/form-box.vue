@@ -346,7 +346,6 @@ export default {
       this.clickHide()
       this.pageDetail = false
       this.focus = false
-      this.$parent.delCancel()
     },
     detailPage(page) {
       this.page = page
@@ -463,6 +462,7 @@ export default {
       this.$refs.toast.show(content, showTime)
     },
     beginPage() {
+      this.pageInput = ''
       this.page = 1
     }
   },
@@ -496,6 +496,7 @@ export default {
       background: $color-white
       position: relative
       z-index: 150
+      height :150px
       .tag-title
         padding :3.47vh 0 1.57vh 0
         font-size: $font-size-large

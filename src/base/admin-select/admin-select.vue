@@ -89,13 +89,14 @@ export default {
 
   .select-item
     display: flex
-    margin-left: 2vw
+    margin-left: 3.535vw
     position: relative
     z-index :1
     &:first-child
       margin-left: 0px
 
   .select-title
+    font-size :$font-size-medium
     line-height: 17px
     no-wrap()
 
