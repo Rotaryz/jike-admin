@@ -87,7 +87,6 @@ export default {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page}, this.address, this.shopId)
       datas.datasList(data).then((res) => {
-        console.log(res)
         this.showContent = true
         if (res.error === ERR_OK) {
           this.datasList = res.data
