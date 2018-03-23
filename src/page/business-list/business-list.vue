@@ -209,7 +209,7 @@
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {merchanList, merchantDetail, merchantMessage, openService, disable} from 'api/merchant'
+import merchant from 'api/merchant'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
 import AdminSelect from 'base/admin-select/admin-select'
@@ -387,7 +387,7 @@ export default {
         expiration_time: date,
         user_name: this.merchantDetail.user_name
       }
-      merchantMessage(id, data).then((res) => {
+      merchant.merchantMessage(id, data).then((res) => {
         if (res.error === ERR_OK) {
           this.$refs.order.hideShade()
         }
@@ -441,7 +441,7 @@ export default {
     },
     withdrawal() {
       let data = {note: this.reamrk, merchant_id: this.merchantId}
-      disable(data).then((res) => {
+      merchant.disable(data).then((res) => {
         if (res.error === ERR_OK) {
           let content = ''
           this.isDisabledCode ? content = '解冻' : content = '冻结'
@@ -467,7 +467,7 @@ export default {
         is_expiration: this.isExpiration,
         is_disabled: this.isDisabled
       }, this.address, this.shopId)
-      merchanList(data).then((res) => {
+      merchant.merchanList(data).then((res) => {
         this.showContent = true
         if (res.error === ERR_OK) {
           res.data.map((item) => {
@@ -488,7 +488,7 @@ export default {
       this.disableds = true
       this.$refs.order.showShade()
       this.freeze = false
-      merchantDetail(id).then((res) => {
+      merchant.merchantDetail(id).then((res) => {
         if (res.error === ERR_OK) {
           this.merchantDetail = res.data
           this.merchantDetail.expiration_time = new Date(this.merchantDetail.expiration_time * 1000)
@@ -519,7 +519,7 @@ export default {
       }
       let endTime = this.riQi(this.endTime)
       let data = {expiration_time: endTime, merchant_id: this.merchantId}
-      openService(data).then((res) => {
+      merchant.openService(data).then((res) => {
         if (res.error === ERR_OK) {
           this.merchanList[index].end_time = false
           this.$refs.order.showContent('开通成功')

@@ -23,7 +23,7 @@
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {datasList} from 'api/datas'
+import datas from 'api/datas'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
 const titleList = ['日期', '商家数', '用户数', '客户数', '订单数', '交易金额']
@@ -86,7 +86,8 @@ export default {
     showList() {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page}, this.address, this.shopId)
-      datasList(data).then((res) => {
+      datas.datasList(data).then((res) => {
+        console.log(res)
         this.showContent = true
         if (res.error === ERR_OK) {
           this.datasList = res.data

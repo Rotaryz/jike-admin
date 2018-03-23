@@ -118,7 +118,7 @@ const navList = [
       url: '#/container/order'
     }, {
       title: '订单查询',
-      url: '#/container/order-inquiry'
+      url: '#/container/monies-inquiry'
     }],
     showHeight: height
   }]
@@ -155,6 +155,7 @@ export default {
       if (item.children.length > 1) {
         item.children.forEach((items, index) => {
           if (items.url.includes(type)) {
+            console.log(items)
             this.showChild(idx)
             this.bigChildren(index)
           }

@@ -130,7 +130,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {businessCircle, industrie} from 'api/globals'
+import globals from 'api/globals'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
 const allWay = '全部'
@@ -296,7 +296,7 @@ export default {
       if (this.industrieId !== -1) {
         data = {partent_id: this.shopData[0]}
       }
-      industrie(data).then((res) => {
+      globals.industrie(data).then((res) => {
         if (res.error === ERR_OK) {
           this.industrieList[this.shopIndex].data = res.data
           this.industrieList[this.shopIndex].data.unshift(shopWay)
@@ -358,7 +358,7 @@ export default {
     showCity() {
       this.hideShade()
       let data = this.infoData(this.prams)
-      businessCircle(data).then((res) => {
+      globals.businessCircle(data).then((res) => {
         if (res.error === ERR_OK) {
           if (res.data.filter[this.cityList[this.cityIndex].type]) {
             this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]

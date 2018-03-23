@@ -43,6 +43,11 @@ function checkCode(res) {
   }
   // 如果网络请求成功，而提交的数据，或者是后端的一些未知错误所导致的，可以根据实际情况进行捕获异常
   if (res.data && (res.data.code !== ERR_OK)) {
+    switch (res.data.code) {
+      case TIME_OUT:
+        location.href = '#/login'
+        break
+    }
     // 可以进行switch操作，根据返回的code进行相对应的操作，然后抛异常
     console.warn(res.data.message)
     throw requestException(res)

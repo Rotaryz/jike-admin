@@ -8,7 +8,7 @@ const Login = () => import('page/login/login')
 const Container = () => import('page/container/container')
 const Data = () => import('page/data/data')
 const Order = () => import('page/order/order')
-const OrderInquiry = () => import('page/order-inquiry/order-inquiry')
+const OrderInquiry = () => import('page/monies-inquiry/monies-inquiry')
 const Client = () => import('page/client/client')
 const BusinessList = () => import('page/business-list/business-list')
 const BusinessGeneral = () => import('page/business-general/business-general')
@@ -36,7 +36,7 @@ export default new Router({
         path: 'order',
         component: Order
       }, {
-        path: 'order-inquiry',
+        path: 'monies-inquiry',
         component: OrderInquiry
       }, {
         path: 'businessList',

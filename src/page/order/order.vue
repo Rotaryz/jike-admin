@@ -65,7 +65,7 @@
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {orderList, orderDetail, orderManage} from 'api/order'
+import order from 'api/order'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
 const titleList = ['订单号', '商家名称', '客户名称', '订单金额', '下单时间', '订单状态', '订单详情']
@@ -94,7 +94,7 @@ export default {
   methods: {
     orderManage(id) {
       let data = {remark: this.orderDetail.reamrk}
-      orderManage(id, data).then((res) => {
+      order.orderManage(id, data).then((res) => {
         if (res.error === ERR_OK) {
           this.$refs.order.hideShade()
         }
@@ -106,7 +106,7 @@ export default {
     showList() {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page, status: this.status}, this.address)
-      orderList(data).then((res) => {
+      order.orderList(data).then((res) => {
         this.showContent = true
         if (res.error === ERR_OK) {
           this.orderList = res.data
@@ -118,7 +118,7 @@ export default {
     },
     showDetail(id) {
       this.$refs.order.showShade()
-      orderDetail(id).then((res) => {
+      order.orderDetail(id).then((res) => {
         if (res.error === ERR_OK) {
           this.orderDetail = res.data
         }

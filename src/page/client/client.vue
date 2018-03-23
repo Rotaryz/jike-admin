@@ -61,7 +61,7 @@
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {customers, wechatdata, customerInfo, customerRemark} from 'api/customer'
+import customer from 'api/customer'
 import {ERR_OK} from 'api/config'
 import Toast from 'base/toast/toast'
 const titleList = ['客户账号', '绑定商家', '绑定时间', '操作']
@@ -94,7 +94,7 @@ export default {
       if (this.status === 'wechat_user') {
         data.type = 'wechat_data'
       }
-      customerRemark(data).then((res) => {
+      customer.customerRemark(data).then((res) => {
         if (res.error === ERR_OK) {
           this.focus = false
           this.$refs.order.hideShade()
@@ -109,7 +109,7 @@ export default {
     showList() {
       let data = {}
       data = Object.assign({}, {time: this.time, page: this.page, user_type: this.status}, this.address)
-      customers(data).then((res) => {
+      customer.customers(data).then((res) => {
         this.showContent = true
         if (res.error === ERR_OK) {
           this.customers = res.data
@@ -130,14 +130,14 @@ export default {
       this.$refs.order.showShade()
       let data = {user_id: id}
       if (this.status === 'wechat_user') {
-        wechatdata(data).then((res) => {
+        customer.wechatdata(data).then((res) => {
           if (res.error === ERR_OK) {
             this.customersDetail = res.data
           }
         })
         return false
       }
-      customerInfo(data).then((res) => {
+      customer.customerInfo(data).then((res) => {
         if (res.error === ERR_OK) {
           this.customersDetail = res.data
         }

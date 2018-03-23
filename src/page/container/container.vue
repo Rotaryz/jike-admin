@@ -30,7 +30,6 @@
 
 <script type="text/ecmascript-6">
 import Navigation from 'base/navigation/navigation'
-import {datasList} from 'api/datas'
 
 export default {
   data() {
@@ -47,21 +46,6 @@ export default {
   created() {
     window.onresize = () => {
       this.offsetWhidt = document.body.clientWidth - this.width
-    }
-    let token = localStorage.getItem('token') || sessionStorage.getItem('token')
-    if (!token) {
-      location.href = '#/login'
-      localStorage.clear()
-      sessionStorage.clear()
-    } else {
-      datasList().then((res) => {
-        this.dataStatus = res.message
-        if (this.dataStatus === '凭证已失效') {
-          location.href = '#/login'
-          localStorage.clear()
-          sessionStorage.clear()
-        }
-      })
     }
   },
   methods: {

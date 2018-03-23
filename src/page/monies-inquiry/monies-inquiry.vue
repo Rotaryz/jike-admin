@@ -154,8 +154,8 @@
 
 <script type="text/ecmascript-6">
 import FormBox from 'base/form-box/form-box'
-import {ordersInquiry, checkWithdrawal, orderDetail} from 'api/monies'
-import {refundConfirm} from 'api/finances'
+import monies from 'api/monies'
+import finances from 'api/finances'
 import {ERR_OK, BASE_URL} from 'api/config'
 import Toast from 'base/toast/toast'
 import AdminSelect from 'base/admin-select/admin-select'
@@ -271,7 +271,7 @@ export default {
         limit: 10,
         page: this.page
       })
-      ordersInquiry(data).then((res) => {
+      monies.ordersInquiry(data).then((res) => {
         this.showContent = true
         if (res.error === ERR_OK) {
           console.log(res.data)
@@ -290,7 +290,7 @@ export default {
       this.$refs.order.showShade()
       this.detail = true
       let data = {order_id: res.id, order_type: res.order_type}
-      orderDetail(data).then((res) => {
+      monies.orderDetail(data).then((res) => {
         if (res.error === ERR_OK) {
           this.orderDetail = res.data
         }
@@ -309,17 +309,18 @@ export default {
       let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
       if (this.isRefund) {
         let data = {order_id: this.inquiryId, note: this.reamrk, status: pass}
-        refundConfirm(data).then((res) => {
+        finances.refundConfirm(data).then((res) => {
           if (res.error === ERR_OK) {
             this.$refs.order.hideShade()
             this.showList()
+            this.$refs.order.showContent('审核成功')
           } else {
             this.$refs.order.showContent(res.message)
           }
         })
         return
       }
-      checkWithdrawal(data).then((res) => {
+      monies.checkWithdrawal(data).then((res) => {
         if (res.error === ERR_OK) {
           this.$refs.order.hideShade()
           this.showList()

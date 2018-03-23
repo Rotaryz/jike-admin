@@ -30,7 +30,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {login} from 'api/admins'
+import admins from 'api/admins'
 import Toast from 'base/toast/toast'
 export default {
   data() {
@@ -70,20 +70,20 @@ export default {
         return false
       }
       let data = {username: this.user, password: this.password}
-      login(data).then((res) => {
-        console.log(res)
+      admins.login(data).then((res) => {
         if (!res.error) {
+          let data = res.data
           this.$refs.toast.show('登陆成功')
           if (this.remenber) {
-            localStorage.setItem('token', res.access_token)
-            localStorage.setItem('userName', res.admin_info.username)
+            localStorage.setItem('token', data.access_token)
+            localStorage.setItem('userName', data.admin_info.username)
           } else {
-            sessionStorage.setItem('token', res.access_token)
-            sessionStorage.setItem('userName', res.admin_info.username)
+            sessionStorage.setItem('token', data.access_token)
+            sessionStorage.setItem('userName', data.admin_info.username)
           }
           setTimeout(() => {
             location.href = '#/container/data'
-          }, 1000)
+          }, 1300)
         } else if (res.error) {
           this.$refs.toast.show(res.message)
         }

@@ -129,14 +129,8 @@
 
 <script type="text/ecmascript-6">
   import FormBox from 'base/form-box/form-box'
-  import {
-    circlesDetail,
-    industryDetail,
-    addCircle,
-    indestryAdd,
-    delCircle
-  } from 'api/merchant'
-  import {businessCircle, industrie} from 'api/globals'
+  import merchanList from 'api/merchant'
+  import globals from 'api/globals'
   import {ERR_OK} from 'api/config'
   const titleList = ['商圈名称', '省', '市', '区', '操作']
   const cityInfo = [{
@@ -237,7 +231,7 @@
       },
       delSure() {
         let data = {id: this.delId}
-        delCircle(data).then((res) => {
+        merchanList.delCircle(data).then((res) => {
           if (res.error === ERR_OK) {
             this.hideShadeBox()
             this.showList()
@@ -275,7 +269,7 @@
       showCity() {
         let data = this.infoData(this.prams)
         if (this.type === 'circles') {
-          businessCircle(data).then((res) => {
+          globals.businessCircle(data).then((res) => {
             if (res.error === ERR_OK) {
               if (res.data.filter[this.cityList[this.cityIndex].type]) {
                 this.cityList[this.cityIndex].data = res.data.filter[this.cityList[this.cityIndex].type]
@@ -284,7 +278,7 @@
           })
           return false
         }
-        industrie(data).then((res) => {
+        globals.industrie(data).then((res) => {
           if (res.error === ERR_OK) {
             this.cityList[0].data = res.data
           }
@@ -339,7 +333,7 @@
           }
           let data = this.infoData(this.prams)
           data = Object.assign({}, data, {name: this.name})
-          addCircle(data).then((res) => {
+          merchanList.addCircle(data).then((res) => {
             if (res.error === ERR_OK) {
               this.showList()
               this.hideShadeBox()
@@ -354,7 +348,7 @@
           return false
         }
         let data = {parent_id: this.insId, name: this.name}
-        indestryAdd(data).then((res) => {
+        merchanList.indestryAdd(data).then((res) => {
           if (res.error === ERR_OK) {
             this.showList()
             this.hideShadeBox()
@@ -367,7 +361,7 @@
       showList() {
         let data = {page: this.page}
         if (this.type === 'circles') {
-          circlesDetail(data).then((res) => {
+          merchanList.circlesDetail(data).then((res) => {
             this.showContent = true
             if (res.error === ERR_OK) {
               this.merchanList = res.data
@@ -382,7 +376,7 @@
           })
           return false
         }
-        industryDetail(data).then((res) => {
+        merchanList.industryDetail(data).then((res) => {
           this.showContent = true
           if (res.error === ERR_OK) {
             this.industryList = res.data
@@ -462,8 +456,8 @@
       color: $color-text
       flex: 1.7
       .showDetail
-        box-sizing :content-box
-        display :inline-block
+        box-sizing: content-box
+        display: inline-block
         cursor: pointer
         font-size: $font-size-medium
         padding: 5% 14%
@@ -713,10 +707,12 @@
             background: $color-hover
           &:active
             background: $color-nomal
+
   .form-industry
     .list-item
       .showDetail
         padding: 3.9% 14%
+
   .shade-del-box
     .del-header
       display: flex
@@ -730,7 +726,7 @@
         height: 50.562px
         margin-bottom: 21.0675px
     .del-tip
-      margin-bottom :25.281px
+      margin-bottom: 25.281px
       display: flex
       padding: 0 7.49%
       justify-content: space-between
