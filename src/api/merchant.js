@@ -76,9 +76,7 @@ export default {
    */
   openService(params) {
     const url = `/api/merchant/open-service`
-    return http.get(url, {params: params}).then((res) => {
-      return Promise.resolve(res.data)
-    })
+    return http.get(url, params)
   },
   /**
    * 冻结商家服务
@@ -87,9 +85,7 @@ export default {
    */
   disable(params) {
     const url = `/api/merchant/disable`
-    return http.get(url, {params: params}).then((res) => {
-      return Promise.resolve(res.data)
-    })
+    return http.get(url, params)
   },
 
   /**
@@ -99,8 +95,6 @@ export default {
    */
   delCircle(params) {
     const url = `/api/merchant/del-circle`
-    return http.get(url, {params: params}).then((res) => {
-      return Promise.resolve(res.data)
-    })
+    return http.get(url, params)
   }
 }

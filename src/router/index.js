@@ -16,41 +16,41 @@ const Account = () => import('page/account/account')
 
 export default new Router({
   routes: [
-    {
-      path: '/',
-      redirect: '/login'
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/container',
-      name: 'Container',
-      component: Container,
-      children: [{
-        path: 'data',
-        component: Data
-      }, {
-        path: 'order',
-        component: Order
-      }, {
-        path: 'monies-inquiry',
-        component: OrderInquiry
-      }, {
-        path: 'businessList',
-        component: BusinessList
-      }, {
-        path: 'businessGeneral',
-        component: BusinessGeneral
-      }, {
-        path: 'client',
-        component: Client
-      }, {
-        path: 'account',
-        component: Account
-      }]
-    }
+  {
+    path: '/',
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/container',
+    name: 'Container',
+    component: Container,
+    children: [{
+      path: 'data',
+      component: Data
+    }, {
+      path: 'order',
+      component: Order
+    }, {
+      path: 'monies-inquiry',
+      component: OrderInquiry
+    }, {
+      path: 'businessList',
+      component: BusinessList
+    }, {
+      path: 'businessGeneral',
+      component: BusinessGeneral
+    }, {
+      path: 'client',
+      component: Client
+    }, {
+      path: 'account',
+      component: Account
+    }]
+  }
   ]
 })
