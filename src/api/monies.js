@@ -1,7 +1,7 @@
 /**
  * Created by user on 2018/3/6.
  */
-
+// 财务模块
 import http from '../common/js/http'
 export default {
   /**
@@ -30,6 +30,24 @@ export default {
    */
   orderDetail(params) {
     const url = `/api/monies/order-detail`
+    return http.get(url, params)
+  },
+  /**
+   * 财务收入收支
+   * @param params
+   * @returns {Promise.<TResult>}
+   */
+  accounts() {
+    const url = `/api/monies/accounts`
+    return http.get(url)
+  },
+  /**
+   * 财务账目明细
+   * @param params
+   * @returns {Promise.<TResult>}
+   */
+  accountsDetail(params) {
+    const url = `/api/monies/accounts-detail`
     return http.get(url, params)
   }
 }

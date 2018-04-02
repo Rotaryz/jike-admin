@@ -1,11 +1,8 @@
 <template>
   <div class="buslist" @click="hideTime">
-    <form-box ref="order" @checkTime="checkTime" @addPage="addPage"
-              @showCity="showCity" @showIndustrie="showIndustrie"
-              :pageDtail="pageDtail" :isIndustrie="isIndustrie">
+    <form-box ref="order" @checkTime="checkTime" @addPage="addPage" @showCity="showCity" @showIndustrie="showIndustrie" :pageDtail="pageDtail" :isIndustrie="isIndustrie">
       <div slot="tap" class="select">
-        <admin-select :select="selectList" @selectType="selectType"
-                      @setValue="setValue"></admin-select>
+        <admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>
       </div>
       <div slot="form-list" class="form-list" v-show="showContent">
         <div class="list-header">
@@ -14,9 +11,7 @@
           </div>
         </div>
         <ul class="list">
-          <li class="list-box" v-for="(item,index) in merchanList"
-              :class="{'list-box-active': heightIndex === index}" :key="index"
-              @mouseenter="showHeight(index)" @mouseleave="hideHeight">
+          <li class="list-box" v-for="(item,index) in merchanList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
             <div class="list-item list-text">{{item.mobile}}</div>
             <div class="list-item list-text">{{item.shop_name}}</div>
             <div class="list-item list-text">{{item.is_leader ? '盟主' : '普通'}}
@@ -28,7 +23,8 @@
             <div class="list-item list-text">{{item.service_version ? '基础' : '试用'}}</div>
             <div class="list-item list-text">{{item.is_expiration ? '已过期' : '使用中'}}</div>
             <div class="list-item list-text">
-              {{item.open_type === 0 ? '支付开通' : item.open_type === 1 ? '盟主开通' : item.open_type === 2 ? '后台开通' : ''}}
+              {{item.is_checked === 0 ? '未认证' : '已认证'}}
+              <!--{{item.open_type === 0 ? '支付开通' : item.open_type === 1 ? '盟主开通' : item.open_type === 2 ? '后台开通' : ''}}-->
             </div>
             <div class="list-item">
             <span class="showDetail">
@@ -45,160 +41,38 @@
                 </div>
               </span>
               <span @click="frost(item)"> | {{item.is_disabled ? '解冻' : '冻结'}}</span>
+              <span @click="audit(item)" :class="item.is_checked === 0 ? 'audit' : 'audit-disable'"> | 审核</span>
             </span>
             </div>
           </li>
         </ul>
       </div>
       <div slot="shade-box" class="shade-box">
-        <div v-show="!freeze">
-          <div class="shade-border">商家属性<span class="close" @click="hideShadeBox">&times;</span>
-          </div>
-          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-            <span class="shade-title">姓名</span>
-            <div class="input-box" :class="{'input-height': heightType === 4}">
-              <input type="text" :class="{'input-height-item': !disableds}"
-                     class="shade-text" v-model="merchantDetail.user_name" name="change"
-                     :disabled="disableds" @input="onPhone" @focus="isFocus(4)"
-                     @blur="heightType = -1"/>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">商家名称</span>
-            <span class="shade-text">{{merchantDetail.shop_name}}</span>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">商家账号</span>
-            <span class="shade-text">{{merchantDetail.account}}</span>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">注册时间</span>
-            <span class="shade-text">{{merchantDetail.register_time}}</span>
-          </div>
-          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-            <span class="shade-title">联系方式</span>
-            <div class="input-box" :class="{'input-height': heightType === 0}">
-              <input type="number" :class="{'input-height-item': !disableds}"
-                     class="shade-text" maxlength="11"
-                     v-model="merchantDetail.mobile" name="change"
-                     :disabled="disableds" @input="onPhone" @focus="isFocus(0)"
-                     @blur="heightType = -1"/>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-            <span class="shade-title">所在行业</span>
-            <div class="input-box" :class="{'input-height': heightType === 1}">
-              <input class="shade-text" :class="{'input-height-item': !disableds}"
-                     v-model="merchantDetail.industry_name"
-                     name="change" @focus="isFocus(1)" @blur="heightType = -1"
-                     :disabled="disableds"/>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-
-            <span class="shade-title">所在位置</span>
-            <div class="input-box" :class="{'input-height': heightType === 2}">
-          <textarea :class="{'input-height-item': !disableds}"
-                    @focus="isFocus(2)" @blur="heightType = -1"
-                    class="shade-text" v-model="merchantDetail.particular_address" :disabled="disableds"></textarea>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem" :class="{'shade-input':!disableds}">
-            <span class="shade-title">所在商圈</span>
-            <div class="input-box" :class="{'input-height': heightType === 3}">
-              <input class="shade-text" :class="{'input-height-item': !disableds}"
-                     v-model="merchantDetail.business_circle_name"
-                     name="change" :disabled="disableds" @focus="isFocus(3)"
-                     @blur="heightType = -1"/>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">开通时间</span>
-            <span class="shade-text">{{merchantDetail.open_service_log ? merchantDetail.open_service_log.created_at : ''}}</span>
-          </div>
-          <div class="shade-border shade-tiem end-time" :class="{'shade-input':!disableds}">
-            <span class="shade-title">到期时间</span>
-            <div class="order-block input-box" :class="{'order-boder': !disableds}">
-              <el-date-picker
-                v-model="merchantDetail.expiration_time"
-                type="datetime"
-              >
-              </el-date-picker>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">开通方式</span>
-            <span class="shade-text" >{{!merchantDetail.open_service_log ? '' : merchantDetail.open_service_log.open_type === 0 ? '支付开通' : merchantDetail.open_service_log.open_type === 1 ? '盟主开通' : merchantDetail.open_service_log.open_type === 2 ? '后台开通' : ''}}</span>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">商家属性</span>
-            <div class="radios" @click="level('single')">
-          <span class="icon hand"
-                :class="{'icon-active': merchantDetail.reseller_level === 0}"></span>
-              <span class="title">单店</span>
-            </div>
-            <div class="radios" @click="level">
-          <span class="icon hand"
-                :class="{'icon-active': merchantDetail.reseller_level === 1}"></span>
-              <span class="title">连锁门店</span>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">商家角色</span>
-            <div class="radios" @click="leader('leader')">
-          <span class="icon hand"
-                :class="{'icon-active': merchantDetail.is_leader === 0}"></span>
-              <span class="title">普通</span>
-            </div>
-            <div class="radios" @click="leader">
-          <span class="icon hand"
-                :class="{'icon-active': merchantDetail.is_leader === 1}"></span>
-              <span class="title">盟主</span>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem activation-code" :class="{'shade-input':!disableds}" v-show="merchantDetail.is_leader">
-            <span class="shade-title">生成激活码</span>
-            <div class="input-box" :class="{'input-height': heightType === 7}">
-              <input class="shade-text" :class="{'input-height-item': !disableds}" type="number"
-                     v-model="activationCode"
-                     name="change" :disabled="disableds" @focus="isFocus(7)"
-                     @blur="heightType = -1"/>
-              <span class="activation-tip">累计{{merchantDetail.inviter_code_count + (activationCode * 1)}}个</span>
-            </div>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">版本</span>
-            <span class="shade-text">{{merchantDetail.service_version ? '普通' : '试用'}}</span>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">账号状态</span>
-            <span class="shade-text">{{merchantDetail.is_disabled ? '已冻结' : '未冻结'}}</span>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">商家状态</span>
-            <span class="shade-text">{{merchantDetail.is_expiration ? '已过期' : '使用中'}}</span>
-          </div>
-          <div class="shade-border shade-tiem">
-            <span class="shade-title">冻结原因</span>
-            <span class="shade-text">{{merchantDetail.note}}</span>
-          </div>
-          <div class="ok">
-            <span class="submit change hand" @click="change">{{cancelTitle}}</span>
-            <span class="submit sure hand"
-                  @click="merchantMessage(merchantDetail.id)">保存</span>
-          </div>
-        </div>
-        <div class="shade-inquiry" v-show="freeze">
+        <div class="shade-inquiry" v-show="!check">
           <div class="shade-border shade-tiem">{{freezeText}}<span class="close" @click="hideShadeBox">&times;</span>
           </div>
           <div class="shade-border shade-exprent shade-tiem">
             备注
             <div class="ex-box" :class="{'input-height':focus }">
-              <textarea id="exprent" :class="freezeText == '解冻' ? '' : 'input-height-item'" @focus="focus = true" :disabled="freezeText == '解冻'" @blur="focus = false" placeholder="请输入" v-model="reamrk"></textarea>
+              <textarea class="exprent" :class="freezeText == '解冻' ? '' : 'input-height-item'" @focus="focus = true" :disabled="freezeText == '解冻'" @blur="focus = false" placeholder="请输入" v-model="reamrk"></textarea>
             </div>
           </div>
           <div class="ok">
             <span class="submit sure hand" @click="withdrawal">确定</span>
+          </div>
+        </div>
+        <div class="shade-check" v-show="check">
+          <div class="shade-border shade-tiem">审核<span class="close" @click="hideShadeBox">&times;</span>
+          </div>
+          <div class="shade-border shade-exprent shade-tiem">
+            备注
+            <div class="ex-box" :class="{'input-height':focus}">
+              <textarea class="input-height-item exprent" @focus="focus = true" @blur="focus = false" placeholder="请输入" v-model="remarks"></textarea>
+            </div>
+          </div>
+          <div class="ok">
+            <span class="submit change hand" @click="withdrawal(1)">审核通过</span>
+            <span class="submit sure hand" @click="withdrawal(2)">审核不通过</span>
           </div>
         </div>
       </div>
@@ -208,359 +82,372 @@
 </template>
 
 <script type="text/ecmascript-6">
-import FormBox from 'base/form-box/form-box'
-import merchant from 'api/merchant'
-import {ERR_OK} from 'api/config'
-import Toast from 'base/toast/toast'
-import AdminSelect from 'base/admin-select/admin-select'
-const titleList = ['商家账号', '商家名称', '商家角色', '商家类型', '用户数', '客户数', '订单数', '版本', '商家状态', '开通方式', '操作']
-const select = [{
-  title: '开通方式',
-  type: 'open',
-  select: false,
-  show: false,
-  children: [{
-    content: '全部',
-    data: [{title: '全部', status: ''}, {
-      title: '支付开通',
-      status: 0
-    }, {title: '盟主开通', status: 1}, {title: '后台开通', status: 2}]
-  }]
-}, {
-  title: '版本',
-  type: 'version',
-  select: false,
-  show: false,
-  children: [{
-    content: '全部',
-    data: [{title: '全部', status: ''}, {title: '试用', status: 0}, {
-      title: '基础',
-      status: 1
+  import FormBox from 'base/form-box/form-box'
+  import merchant from 'api/merchant'
+  import home from 'api/home'
+  import {mixinBase} from 'common/mixin/base'
+  import {ERR_OK} from 'api/config'
+  import Toast from 'base/toast/toast'
+  import AdminSelect from 'base/admin-select/admin-select'
+  const titleList = ['商家账号', '商家名称', '商家角色', '商家类型', '用户数', '客户数', '订单数', '版本', '商家状态', '认证状态', '操作']
+  const SELECT = [{
+    title: '开通方式',
+    type: 'open',
+    select: false,
+    show: false,
+    children: [{
+      content: '全部',
+      data: [{title: '全部', status: ''}, {
+        title: '支付开通',
+        status: 0
+      }, {title: '盟主开通', status: 1}, {title: '后台开通', status: 2}]
+    }]
+  }, {
+    title: '版本',
+    type: 'version',
+    select: false,
+    show: false,
+    children: [{
+      content: '全部',
+      data: [{title: '全部', status: ''}, {title: '试用', status: 0}, {
+        title: '基础',
+        status: 1
+      }]
+    }]
+  }, {
+    title: '商家角色',
+    type: 'role',
+    select: false,
+    show: false,
+    children: [{
+      content: '全部',
+      data: [{title: '全部', status: ''}, {title: '普通', status: 0}, {
+        title: '盟主',
+        status: 1
+      }]
+    }]
+  }, {
+    title: '商家状态',
+    type: 'account',
+    select: false,
+    show: false,
+    children: [{
+      content: '全部',
+      data: [{title: '全部', status: ''}, {
+        title: '使用中',
+        status: 0
+      }, {title: '已过期', status: 1}]
+    }]
+  }, {
+    title: '账号状态',
+    type: 'merchant',
+    select: false,
+    show: false,
+    children: [{
+      content: '全部',
+      data: [{title: '全部', status: ''}, {title: '未冻结', status: 0}, {
+        title: '已冻结',
+        status: 1
+      }]
+    }]
+  }, {
+    title: '认证状态',
+    type: 'checked',
+    select: false,
+    show: false,
+    children: [{
+      content: '全部',
+      data: [{title: '全部', status: ''}, {title: '已认证', status: 1}, {
+        title: '未认证',
+        status: 0
+      }]
     }]
   }]
-}, {
-  title: '商家角色',
-  type: 'role',
-  select: false,
-  show: false,
-  children: [{
-    content: '全部',
-    data: [{title: '全部', status: ''}, {title: '普通', status: 0}, {
-      title: '盟主',
-      status: 1
-    }]
-  }]
-}, {
-  title: '商家状态',
-  type: 'account',
-  select: false,
-  show: false,
-  children: [{
-    content: '全部',
-    data: [{title: '全部', status: ''}, {
-      title: '使用中',
-      status: 0
-    }, {title: '已过期', status: 1}]
-  }]
-}, {
-  title: '账号状态',
-  type: 'merchant',
-  select: false,
-  show: false,
-  children: [{
-    content: '全部',
-    data: [{title: '全部', status: ''}, {title: '未冻结', status: 0}, {
-      title: '已冻结',
-      status: 1
-    }]
-  }]
-}]
-export default {
-  data() {
-    return {
-      freezeText: '冻结',
-      focus: false,
-      reamrk: '',
-      freeze: false,
-      endTime: '',
-      activationCode: 0,
-      heightType: -1,
-      disableds: true,
-      titleList: titleList,
-      merchanList: [],
-      time: 1,
-      pageDtail: [{total: 1, per_page: 10, total_page: 1}],
-      page: 1,
-      merchantDetail: [],
-      isIndustrie: true,
-      address: {},
-      status: 1,
-      shopId: {},
-      heightIndex: -1,
-      showContent: false,
-      cancelTitle: '修改',
-      selectList: select,
-      type: '',
-      openType: '',
-      role: '',
-      serviceVersion: '',
-      isExpiration: '',
-      isDisabled: '',
-      merchantId: 0,
-      isDisabledCode: 0
-    }
-  },
-  created() {
-    this.showList()
-  },
-  methods: {
-    selectType(type, res) {
-      this.selectList = res
-      this.type = type
-    },
-    setValue(res) {
-      switch (this.type) {
-      case 'open':
-        this.openType = res.status
-        break
-      case 'version':
-        this.serviceVersion = res.status
-        break
-      case 'role':
-        this.role = res.status
-        break
-      case 'account':
-        this.isExpiration = res.status
-        break
-      case 'merchant':
-        this.isDisabled = res.status
-        break
-      }
-      this.page = 1
-      this.$refs.order.beginPage()
-      this.showList()
-    },
-    onPhone() {
-      if (this.merchantDetail.mobile.length > 11) {
-        this.merchantDetail.mobile = this.merchantDetail.mobile.slice(0, 11)
-        return false
+  export default {
+    mixins: [mixinBase],
+    data() {
+      return {
+        freezeText: '冻结',
+        focus: false,
+        reamrk: '',
+        freeze: false,
+        endTime: '',
+        activationCode: 0,
+        heightType: -1,
+        disableds: true,
+        titleList: titleList,
+        merchanList: [],
+        time: 1,
+        pageDtail: [{total: 1, per_page: 10, total_page: 1}],
+        page: 1,
+        merchantDetail: [],
+        isIndustrie: true,
+        address: {},
+        status: 1,
+        shopId: {},
+        heightIndex: -1,
+        showContent: false,
+        cancelTitle: '修改',
+        selectList: SELECT,
+        type: '',
+        openType: '',
+        role: '',
+        serviceVersion: '',
+        isExpiration: '',
+        isDisabled: '',
+        merchantId: 0,
+        isDisabledCode: 0,
+        checked: '',
+        orderId: '',
+        check: false,
+        remarks: '',
+        goNUm: 0
       }
     },
-    riQi(time) {
-      let now = new Date(time)
-      let year = now.getFullYear()
-      let month = now.getMonth() + 1
-      let date = now.getDate()
-      let hour = now.getHours()
-      let minute = now.getMinutes()
-      let second = now.getSeconds()
-      let res = year + '-' + month + '-' + date + '   ' + hour + ':' + minute + ':' + second
-      return res
+    created() {
+      this.orderId = this.$route.query.order ? this.$route.query.order : ''
+      this.goNUm = this.orderId ? 0 : 2
+      //      未完成 ，，，判断审核的订单号
+      this.orderId ? this.showList(true) : this.showList()
     },
-    change() {
-      this.disableds = !this.disableds
-      this.disableds ? this.cancelTitle = '修改' : this.cancelTitle = '取消修改'
-    },
-    showIndustrie(res) {
-      this.shopId = res
-      this.showList()
-    },
-    isFocus(num) {
-      this.heightType = num
-    },
-    merchantMessage(id) {
-      let date = this.riQi(this.merchantDetail.expiration_time)
-      let reg = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/
-      if (!reg.test(this.merchantDetail.mobile)) {
-        this.$refs.order.showContent('请输入正确的手机号码')
-        return false
-      }
-      let data = {
-        mobile: this.merchantDetail.mobile,
-        industry_id: this.merchantDetail.industry_id,
-        particular_address: this.merchantDetail.particular_address,
-        business_circle_id: this.merchantDetail.business_circle_id,
-        reseller_level: this.merchantDetail.reseller_level,
-        is_leader: this.merchantDetail.is_leader,
-        inviter_code_count: this.activationCode,
-        service_version: this.merchantDetail.service_version,
-        expiration_time: date,
-        user_name: this.merchantDetail.user_name
-      }
-      merchant.merchantMessage(id, data).then((res) => {
-        if (res.error === ERR_OK) {
-          this.$refs.order.hideShade()
+    methods: {
+      selectType(type, res) {
+        this.selectList = res
+        this.type = type
+      },
+      setValue(res) {
+        switch (this.type) {
+          case 'open':
+            this.openType = res.status
+            break
+          case 'version':
+            this.serviceVersion = res.status
+            break
+          case 'role':
+            this.role = res.status
+            break
+          case 'account':
+            this.isExpiration = res.status
+            break
+          case 'merchant':
+            this.isDisabled = res.status
+            break
+          case 'checked':
+            this.checked = res.status
+            break
         }
-        this.$refs.order.showContent(res.message)
-      })
-    },
-    level(type) {
-      if (type === 'single') {
-        if (this.merchantDetail.reseller_level !== 0) {
-          this.merchantDetail.reseller_level = 0
+        this.page = 1
+        this.$refs.order.beginPage()
+        this.showList()
+      },
+      showIndustrie(res) {
+        this.shopId = res
+        this.showList()
+      },
+      isFocus(num) {
+        this.heightType = num
+      },
+      merchantMessage(id) {
+        let date = this.riQi(this.merchantDetail.expiration_time)
+        let reg = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/
+        if (!reg.test(this.merchantDetail.mobile)) {
+          this.$refs.order.showContent('请输入正确的手机号码')
+          return false
         }
-      } else {
-        if (this.merchantDetail.reseller_level !== 1) {
-          this.merchantDetail.reseller_level = 1
+        let data = {
+          mobile: this.merchantDetail.mobile,
+          industry_id: this.merchantDetail.industry_id,
+          particular_address: this.merchantDetail.particular_address,
+          business_circle_id: this.merchantDetail.business_circle_id,
+          reseller_level: this.merchantDetail.reseller_level,
+          is_leader: this.merchantDetail.is_leader,
+          inviter_code_count: this.activationCode,
+          service_version: this.merchantDetail.service_version,
+          expiration_time: date,
+          user_name: this.merchantDetail.user_name
         }
-      }
-    },
-    leader(type) {
-      if (type === 'leader') {
-        if (this.merchantDetail.is_leader !== 0) {
-          this.merchantDetail.is_leader = 0
-        }
-      } else {
-        if (this.merchantDetail.is_leader !== 1) {
-          this.merchantDetail.is_leader = 1
-        }
-      }
-    },
-    version(type) {
-      if (type === 'version') {
-        if (this.merchantDetail.service_version !== 0) {
-          this.merchantDetail.service_version = 0
-        }
-      } else {
-        if (this.merchantDetail.service_version !== 1) {
-          this.merchantDetail.service_version = 1
-        }
-      }
-    },
-    frost(res) {
-      res.is_disabled ? this.freezeText = '解冻' : this.freezeText = '冻结'
-      this.merchantId = res.merchant_id
-      this.isDisabledCode = res.is_disabled
-      res.is_disabled ? this.reamrk = '' : this.reamrk = res.note
-      this.merchanList.map((item) => {
-        item.end_time = false
-        return item
-      })
-      this.$refs.order.showShade()
-      this.freeze = true
-    },
-    withdrawal() {
-      let data = {note: this.reamrk, merchant_id: this.merchantId}
-      merchant.disable(data).then((res) => {
-        if (res.error === ERR_OK) {
-          let content = ''
-          this.isDisabledCode ? content = '解冻' : content = '冻结'
-          this.$refs.order.showContent(content + '成功')
-          this.$refs.order.hideShade()
-          this.showList()
-          return
-        }
-        this.$refs.order.showContent(res.message)
-      })
-    },
-    hideShadeBox() {
-      this.$refs.order.hideShade()
-    },
-    showList() {
-      let data = {}
-      data = Object.assign({}, {
-        time: this.time,
-        page: this.page,
-        open_type: this.openType,
-        role: this.role,
-        service_version: this.serviceVersion,
-        is_expiration: this.isExpiration,
-        is_disabled: this.isDisabled
-      }, this.address, this.shopId)
-      merchant.merchanList(data).then((res) => {
-        this.showContent = true
-        if (res.error === ERR_OK) {
-          res.data.map((item) => {
-            item.end_time = false
-          })
-          this.merchanList = res.data
-          this.$refs.order.isBlank(res.data)
-          let pages = res.meta
-          this.pageDtail = [{
-            total: pages.total,
-            per_page: pages.per_page,
-            total_page: pages.last_page
-          }]
-        }
-      })
-    },
-    showDetail(id) {
-      this.disableds = true
-      this.$refs.order.showShade()
-      this.freeze = false
-      merchant.merchantDetail(id).then((res) => {
-        if (res.error === ERR_OK) {
-          this.merchantDetail = res.data
-          this.merchantDetail.expiration_time = new Date(this.merchantDetail.expiration_time * 1000)
-        }
-      })
-    },
-    hideTime() {
-      this.merchanList.map((item) => {
-        item.end_time = false
-        return item
-      })
-    },
-    openShop(merchantId) {
-      this.merchantId = merchantId
-      this.merchanList.map((item) => {
-        if (item.merchant_id === merchantId) {
-          item.end_time = !item.end_time
-        } else {
+        merchant.merchantMessage(id, data).then((res) => {
+          if (res.error === ERR_OK) {
+            this.$refs.order.hideShade()
+          }
+          this.$refs.order.showContent(res.message)
+        })
+      },
+//      冻结
+      frost(res) {
+        res.is_disabled ? this.freezeText = '解冻' : this.freezeText = '冻结'
+        this.merchantId = res.merchant_id
+//        this.isDisabledCode = res.is_disabled
+        res.is_disabled ? this.reamrk = '' : this.reamrk = res.note
+        this.merchanList.map((item) => {
           item.end_time = false
+          return item
+        })
+        this.$refs.order.showShade()
+        this.check = false
+      },
+//      审核
+      audit(res) {
+        if (!res.is_checked) {
+          this.remarks = res.remark
+          this.freezeText = '认证审核'
+          this.$refs.order.showShade()
+          this.merchantId = res.merchant_id
+          this.check = true
         }
-        return item
-      })
-    },
-    openServices(index) {
-      if (this.endTime === '') {
-        this.$refs.order.showContent('请选择开通时间')
-        return
-      }
-      let endTime = this.riQi(this.endTime)
-      let data = {expiration_time: endTime, merchant_id: this.merchantId}
-      merchant.openService(data).then((res) => {
-        if (res.error === ERR_OK) {
-          this.merchanList[index].end_time = false
-          this.$refs.order.showContent('开通成功')
+      },
+      isDeal() {
+        if (this.orderId && this.goNUm <= 1) {
+          this.$router.push({path: 'notes', query: {status: 'license_audit'}})
+          this.orderId = ''
+        } else {
+          this.$refs.order.hideShade()
           this.showList()
-          this.endTime = ''
+        }
+      },
+//      审核弹窗
+      withdrawal(code) {
+        let data = {note: this.reamrk, merchant_id: this.merchantId}
+        if (this.check) {
+          let data = {remark: this.remarks, merchant_id: this.merchantId, check_status: code}
+          home.licenseAudit(data).then((res) => {
+            if (res.error === ERR_OK) {
+              switch (code) {
+                case 1:
+                  this.$refs.order.showContent('审核通过')
+                  break
+                case 2:
+                  this.$refs.order.showContent('审核不通过')
+                  break
+              }
+              this.isDeal()
+              return
+            }
+            this.$refs.order.showContent(res.message)
+          })
+          return false
+        }
+        merchant.disable(data).then((res) => {
+          if (res.error === ERR_OK) {
+            let content = ''
+            this.isDisabledCode ? content = '解冻' : content = '冻结'
+            this.$refs.order.showContent(content + '成功')
+            this.$refs.order.hideShade()
+            this.showList()
+            return
+          }
+          this.$refs.order.showContent(res.message)
+        })
+      },
+      hideShadeBox() {
+        this.$refs.order.hideShade()
+      },
+      showList(status = false) {
+        let data = {}
+        data = Object.assign({}, {
+          time: this.time,
+          page: this.page,
+          open_type: this.openType,
+          role: this.role,
+          service_version: this.serviceVersion,
+          is_expiration: this.isExpiration,
+          is_disabled: this.isDisabled,
+          is_checked: this.checked
+        }, this.address, this.shopId)
+        if (status) {
+          data = Object.assign({}, data, {merchant_id: this.orderId})
+        }
+        merchant.merchanList(data).then((res) => {
+          this.goNUm++
+          this.showContent = true
+          if (res.error === ERR_OK) {
+            res.data.map((item) => {
+              item.end_time = false
+            })
+            this.merchanList = res.data
+            this.$refs.order.isBlank(res.data)
+            let pages = res.meta
+            this.pageDtail = [{
+              total: pages.total,
+              per_page: pages.per_page,
+              total_page: pages.last_page
+            }]
+          }
+        })
+      },
+      showDetail(id) {
+        this.$router.push({name: 'BusinessDetail', query: {id: id}})
+        let title = sessionStorage.getItem('title').split(',')
+        title.push('商家详情')
+        sessionStorage.setItem('title', title)
+      },
+      hideTime() {
+        this.merchanList.map((item) => {
+          item.end_time = false
+          return item
+        })
+      },
+      openShop(merchantId) {
+        this.merchantId = merchantId
+        this.merchanList.map((item) => {
+          if (item.merchant_id === merchantId) {
+            item.end_time = !item.end_time
+          } else {
+            item.end_time = false
+          }
+          return item
+        })
+      },
+      openServices(index) {
+        if (this.endTime === '') {
+          this.$refs.order.showContent('请选择开通时间')
           return
         }
-        this.$refs.order.showContent(res.message)
-      })
-    },
-    showHeight(index) {
-      this.heightIndex = index
-    },
-    hideHeight() {
-      this.heightIndex = -1
-    },
-    checkTime(value, page) {
-      if (Array.isArray(value)) {
-        this.time = value.join(',')
-      } else {
-        this.time = value
+        let endTime = this.farmatTime(this.endTime)
+        let data = {expiration_time: endTime, merchant_id: this.merchantId}
+        merchant.openService(data).then((res) => {
+          if (res.error === ERR_OK) {
+            this.merchanList[index].end_time = false
+            this.$refs.order.showContent('开通成功')
+            this.showList()
+            this.endTime = ''
+            return
+          }
+          this.$refs.order.showContent(res.message)
+        })
+      },
+      showHeight(index) {
+        this.heightIndex = index
+      },
+      hideHeight() {
+        this.heightIndex = -1
+      },
+      checkTime(value, page) {
+        if (Array.isArray(value)) {
+          this.time = value.join(',')
+        } else {
+          this.time = value
+        }
+        this.$refs.order.beginPage()
+        this.page = 1
+        this.showList()
+      },
+      addPage(page) {
+        this.page = page
+        this.showList()
+      },
+      showCity(prams, page) {
+        this.address = this.$refs.order.infoData(prams)
+        this.page = page
+        this.showList()
       }
-      this.page = page
-      this.showList()
     },
-    addPage(page) {
-      this.page = page
-      this.showList()
-    },
-    showCity(prams, page) {
-      this.address = this.$refs.order.infoData(prams)
-      this.page = page
-      this.showList()
+    components: {
+      'form-box': FormBox,
+      'toast': Toast,
+      'admin-select': AdminSelect
     }
-  },
-  components: {
-    'form-box': FormBox,
-    'toast': Toast,
-    'admin-select': AdminSelect
   }
-}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -568,6 +455,7 @@ export default {
   @import '~common/stylus/mixin'
   .buslist
     height: 100%
+
   .form-list
     height: 100%
     .list-header, .list-box
@@ -597,11 +485,15 @@ export default {
       flex: 1
       .showDetail
         cursor: pointer
-        font-size: $font-size-medium
-        padding: 5% 7%
+        font-size: $font-size-small
+        padding: 4% 4%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
+        .audit-disable
+          color: $color-text-little
+        .audit
+          color: $color-nomal
         .open
           position: relative
           .order-block
@@ -634,10 +526,10 @@ export default {
       height: 5.01vh
       align-items: center
       color: $color-text
-      white-space :nowrap
-      overflow:hidden
+      white-space: nowrap
+      overflow: hidden
       position: relative
-      border-bottom :0.5px solid $color-icon-line
+      border-bottom: 0.5px solid $color-icon-line
       .shade-text:disabled
         background: $color-white
       input.shade-text, textarea.shade-text
@@ -651,7 +543,7 @@ export default {
         box-sizing: border-box
         outline: none
       .shade-text
-        border :0.5px solid transparent
+        border: 0.5px solid transparent
         width: 65%
 
       .input-box
@@ -709,7 +601,7 @@ export default {
     .shade-exprent
       height: 144px
       display: block
-      #exprent
+      .exprent
         padding: 8px
         transform: translateY(-12px)
         display: block
@@ -722,12 +614,12 @@ export default {
         display: block
         padding-top: 10px
         .ex-box
-          transform :translateY(12px)
+          transform: translateY(12px)
           border: 2px solid $color-white
           height: 75%
           width: 95.6%
-        #exprent
-          transform :translateY(0px)
+        .exprent
+          transform: translateY(0px)
           height: 100%
           width: 100%
           padding: 8px
@@ -739,7 +631,7 @@ export default {
           .ex-box
             border: 2px solid $color-background
           .input-height-item
-            border : 1px solid #999 !important
+            border: 1px solid #999 !important
             background: $color-white
       .ok
         .submit
@@ -786,12 +678,66 @@ export default {
     .activation-code
       position: relative
       .input-box
-        width :40%
+        width: 40%
       .activation-tip
         right: -80%
         col-center()
         font-size: $font-size-small
-        color :$color-text-little
+        color: $color-text-little
+
+  .shade-check
+    .shade-exprent
+      height: 19vh
+      display: block
+      padding-top: 10px
+      .ex-box
+        transform: translateY(12px)
+        margin-top: 2px
+        border: 2px solid $color-white
+        height: 75%
+        width: 95.6%
+      .exprent
+        transform: translateY(0px)
+        height: 100%
+        width: 100%
+        padding: 8px
+        display: inline-block
+        box-sizing: border-box
+        border: 1px solid $color-icon-line
+      &:hover
+        background: $color-background
+        .ex-box
+          border: 2px solid $color-background
+        .exprent
+          border: 1px solid #999 !important
+          background: $color-white
+    .ok
+      height: 9.26vh
+      display: flex
+      justify-content: center
+      align-items: center
+      .submit
+        height: 40px
+        width: 40%
+        border-radius: 3px
+        color: $color-white
+        text-align: center
+        line-height: 40px
+        background: $color-nomal
+      .sure
+        &:hover
+          background: $color-hover
+        &:active
+          background: $color-active
+      .change
+        margin-right: 20px
+        background: $color-white
+        border: 1px solid $color-line
+        color: $color-text
+        &:hover
+          color: $color-nomal
+          border: 1px solid $color-nomal
+
   .selects
     display: flex
     font-size: $font-size-medium

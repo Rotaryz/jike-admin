@@ -25,60 +25,59 @@
 </template>
 
 <script type="text/ecmascript-6">
-export default {
-  props: {
-    select: {
-      type: Array,
-      default: () => [{
-        title: '开通方式',
-        select: false,
-        show: false,
-        children: [{content: '全部', data: []}]
-      }]
-    }
-  },
-  created() {
-    window.onclick = () => {
-      this.select.forEach((item) => {
-        item.select = false
-      })
-    }
-  },
-  data() {
-    return {
-      setTime: ''
-    }
-  },
-  methods: {
-    clickHide(index) {
-      this.select[index].select = false
+  export default {
+    props: {
+      select: {
+        type: Array,
+        default: () => [{
+          title: '开通方式',
+          select: false,
+          show: false,
+          children: [{content: '全部', data: []}]
+        }]
+      }
     },
-    endShow() {
-      clearTimeout(this.setTime)
-    },
-    leaveHide(index) {
-      console.log(index)
-      this.setTime = setTimeout(() => {
-        this.clickHide(index)
-      }, 1500)
-    },
-    selectType(type, index) {
-      this.select[index].select = !this.select[index].select
-      this.select.forEach((item, idx) => {
-        if (idx !== index) {
+    created() {
+      window.onclick = () => {
+        this.select.forEach((item) => {
           item.select = false
-        }
-      })
-      this.select[index].show = true
-      this.$emit('selectType', type, this.select)
+        })
+      }
     },
-    setValue(value, index, idx) {
-      this.select[index].select = false
-      this.select[index].children[idx].content = value.title
-      this.$emit('setValue', value, idx)
+    data() {
+      return {
+        setTime: ''
+      }
+    },
+    methods: {
+      clickHide(index) {
+        this.select[index].select = false
+      },
+      endShow() {
+        clearTimeout(this.setTime)
+      },
+      leaveHide(index) {
+        this.setTime = setTimeout(() => {
+          this.clickHide(index)
+        }, 1500)
+      },
+      selectType(type, index) {
+        this.select[index].select = !this.select[index].select
+        this.select.forEach((item, idx) => {
+          if (idx !== index) {
+            item.select = false
+          }
+        })
+        this.select[index].show = true
+        this.$emit('selectType', type, this.select)
+      },
+      setValue(value, index, idx) {
+        this.select[index].select = false
+        this.select[index].children[idx].content = value.title
+        this.$emit('setValue', value, idx)
+      }
     }
   }
-}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -91,12 +90,12 @@ export default {
     display: flex
     margin-left: 3.535vw
     position: relative
-    z-index :1
+    z-index: 50
     &:first-child
       margin-left: 0px
 
   .select-title
-    font-size :$font-size-medium
+    font-size: $font-size-medium
     line-height: 17px
     no-wrap()
 

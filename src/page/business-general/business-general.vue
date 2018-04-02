@@ -459,8 +459,8 @@
         box-sizing: content-box
         display: inline-block
         cursor: pointer
-        font-size: $font-size-medium
-        padding: 5% 14%
+        font-size: $font-size-small
+        padding: 2.5% 4%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal

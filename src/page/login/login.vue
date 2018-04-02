@@ -30,70 +30,72 @@
 </template>
 
 <script type="text/ecmascript-6">
-import admins from 'api/admins'
-import Toast from 'base/toast/toast'
-export default {
-  data() {
-    return {
-      focusPass: false,
-      focusPhone: false,
-      user: '',
-      password: '',
-      remenber: true
-    }
-  },
-  created() {
-    let token = localStorage.getItem('token') || sessionStorage.getItem('token')
-    if (token) {
-      location.href = '#/container/data'
-    }
-    window.onkeydown = (e) => {
-      if (e.keyCode === 13) {
-        this.login()
+  import admins from 'api/admins'
+  import Toast from 'base/toast/toast'
+  export default {
+    data() {
+      return {
+        focusPass: false,
+        focusPhone: false,
+        user: '',
+        password: '',
+        remenber: true
       }
-    }
-  },
-  methods: {
-    hideFocus() {
-      this.focusPhone = false
-      this.focusPass = false
     },
-    remenberPassWord() {
-      this.remenber = !this.remenber
-    },
-    login() {
-      if (this.user === '') {
-        this.$refs.toast.show('请输入用户名')
-        return false
-      } else if (this.password === '') {
-        this.$refs.toast.show('请输入密码')
-        return false
+    created() {
+//      localStorage.clear()
+//      sessionStorage.clear()
+      let token = localStorage.getItem('token') || sessionStorage.getItem('token')
+      if (token) {
+        location.href = '#/container/data'
       }
-      let data = {username: this.user, password: this.password}
-      admins.login(data).then((res) => {
-        if (!res.error) {
-          let data = res.data
-          this.$refs.toast.show('登陆成功')
-          if (this.remenber) {
-            localStorage.setItem('token', data.access_token)
-            localStorage.setItem('userName', data.admin_info.username)
-          } else {
-            sessionStorage.setItem('token', data.access_token)
-            sessionStorage.setItem('userName', data.admin_info.username)
-          }
-          setTimeout(() => {
-            location.href = '#/container/data'
-          }, 1300)
-        } else if (res.error) {
-          this.$refs.toast.show(res.message)
+      window.onkeydown = (e) => {
+        if (e.keyCode === 13) {
+          this.login()
         }
-      })
+      }
+    },
+    methods: {
+      hideFocus() {
+        this.focusPhone = false
+        this.focusPass = false
+      },
+      remenberPassWord() {
+        this.remenber = !this.remenber
+      },
+      login() {
+        if (this.user === '') {
+          this.$refs.toast.show('请输入用户名')
+          return false
+        } else if (this.password === '') {
+          this.$refs.toast.show('请输入密码')
+          return false
+        }
+        let data = {username: this.user, password: this.password}
+        admins.login(data).then((res) => {
+          if (!res.error) {
+            let data = res.data
+            this.$refs.toast.show('登陆成功')
+            if (this.remenber) {
+              localStorage.setItem('token', data.access_token)
+              localStorage.setItem('userName', data.admin_info.username)
+            } else {
+              sessionStorage.setItem('token', data.access_token)
+              sessionStorage.setItem('userName', data.admin_info.username)
+            }
+            setTimeout(() => {
+              location.href = '#/container/data'
+            }, 500)
+          } else if (res.error) {
+            this.$refs.toast.show(res.message)
+          }
+        })
+      }
+    },
+    components: {
+      'toast': Toast
     }
-  },
-  components: {
-    'toast': Toast
   }
-}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">

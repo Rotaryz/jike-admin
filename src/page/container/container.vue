@@ -13,7 +13,7 @@
           <i class="icons-top" :class="logout ? 'icons-bottom': '' "></i>
           <transition name="fade">
             <div class="logout-box" v-show="logout" @mouseenter="showlogout">
-              <div class="logout" @click.stop="isLogout" >
+              <div class="logout" @click.stop="isLogout">
                 <span class="logout-icons"></span>
                 退出登录
               </div>
@@ -29,57 +29,57 @@
 </template>
 
 <script type="text/ecmascript-6">
-import Navigation from 'base/navigation/navigation'
+  import Navigation from 'base/navigation/navigation'
 
-export default {
-  data() {
-    return {
-      navStatus: true,
-      userName: localStorage.getItem('userName') || sessionStorage.getItem('userName'),
-      logout: false,
-      showOut: false,
-      dataStatus: '',
-      width: 200,
-      offsetWhidt: document.body.clientWidth - 200
+  export default {
+    data() {
+      return {
+        navStatus: true,
+        userName: localStorage.getItem('userName') || sessionStorage.getItem('userName'),
+        logout: false,
+        showOut: false,
+        dataStatus: '',
+        width: 200,
+        offsetWhidt: document.body.clientWidth - 200
+      }
+    },
+    created() {
+      window.onresize = () => {
+        this.offsetWhidt = document.body.clientWidth - this.width
+      }
+    },
+    methods: {
+      showlogout() {
+        this.logout = true
+      },
+      hidelogout() {
+        this.logout = false
+      },
+      checkStatus() {
+        let res = this.$refs.nav.isShowBig()
+        this.width = res
+        this.offsetWhidt = document.body.clientWidth - this.width
+        this.navStatus = !this.navStatus
+      },
+      hideNav() {
+        this.$refs.nav.hideHover()
+      },
+      isLogout() {
+        localStorage.clear()
+        sessionStorage.clear()
+        location.href = '#/login'
+      },
+      showHeight() {
+        this.showOut = true
+      },
+      hideHeight() {
+        this.showOut = false
+      }
+    },
+    components: {
+      'navigation': Navigation
     }
-  },
-  created() {
-    window.onresize = () => {
-      this.offsetWhidt = document.body.clientWidth - this.width
-    }
-  },
-  methods: {
-    showlogout() {
-      this.logout = true
-    },
-    hidelogout() {
-      this.logout = false
-    },
-    checkStatus() {
-      let res = this.$refs.nav.isShowBig()
-      this.width = res
-      this.offsetWhidt = document.body.clientWidth - this.width
-      this.navStatus = !this.navStatus
-    },
-    hideNav() {
-      this.$refs.nav.hideHover()
-    },
-    isLogout() {
-      localStorage.clear()
-      sessionStorage.clear()
-      location.href = '#/login'
-    },
-    showHeight() {
-      this.showOut = true
-    },
-    hideHeight() {
-      this.showOut = false
-    }
-  },
-  components: {
-    'navigation': Navigation
   }
-}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -91,31 +91,31 @@ export default {
     .left-side
       position: relative
       flex: 1
-      width :100%
+      width: 100%
       display: flex
       flex-direction: column
       .herder-peo
         position: fixed
         top: 0
-        z-index :800
+        z-index: 800
         left: 0
-        width :100%
+        width: 100%
         background: $color-white
         display: flex
-        height :65px
+        height: 65px
         align-items: center
         justify-content: space-between
         border-bottom: 1px solid #eee
         .guild-box
-          height :100%
-          width :78px
+          height: 100%
+          width: 78px
           position: relative
           cursor: pointer
           &:hover
-            background :$color-background
+            background: $color-background
         .guide
-          margin-left :26px
-          margin-top :19.5px
+          margin-left: 26px
+          margin-top: 19.5px
           height: 26px
           width: 26px
           transform: rotateY(180deg)
@@ -130,21 +130,21 @@ export default {
           align-items: center
           padding: 0 41px 0 33px
           position: relative
-          z-index :1500
+          z-index: 1500
           .logout-box
             position: absolute
             right: 2px
             bottom: -58px
-            height :58px
+            height: 58px
             width: 99%
-            z-index :1500
+            z-index: 1500
             &.fade-enter, &.fade-leave-to
               opacity: 0
             &.fade-enter-to, &.fade-leave-to
               transition: all .2s ease-in-out
           .logout
-            background-color:$color-white
-            margin-top :4px
+            background-color: $color-white
+            margin-top: 4px
             border-radius: 3px
             width: 100%
             text-indent: 64px
@@ -177,16 +177,16 @@ export default {
             position: absolute
             right: 28px
             top: 47%
-            transform-origin:  7px 3px
-            transform : rotate(0deg)
-            transition : all 0.2s
+            transform-origin: 7px 3px
+            transform: rotate(0deg)
+            transition: all 0.2s
           .icons-bottom
-            transform-origin:  7px 3px
-            transform : rotate(180deg)
-            transition : all 0.2s
+            transform-origin: 7px 3px
+            transform: rotate(180deg)
+            transition: all 0.2s
         .user-active
           background: $color-background
       .content
-        margin-top :65px
+        margin-top: 65px
         flex: 1
 </style>

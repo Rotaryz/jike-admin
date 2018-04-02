@@ -136,7 +136,8 @@ export default {
       } else {
         this.time = value
       }
-      this.page = page
+      this.$refs.order.beginPage()
+      this.page = 1
       this.showList()
     },
     addPage(page) {
@@ -192,8 +193,8 @@ export default {
       flex: 1
       .showDetail
         cursor: pointer
-        font-size: $font-size-medium
-        padding: 5% 11%
+        font-size: $font-size-small
+        padding: 3.8% 9%
         color: $color-nomal
         border-radius: 3px
         border: 1px solid $color-nomal
