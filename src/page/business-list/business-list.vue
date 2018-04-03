@@ -477,7 +477,6 @@ export default {
       })
     },
     showUltra(item) {
-      console.log(item)
       this.ultraPassword = ''
       this.ultraPhone = item.mobile
       this.ultraShow = true

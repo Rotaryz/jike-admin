@@ -126,7 +126,7 @@ export function delCircle(params) {
  */
 export function ultraVires(params) {
   const url = `/api/merchant/exceed-authority`
-  return axios.post(url, {params: params}).then((res) => {
+  return axios.post(url, params).then((res) => {
     return Promise.resolve(res.data)
   })
 }
