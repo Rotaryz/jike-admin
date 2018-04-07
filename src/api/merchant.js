@@ -96,29 +96,23 @@ export default {
   delCircle(params) {
     const url = `/api/merchant/del-circle`
     return http.get(url, params)
+  },
+  /**
+   * 越权
+   * @param params
+   * @returns {Promise.<TResult>}
+   */
+  getQrcord(id) {
+    const url = `/api/merchant/shop-qrcode/${id}`
+    return http.get(url)
+  },
+  /**
+   * 越权
+   * @param params
+   * @returns {Promise.<TResult>}
+   */
+  ultraVires(params) {
+    const url = `/api/merchant/exceed-authority`
+    return http.post(url, params)
   }
-}
-
-/**
- * 越权
- * @param params
- * @returns {Promise.<TResult>}
- */
-export function ultraVires(params) {
-  const url = `/api/merchant/exceed-authority`
-  return axios.post(url, params).then((res) => {
-    return Promise.resolve(res.data)
-  })
-}
-
-/**
- * 越权
- * @param params
- * @returns {Promise.<TResult>}
- */
-export function getQrcord(id) {
-  const url = `/api/merchant/shop-qrcode/${id}`
-  return axios.get(url).then((res) => {
-    return Promise.resolve(res.data)
-  })
 }

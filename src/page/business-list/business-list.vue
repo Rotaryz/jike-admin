@@ -12,7 +12,7 @@
         </div>
         <ul class="list">
           <li class="list-box" v-for="(item,index) in merchanList" :class="{'list-box-active': heightIndex === index}" :key="index" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
-            <div class="list-item list-text">{{item.mobile}}</div>
+            <div class="list-item list-text list-src hand" @click="showDetail(item.id)">{{item.mobile}}</div>
             <div class="list-item list-text">{{item.shop_name}}</div>
             <div class="list-item list-text">{{item.is_leader ? '盟主' : '普通'}}
             </div>
@@ -28,9 +28,9 @@
             </div>
             <div class="list-item">
             <span class="showDetail">
-              <span @click="showDetail(item.id)">查看</span>
+              <!--<span >查看</span>-->
               <span class="open" @click.stop="openShop(item.merchant_id)">
-                | 开通
+                开通
                 <div class="order-block " @click.stop v-show="item.end_time">
                   <el-date-picker
                     type="datetime"
@@ -49,7 +49,7 @@
         </ul>
       </div>
       <div slot="shade-box" class="shade-box">
-        <div class="shade-inquiry" v-show="!check">
+        <div class="shade-inquiry" v-show="check === 1">
           <div class="shade-border shade-tiem">{{freezeText}}<span class="close" @click="hideShadeBox">&times;</span>
           </div>
           <div class="shade-border shade-exprent shade-tiem">
@@ -62,7 +62,7 @@
             <span class="submit sure hand" @click="withdrawal">确定</span>
           </div>
         </div>
-        <div class="shade-check" v-show="check">
+        <div class="shade-check" v-show="check === 2">
           <div class="shade-border shade-tiem">审核<span class="close" @click="hideShadeBox">&times;</span>
           </div>
           <div class="shade-border shade-exprent shade-tiem">
@@ -76,21 +76,31 @@
             <span class="submit sure hand" @click="withdrawal(2)">审核不通过</span>
           </div>
         </div>
+        <div class="ultra-vires-box" v-show="check === 3">
+          <div class="shade-border">设置越权密码<span class="close" @click="hideShadeBox">&times;</span></div>
+          <div class="shade-border shade-tiem">
+            <span class="shade-title">越权帐号</span>
+            <span class="shade-text">{{ultraPhone}}</span>
+          </div>
+          <div class="shade-border shade-tiem activation-code" :class="{'shade-input':!disableds}">
+            <span class="shade-title">设置密码</span>
+            <div class="input-box" :class="{'input-height': heightType === 7}">
+              <input class="shade-text input-height-item" type="text"
+                     v-model="ultraPassword" name="change" @focus="isFocus(7)"
+                     @blur="heightType = -1"/>
+            </div>
+          </div>
+          <div class="shade-border shade-tiem shade-img">
+            <span class="shade-title">商家二维码</span>
+            <img :src="shopQrcord" class="qrcord-img">
+          </div>
+          <div class="ultra-vires-ok">
+            <span class="submit hand" @click="ultraViresSub">确定</span>
+          </div>
+        </div>
       </div>
       <toast></toast>
     </form-box>
-    <div class="ultra-vires-box" v-show="ultraShow">
-      <div class="title">设置越权密码</div>
-      <div class="ultra-vires-phone">越权帐号: {{ultraPhone}}</div>
-      <div class="down-box">
-        <input type="text" v-model="ultraPassword" class="ultra-vires-txt">
-        <div class="ultra-vires-btn hand" @click="ultraViresSub">确定</div>
-      </div>
-      <div class="shop-qrcord">
-        <img :src="shopQrcord" alt="商家二维码" class="qrcord-img">
-      </div>
-      <div class="close-box hand" @click="closeUltra">X</div>
-    </div>
   </div>
 </template>
 
@@ -180,6 +190,9 @@
     mixins: [mixinBase],
     data() {
       return {
+        shopQrcord: '',
+        ultraPassword: '',
+        ultraShow: false,
         freezeText: '冻结',
         focus: false,
         reamrk: '',
@@ -212,9 +225,10 @@
         isDisabledCode: 0,
         checked: '',
         orderId: '',
-        check: false,
+        check: 1,
         remarks: '',
-        goNUm: 0
+        goNUm: 0,
+        ultraPhone: ''
       }
     },
     created() {
@@ -260,6 +274,7 @@
       isFocus(num) {
         this.heightType = num
       },
+
       merchantMessage(id) {
         let date = this.riQi(this.merchantDetail.expiration_time)
         let reg = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/
@@ -297,7 +312,31 @@
           return item
         })
         this.$refs.order.showShade()
-        this.check = false
+        this.check = 1
+      },
+      // 越权
+      ultraViresSub() {
+        if (!this.ultraPassword) {
+          this.$refs.order.showContent('请输入密码')
+          return
+        }
+        let data = {
+          mobile: this.ultraPhone,
+          password: this.ultraPassword
+        }
+        merchant.ultraVires(data).then((res) => {
+          if (res.error === ERR_OK) {
+            this.$refs.order.showContent('设置成功')
+            setTimeout(() => {
+              this.ultraPhone = ''
+              this.ultraPassword = ''
+              this.ultraShow = false
+              this.hideShadeBox()
+            }, 1000)
+            return
+          }
+          this.$refs.order.showContent(res.message)
+        })
       },
 //      审核
       audit(res) {
@@ -306,7 +345,7 @@
           this.freezeText = '认证审核'
           this.$refs.order.showShade()
           this.merchantId = res.merchant_id
-          this.check = true
+          this.check = 2
         }
       },
       isDeal() {
@@ -354,6 +393,20 @@
       },
       hideShadeBox() {
         this.$refs.order.hideShade()
+      },
+      showUltra(item) {
+        console.log(item)
+        this.$refs.order.showShade()
+        this.check = 3
+        this.ultraPassword = ''
+        this.ultraPhone = item.mobile
+        this.ultraShow = true
+        console.log(merchant)
+        merchant.getQrcord(item.merchant_id).then((res) => {
+          if (res.error === ERR_OK) {
+            this.shopQrcord = res.data.url
+          }
+        })
       },
       showList(status = false) {
         let data = {}
@@ -493,6 +546,9 @@
       white-space: nowrap
       text-overflow: ellipsis
       overflow: hidden
+    .list-src
+      color: $color-nomal !important
+      text-decoration: underline
     .list-item
       color: $color-text
       flex: 1
@@ -549,7 +605,7 @@
         height: 100%
         width: 100%
         padding-left: 10px
-        border: 0.5px solid $color-white
+        border: 0.5px solid $color-line
       textarea.shade-text
         padding-top: 2px
         font-size: $font-size-medium
@@ -611,6 +667,11 @@
         .icon-active
           border: none
           icon-image('icon-rignt')
+    .shade-img
+      height: 10.41vw
+      .qrcord-img
+        height: 8.33vw
+        width: 8.33vw
     .shade-exprent
       height: 144px
       display: block
@@ -780,56 +841,31 @@
         border: none
         background: $color-nomal
         color: $color-white
-
-  .select
-    padding-left: 1.8vw
+  // 越权
   .ultra-vires-box
-    position: fixed
-    left: 50%
-    top: 50%
-    width: 250px
-    height: 360px
-    border: 1px solid $color-line
+    all-center()
+    width: 29vw
+    border: 0.5px solid $color-icon-line
     background: $color-white
-    transform: translate(0, -160px)
-    .title
-      line-height: 30px
-      padding-left: 15px
-    .ultra-vires-phone
-      line-height: 30px
-      padding-left: 15px
-    .down-box
+    box-shadow: 0 0 5px 0 rgba(12, 6, 14, 0.60)
+    border-radius: 3px
+    .ultra-vires-ok
       display: flex
-      width: 250px
-      height: 50px
+      justify-content: center
       align-items: center
-      .ultra-vires-txt
-        border: 1px solid $color-line
-        width: 150px
-        height: 30px
-        line-height: 30px
-        margin: 0 15px
-      .ultra-vires-btn
-        width: 50px
-        height: 24px
-        color: $color-text
-        border: 1px solid $color-line
-        border-radius: 6px
+      height: 5.2vw
+      .submit
+        font-size: $font-size-medium-x
+        display: inline-block
+        height: 2.5vw
+        width: 11.45vw
         text-align: center
-        line-height: 24px
-    .shop-qrcord
-      width: 248px
-      height: 248px
-      .qrcord-img
-        width: 248px
-        height: 248px
-    .close-box
-      width: 20px
-      height: 20px
-      position: absolute
-      top: 5px
-      right: 5px
-      border: 1px solid $color-line
-      text-align: center
-      line-height: 20px
+        line-height: 2.5vw
+        border-radius: 3px
+        background: $color-nomal
+        color: $color-white
+        &:hover
+          background: $color-hover
+        &:active
+          background: $color-nomal
 </style>
