@@ -98,3 +98,27 @@ export default {
     return http.get(url, params)
   }
 }
+
+/**
+ * 越权
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function ultraVires(params) {
+  const url = `/api/merchant/exceed-authority`
+  return axios.post(url, params).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
+
+/**
+ * 越权
+ * @param params
+ * @returns {Promise.<TResult>}
+ */
+export function getQrcord(id) {
+  const url = `/api/merchant/shop-qrcode/${id}`
+  return axios.get(url).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

@@ -42,6 +42,7 @@
               </span>
               <span @click="frost(item)"> | {{item.is_disabled ? '解冻' : '冻结'}}</span>
               <span @click="audit(item)" :class="item.is_checked === 0 ? 'audit' : 'audit-disable'"> | 审核</span>
+              <span @click="showUltra(item)"> | 越权</span>
             </span>
             </div>
           </li>
@@ -78,6 +79,18 @@
       </div>
       <toast></toast>
     </form-box>
+    <div class="ultra-vires-box" v-show="ultraShow">
+      <div class="title">设置越权密码</div>
+      <div class="ultra-vires-phone">越权帐号: {{ultraPhone}}</div>
+      <div class="down-box">
+        <input type="text" v-model="ultraPassword" class="ultra-vires-txt">
+        <div class="ultra-vires-btn hand" @click="ultraViresSub">确定</div>
+      </div>
+      <div class="shop-qrcord">
+        <img :src="shopQrcord" alt="商家二维码" class="qrcord-img">
+      </div>
+      <div class="close-box hand" @click="closeUltra">X</div>
+    </div>
   </div>
 </template>
 
@@ -770,4 +783,53 @@
 
   .select
     padding-left: 1.8vw
+  .ultra-vires-box
+    position: fixed
+    left: 50%
+    top: 50%
+    width: 250px
+    height: 360px
+    border: 1px solid $color-line
+    background: $color-white
+    transform: translate(0, -160px)
+    .title
+      line-height: 30px
+      padding-left: 15px
+    .ultra-vires-phone
+      line-height: 30px
+      padding-left: 15px
+    .down-box
+      display: flex
+      width: 250px
+      height: 50px
+      align-items: center
+      .ultra-vires-txt
+        border: 1px solid $color-line
+        width: 150px
+        height: 30px
+        line-height: 30px
+        margin: 0 15px
+      .ultra-vires-btn
+        width: 50px
+        height: 24px
+        color: $color-text
+        border: 1px solid $color-line
+        border-radius: 6px
+        text-align: center
+        line-height: 24px
+    .shop-qrcord
+      width: 248px
+      height: 248px
+      .qrcord-img
+        width: 248px
+        height: 248px
+    .close-box
+      width: 20px
+      height: 20px
+      position: absolute
+      top: 5px
+      right: 5px
+      border: 1px solid $color-line
+      text-align: center
+      line-height: 20px
 </style>
