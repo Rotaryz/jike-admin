@@ -43,8 +43,6 @@
       }
     },
     created() {
-//      localStorage.clear()
-//      sessionStorage.clear()
       let token = localStorage.getItem('token') || sessionStorage.getItem('token')
       if (token) {
         location.href = '#/container/data'
