@@ -43,8 +43,9 @@ function checkCode(res) {
   if (res.data && (res.data.code !== ERR_OK)) {
     switch (res.data.code) {
       case TIME_OUT:
-        location.href = '#/login'
         localStorage.removeItem('token')
+        sessionStorage.removeItem('token')
+        location.href = '#/login'
         break
     }
     // 可以进行switch操作，根据返回的code进行相对应的操作，然后抛异常
