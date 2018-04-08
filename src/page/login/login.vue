@@ -43,7 +43,7 @@
       }
     },
     created() {
-      let token = localStorage.getItem('token') ? localStorage.getItem('token') : sessionStorage.getItem('token') ? sessionStorage.getItem('token') :false
+      let token = localStorage.getItem('token') ? localStorage.getItem('token') : sessionStorage.getItem('token') ? sessionStorage.getItem('token') : false
       if (token) {
         location.href = '#/container/data'
       }
