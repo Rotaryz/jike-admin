@@ -868,4 +868,6 @@
           background: $color-hover
         &:active
           background: $color-nomal
+  .select
+    margin-left:1.9625vw
 </style>
