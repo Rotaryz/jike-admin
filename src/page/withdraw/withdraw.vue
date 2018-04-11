@@ -23,7 +23,7 @@
       <ul class="list">
         <li class="list-box" v-for="(item,index) in orderList" :key="index" :class="{'list-box-active': heightIndex === index}" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
           <div class="list-item list-text">{{item.created_at}}</div>
-          <div class="list-item list-text">{{item.order_type === '1' ? '门店提现' : '顾客提现'}}</div>
+          <div class="list-item list-text">{{item.order_type === '1' ? '门店提现' : item.order_type === '4' ? '顾客提现' : ''}}</div>
           <div class="list-item list-text">{{item.merchant_mobile}}</div>
           <div class="list-item list-text">{{item.bank}}</div>
           <div class="list-item list-text">{{item.withdrawal_card}}</div>
