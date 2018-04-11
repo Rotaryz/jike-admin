@@ -183,6 +183,7 @@
         this.endStart = this.startTime
         this.endFinal = this.finalTime
         let data = {
+          page: this.page,
           start_time: this.endStart,
           end_time: this.endFinal,
           time: this.endTime,
