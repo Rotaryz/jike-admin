@@ -145,9 +145,10 @@
       info() {
         this.orderInput = this.$route.query.order || ''
         this.business = this.$route.query.status || 1
-        this.timeIdx = this.business ? this.$refs.order.hideHeightLine() : 0
-        this.time = this.business ? '' : 'today'
-        this.goNUm = this.business ? 0 : 2
+        let status = this.$route.query.status
+        this.timeIdx = status ? this.$refs.order.hideHeightLine() : 0
+        this.time = status ? '' : 'today'
+        this.goNUm = status ? 0 : 2
         if (this.orderInput) {
           let sum = this.selectList[1].children[0].data
           let idx = sum.findIndex(item => item.status === this.business * 1)
