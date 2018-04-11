@@ -144,7 +144,7 @@
     methods: {
       info() {
         this.orderInput = this.$route.query.order || ''
-        this.business = this.$route.query.status || ''
+        this.business = this.$route.query.status || 1
         this.timeIdx = this.business ? this.$refs.order.hideHeightLine() : 0
         this.time = this.business ? '' : 'today'
         this.goNUm = this.business ? 0 : 2
