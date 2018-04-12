@@ -22,18 +22,18 @@
       </div>
       <ul class="list">
         <li class="list-box" v-for="(item,index) in orderList" :key="index" :class="{'list-box-active': heightIndex === index}" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
-          <div class="list-item list-text">{{item.created_at}}</div>
+          <a href="javaScript:;" class="list-item list-text" :title="item.item.created_at"><div class="list-none">{{item.created_at}}</div></a>
           <div class="list-item list-text">{{item.order_type === '1' ? '门店提现' : item.order_type === '4' ? '顾客提现' : ''}}</div>
           <div class="list-item list-text">{{item.merchant_mobile}}</div>
           <div class="list-item list-text">{{item.bank}}</div>
-          <div class="list-item list-text">{{item.withdrawal_card}}</div>
+          <a href="javaScript:;" class="list-item list-text" :title="item.withdrawal_card"><div class="list-none">{{item.withdrawal_card}}</div></a>
           <div class="list-item list-text">{{item.user_name}}</div>
           <div class="list-item list-text">{{item.remaining}}</div>
           <div class="list-item list-text">{{item.blocked_remaining}}</div>
           <div class="list-item list-text">{{item.total}}</div>
           <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '提现成功' : '提现失败'}}</div>
-          <div class="list-item list-text">{{item.operation_time}}</div>
-          <div class="list-item list-text">{{item.admin_name}}</div>
+          <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
+          <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
           <div class="list-item"><span class="showDetail" :class="item.status !== 0? 'audit' : 'audit-disable'" @click="showDetail(item)">审核</span></div>
         </li>
       </ul>
@@ -63,7 +63,7 @@
   import {ERR_OK, BASE_URL} from 'api/config'
   import Toast from 'base/toast/toast'
   import AdminSelect from 'base/admin-select/admin-select'
-  const titleList = ['申请日期', '业务类型', '商户账号', '提现渠道', '提现账号', '姓名', '可提现金额', '冻结金额', '申请提现金额', '处理状态', '操作时间', '操作人', '操作']
+  const titleList = ['申请日期', '业务类型', '商户账号', '提现渠道', '提现账号', '姓名', '可提现金额', '冻结金额', '申请提现金额', '处理状态', '操作']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
   const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
   const SELECT = [{
@@ -297,6 +297,7 @@
       border-bottom: 1px solid $color-big-background
       background: $color-big-background
       .list-item
+        cursor: url
         white-space: nowrap
     .list
       height: 90.5%
@@ -306,8 +307,11 @@
         height: 10%
         border-bottom: 1px solid $color-big-background
         .list-item
+          cursor: pointer
           line-height: 16px
           font-size: $font-size-medium
+          .list-none
+            no-wrap()
     .list-text
       white-space: nowrap
       text-overflow: ellipsis
