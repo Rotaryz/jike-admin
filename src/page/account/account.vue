@@ -285,6 +285,8 @@
         .list-box
           height: 14.2857%
           border-bottom: 1px solid $color-big-background
+          &:hover
+            background :$color-background
           .list-item
             white-space: nowrap
             line-height: 16px
