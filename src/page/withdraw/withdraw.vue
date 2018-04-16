@@ -22,7 +22,7 @@
       </div>
       <ul class="list">
         <li class="list-box" v-for="(item,index) in orderList" :key="index" :class="{'list-box-active': heightIndex === index}" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
-          <a href="javaScript:;" class="list-item list-text" :title="item.item.created_at"><div class="list-none">{{item.created_at}}</div></a>
+          <a href="javaScript:;" class="list-item list-text" :title="item.created_at"><div class="list-none">{{item.created_at}}</div></a>
           <div class="list-item list-text">{{item.order_type === '1' ? '门店提现' : item.order_type === '4' ? '顾客提现' : ''}}</div>
           <div class="list-item list-text">{{item.merchant_mobile}}</div>
           <div class="list-item list-text">{{item.bank}}</div>
