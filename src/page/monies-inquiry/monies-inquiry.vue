@@ -240,7 +240,7 @@
     },
     mounted() {
       this.info()
-      this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=&merchant_mobile=&order_type=0&order_status=&stare_time=&end_time=&pay_start_time&pay_end_time=`
+      this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=&merchant_mobile=&order_type=0&order_status=&start_time=&end_time=&pay_start_time&pay_end_time=`
       this.showList()
     },
     methods: {
@@ -251,7 +251,7 @@
         this.orderSn = this.orderInput
       },
       downExcel() {
-        this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=${this.orderSn}&merchant_mobile=${this.merchantMobile}&order_type=${this.orderTypes}&order_status=${this.orderState}&stare_time=${this.finalTime[0]}&end_time=${this.finalTime[1]}&pay_start_time=${this.findPayTime[0]}&pay_end_time=${this.findPayTime[1]}`
+        this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=${this.orderSn}&merchant_mobile=${this.merchantMobile}&order_type=${this.orderTypes}&order_status=${this.orderState}&start_time=${this.finalTime[0]}&end_time=${this.finalTime[1]}&pay_start_time=${this.findPayTime[0]}&pay_end_time=${this.findPayTime[1]}`
       },
       search() {
         this.orderSn = this.orderInput
@@ -295,7 +295,7 @@
           merchant_mobile: this.merchantMobile,
           order_type: this.orderTypes,
           order_status: this.orderState,
-          stare_time: this.finalTime[0],
+          start_time: this.finalTime[0],
           end_time: this.finalTime[1],
           limit: 10,
           page: this.page,
