@@ -120,7 +120,7 @@
         payType: 0,
         orderType: '',
         moneyDetail: {},
-        excel: `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_type=0&stare_time=&end_time=0&pay_type=0&time=`
+        excel: `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_type=0&start_time=&end_time=0&pay_type=0&time=`
       }
     },
     created() {

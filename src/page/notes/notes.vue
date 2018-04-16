@@ -117,7 +117,7 @@
         this.searchType = this.searchEndType
         this.finalTime = this.sreachTime
         this.merchantMobile = this.busInput
-        let data = {page: this.page, search_type: this.searchType, stare_time: this.finalTime[0], end_time: this.finalTime[1], mobile: this.merchantMobile}
+        let data = {page: this.page, search_type: this.searchType, start_time: this.finalTime[0], end_time: this.finalTime[1], mobile: this.merchantMobile}
         home.backlogLists(data).then((res) => {
           this.showContent = true
           if (res.error === ERR_OK) {

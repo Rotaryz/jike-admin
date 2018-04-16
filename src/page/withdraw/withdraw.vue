@@ -138,7 +138,7 @@
     mounted() {
 //      未完成
       this.info()
-      this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=&merchant_mobile=&order_type=0&order_status=&stare_time=&end_time=&pay_start_time&pay_end_time=`
+      this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=&merchant_mobile=&order_type=0&order_status=&start_time=&end_time=&pay_start_time&pay_end_time=`
       this.showList(true)
     },
     methods: {
