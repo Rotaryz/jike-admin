@@ -41,7 +41,7 @@
                 </div>
               </span>
               <span @click="frost(item)"> | {{item.is_disabled ? '解冻' : '冻结'}}</span>
-              <span @click="audit(item)" :class="item.is_checked === 0 ? 'audit' : 'audit-disable'"> | 审核</span>
+              <span @click="audit(item)" :class="item.is_checked !== 2  ? 'audit' : 'audit-disable'"> | 审核</span>
               <span @click="showUltra(item)"> | 越权</span>
             </span>
             </div>
