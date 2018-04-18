@@ -340,7 +340,7 @@
       },
 //      审核
       audit(res) {
-        if (!res.is_checked) {
+        if (res.is_checked !== 2) {
           this.remarks = res.remark
           this.freezeText = '认证审核'
           this.$refs.order.showShade()
