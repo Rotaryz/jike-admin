@@ -23,7 +23,7 @@
             <div class="list-item list-text">{{item.service_version ? '基础' : '试用'}}</div>
             <div class="list-item list-text">{{item.is_expiration ? '已过期' : '使用中'}}</div>
             <div class="list-item list-text">
-              {{item.is_checked === 0 ? '未认证' : '已认证'}}
+              {{item.is_checked === 0 || item.is_checked === 1 ? '未认证' : '已认证'}}
               <!--{{item.open_type === 0 ? '支付开通' : item.open_type === 1 ? '盟主开通' : item.open_type === 2 ? '后台开通' : ''}}-->
             </div>
             <div class="list-item">
