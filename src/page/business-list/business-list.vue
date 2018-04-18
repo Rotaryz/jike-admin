@@ -72,8 +72,8 @@
             </div>
           </div>
           <div class="ok">
-            <span class="submit change hand" @click="withdrawal(1)">审核通过</span>
-            <span class="submit sure hand" @click="withdrawal(2)">审核不通过</span>
+            <span class="submit change hand" @click="withdrawal(2)">审核通过</span>
+            <span class="submit sure hand" @click="withdrawal(3)">审核不通过</span>
           </div>
         </div>
         <div class="ultra-vires-box" v-show="check === 3">
@@ -365,10 +365,10 @@
           home.licenseAudit(data).then((res) => {
             if (res.error === ERR_OK) {
               switch (code) {
-                case 1:
+                case 2:
                   this.$refs.order.showContent('审核通过')
                   break
-                case 2:
+                case 3:
                   this.$refs.order.showContent('审核不通过')
                   break
               }
