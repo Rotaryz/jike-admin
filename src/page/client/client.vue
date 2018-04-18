@@ -159,6 +159,8 @@ export default {
     },
     orderStatus(status) {
       this.status = status
+      this.page = 1
+      this.$refs.order.beginPage()
       this.showList()
     },
     showCity(prams, page) {
