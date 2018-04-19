@@ -173,6 +173,7 @@
               if (items.url.includes(type)) {
                 this.showChild(idx)
                 this.bigChildren(index)
+                sessionStorage.setItem('title', [item.title, items.title])
               } else {
                 item.showHeight = HEIGHT
               }
@@ -180,6 +181,7 @@
           } else {
             if (item.url.includes(type)) {
               this.showChild(idx)
+              sessionStorage.setItem('title', [item.title])
             }
           }
         })
@@ -310,6 +312,7 @@
       '$route'(to, form) {
         if (form.path.includes('notes') || form.query.order) {
           this.info(to.matched[1].path)
+          sessionStorage.getItem('title')
         }
       }
     }

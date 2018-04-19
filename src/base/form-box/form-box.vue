@@ -254,9 +254,14 @@
       window.onclick = () => {
         this.hidePageDetail()
       }
-      sessionStorage.getItem('title') ? this.navTitle = sessionStorage.getItem('title').split(',') : this.navTitle = this.navTitle
+      this.setNavTitle()
     },
     methods: {
+      setNavTitle() {
+        setTimeout(() => {
+          this.navTitle = sessionStorage.getItem('title') ? sessionStorage.getItem('title').split(',') : this.navTitle
+        }, 100)
+      },
       hideHeightLine() {
         this.timeIndex = -1
         return this.timeIndex
