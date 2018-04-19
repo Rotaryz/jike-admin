@@ -249,7 +249,7 @@
         text-align: center
         color: $color-text-icon
         font-size: $font-money-size
-        transform: translateY(-22PX)
+        transform: translateY(-14PX)
         font-weight: 600
         font-family: 'ZegoeUI-Bold'
       .sale

@@ -34,7 +34,7 @@
           <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '提现成功' : '提现失败'}}</div>
           <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
           <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
-          <div class="list-item"><span class="showDetail" :class="item.status !== 0? 'audit' : 'audit-disable'" @click="showDetail(item)">审核</span></div>
+          <div class="list-item"><span class="showDetail" :class="item.status !== 1? 'audit' : 'audit-disable'" @click="showDetail(item)">审核</span></div>
         </li>
       </ul>
     </div>

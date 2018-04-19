@@ -310,7 +310,8 @@
     },
     watch: {
       '$route'(to, form) {
-        if (form.path.includes('notes') || form.query.order) {
+        console.log(form)
+        if (form.path.includes('notes')) {
           this.info(to.matched[1].path)
           sessionStorage.getItem('title')
         }
