@@ -260,7 +260,7 @@
       setNavTitle() {
         setTimeout(() => {
           this.navTitle = sessionStorage.getItem('title') ? sessionStorage.getItem('title').split(',') : this.navTitle
-        }, 100)
+        }, 30)
       },
       hideHeightLine() {
         this.timeIndex = -1
@@ -516,6 +516,7 @@
       .tag-title
         padding: 3.47vh 0 1.57vh 0
         font-size: $font-size-large
+        height : $font-size-large
         color: $color-text-little
         text-indent: 30px
         position: relative
