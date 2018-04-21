@@ -64,13 +64,17 @@
           <div class="list-item list-text">{{item.time_end}}</div>
           <div class="list-item list-text">{{item.created_at}}</div>
           <div class="list-item list-text">{{item.mobile}}</div>
-          <div class="list-item list-text" v-if="item.order_type === '0'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 4 ? '退款完成' : item.status === 5 ? '已评价' : item.status === 6 ? '逾期付款已关闭' : item.status === 7 ? '退款失败商家余额不足' : item.status === 8 ? '退款失败平台余额不足' : '有效期过期关闭'}}</div>
-          <div class="list-item" v-if="item.order_type === '0'"><span class="showDetail"
-          ><span @click="showDetail(item)">查看</span></span></div>
-
+          <!--优惠券状态-->
+          <div class="list-item list-text" v-if="item.order_type === '0' || item.order_type === '7'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 4 ? '退款完成' : item.status === 5 ? '已评价' : item.status === 6 ? '逾期付款已关闭' : item.status === 7 ? '退款失败商家余额不足' : item.status === 8 ? '退款失败平台余额不足' : '有效期过期关闭'}}</div>
+          <!--买单-->
+          <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' :  '已支付'}}</div>
+          <!--联盟-->
+          <div class="list-item list-text" v-if="item.order_type === '6'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '商家已确认' : item.status === 3 ? '拒绝后已退款' : '过期退款'}}</div>
+          <div class="list-item" v-if="item.order_type === '0' || '5' || '6' || '7'"><span class="showDetail"><span @click="showDetail(item)">查看</span></span></div>
+          <!--支付状态-->
           <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
           <div class="list-item" v-if="item.order_type === '2' || item.order_type === '3'"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit-disable">审核</span></span></div>
-
+          <!--提现状态-->
           <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '未处理' : item.status === 1 ? '提现成功' : '提现失败'}}</div>
           <div class="list-item" v-if="item.order_type === '1' || item.order_type === '4'"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
           <div class="list-item list-text">{{item.operation_time}}</div>
@@ -173,10 +177,12 @@
   import AdminSelect from 'base/admin-select/admin-select'
   const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作', '操作时间', '操作人']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
-  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}]
+  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}]
   const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
   const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '提现成功', status: 1}, {title: '提现失败', status: 2}]
   const ALL = [{title: '全部', status: 1}]
+  const PAY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}]
+  const ALLIANCE = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '商家已确认', status: 2}, {title: '拒绝后已退款', status: 3}, {title: '过期退款', status: 4}]
   const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
   let select = [{
     title: '业务类型',
@@ -274,12 +280,29 @@
           this.orderStatusCode = value.status === 2 || value.status === 3 ? 1 : ''
         }
         this.orderStatusCode = this.type === 'state' ? value.status : this.orderStatusCode
-        if (this.orderType === 0) {
-          this.selectList[1].children[idx].data = couponList
-        } else if (this.orderType === 2 || this.orderType === 3) {
-          this.selectList[1].children[idx].data = ALL
-        } else {
-          this.selectList[1].children[idx].data = DEPOSIT
+        switch (this.orderType) {
+          case 0:
+          case 7:
+            //          优惠券+礼包状态
+            this.selectList[1].children[idx].data = couponList
+            break
+          case 2:
+          case 3:
+            //          提现状态
+            this.selectList[1].children[idx].data = ALL
+            break
+          case 5:
+            //          买单状态
+            this.selectList[1].children[idx].data = PAY
+            break
+          case 6:
+            //          联盟投放状态
+            this.selectList[1].children[idx].data = ALLIANCE
+            break
+          case 1:
+          case 4:
+            this.selectList[1].children[idx].data = DEPOSIT
+            break
         }
         this.selectList[1].children[idx].content = this.type === 'business' ? '全部' : this.selectList[1].children[idx].content
       },

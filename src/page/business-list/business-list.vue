@@ -1,6 +1,12 @@
 <template>
   <div class="buslist" @click="hideTime">
     <form-box ref="order" @checkTime="checkTime" @addPage="addPage" @showCity="showCity" @showIndustrie="showIndustrie" :pageDtail="pageDtail" :isIndustrie="isIndustrie">
+      <div class="bl-mobile" slot="tag-sel">
+        <div class="selects-inpput-box" :class="{'input-height':bussFocus}">
+          <input type="text" class="input-height-item select-input" v-model="mobile" placeholder="请输入商家账号" @focus="bussFocus = true" @blur="bussFocus = false">
+        </div>
+        <span class="select-item hand select-item-active" @click="sreach">搜索</span>
+      </div>
       <div slot="tap" class="select">
         <admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>
       </div>
@@ -190,6 +196,8 @@
     mixins: [mixinBase],
     data() {
       return {
+        mobile: '',
+        bussFocus: false,
         shopQrcord: '',
         ultraPassword: '',
         ultraShow: false,
@@ -238,6 +246,10 @@
       this.orderId ? this.showList(true) : this.showList()
     },
     methods: {
+//      搜索
+      sreach() {
+        this.showList()
+      },
       selectType(type, res) {
         this.selectList = res
         this.type = type
@@ -418,7 +430,8 @@
           service_version: this.serviceVersion,
           is_expiration: this.isExpiration,
           is_disabled: this.isDisabled,
-          is_checked: this.checked
+          is_checked: this.checked,
+          mobile: this.mobile
         }, this.address, this.shopId)
         if (status) {
           data = Object.assign({}, data, {merchant_id: this.orderId})
@@ -870,4 +883,38 @@
           background: $color-nomal
   .select
     margin-left:1.9625vw
+
+  .bl-mobile
+    display :flex
+    font-size: $font-size-medium
+    align-items :center
+    transform : translateY(-10px)
+    margin-left: 2.3vw
+    .selects-inpput-box
+      margin-left: 10px
+      border: 2px solid $color-white
+      .select-input
+        height: 30px
+        width: 10vw
+        border-radius: 3px
+        padding-left: 10px
+        border: 1px solid $color-icon-line
+    .select-item
+      margin-left: 10px
+      box-sizing: border-box
+      width: 50px
+      height: 30px
+      line-height: 32px
+      text-align center
+      border: 1px solid $color-icon-line
+      color: $color-text-icon
+      border-radius: 3px
+    .select-item-active
+      border: none
+      background: $color-nomal
+      color: $color-white
+      &:hover
+        background: $color-hover
+      &:active
+        background: $color-active
 </style>

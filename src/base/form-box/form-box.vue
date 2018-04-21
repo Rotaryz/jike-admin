@@ -567,7 +567,7 @@
             &:before
               background: $color-nomal
       .tag-city, .tag-industry
-        margin-left: 3.535vw
+        margin-left: 2.6vw
         display: flex
         font-size: $font-size-medium
         color: $color-text

@@ -85,10 +85,9 @@
   @import '~common/stylus/mixin'
   .admin-select
     display: flex
-
   .select-item
     display: flex
-    margin-left: 3.535vw
+    margin-left: 2.6vw
     position: relative
     z-index: 50
     &:first-child
