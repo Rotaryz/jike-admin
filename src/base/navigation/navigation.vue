@@ -109,14 +109,11 @@
       }],
       showHeight: HEIGHT
     }, {
-      title: '订单管理',
+      title: '订单查询',
       icon: require('./icon-indent@2x.png'),
-      url: '#/container/order',
+      url: '#/container/moniesInquiry',
       childrenIndex: -1,
       children: [{
-        title: '订单列表',
-        url: '#/container/order'
-      }, {
         title: '订单查询',
         url: '#/container/moniesInquiry'
       }],
@@ -135,6 +132,10 @@
       }],
       showHeight: HEIGHT
     }]
+  // {
+  //        title: '订单列表',
+  //        url: '#/container/order'
+  //      }
   export default {
     data() {
       return {

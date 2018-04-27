@@ -70,7 +70,7 @@
           <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' :  '已支付'}}</div>
           <!--联盟-->
           <div class="list-item list-text" v-if="item.order_type === '6'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '商家已确认' : item.status === 3 ? '拒绝后已退款' : '过期退款'}}</div>
-          <div class="list-item" v-if="item.order_type === '0' || '5' || '6' || '7'"><span class="showDetail"><span @click="showDetail(item)">查看</span></span></div>
+          <div class="list-item" v-if="item.order_type === '0' || item.order_type === '5' || item.order_type === '6' || item.order_type === '7'"><span class="showDetail"><span @click="showDetail(item)">查看</span></span></div>
           <!--支付状态-->
           <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
           <div class="list-item" v-if="item.order_type === '2' || item.order_type === '3'"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit-disable">审核</span></span></div>
