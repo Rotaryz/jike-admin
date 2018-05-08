@@ -234,15 +234,32 @@
         }
       },
       withdrawal(pass) {
-        let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
-        monies.checkWithdrawal(data).then((res) => {
-          if (res.error === ERR_OK) {
-            this.$refs.order.hideShade()
-            this.isDeal()
-          } else {
-            this.$refs.order.showContent(res.message)
-          }
-        })
+        switch (this.endBusiness) {
+          case 1:
+            let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
+            monies.checkWithdrawal(data).then((res) => {
+              if (res.error === ERR_OK) {
+                this.$refs.order.hideShade()
+                this.isDeal()
+                this.$refs.order.showContent('审核成功')
+              } else {
+                this.$refs.order.showContent(res.message)
+              }
+            })
+            break
+          case 4:
+            let datas = {apply_id: this.inquiryId, note: this.reamrk, is_pass: pass}
+            monies.customerCheckWithdrawal(datas).then((res) => {
+              if (res.error === ERR_OK) {
+                this.$refs.order.hideShade()
+                this.isDeal()
+                this.$refs.order.showContent('审核成功')
+              } else {
+                this.$refs.order.showContent(res.message)
+              }
+            })
+            break
+        }
       },
       checkTime(value, page, index) {
         this.timeIdx = index

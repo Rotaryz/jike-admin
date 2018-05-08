@@ -49,5 +49,14 @@ export default {
   accountsDetail(params) {
     const url = `/api/monies/accounts-detail`
     return http.get(url, params)
+  },
+  /**
+   * 顾客提现
+   * @param params
+   * @returns {Promise.<TResult>}
+   */
+  customerCheckWithdrawal(params) {
+    const url = `/api/monies/customer-check-withdrawal`
+    return http.post(url, params)
   }
 }

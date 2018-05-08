@@ -190,15 +190,17 @@
       showChild(index, status = true) {
         this.smallIndex = index
         clearInterval(this.timer)
-        if (this.navList[index].children.length === 1 && this.recodIndex !== -1) {
-          this.timer = setInterval(() => {
-            if (this.navList[this.recodIndex].showHeight <= HEIGHT) {
-              this.navList[this.recodIndex].showHeight = HEIGHT
-              clearInterval(this.timer)
-              return false
-            }
-            this.navList[this.recodIndex].showHeight -= 20
-          }, 30)
+        if (this.navList[index].children.length === 1) {
+          if (this.recodIndex !== -1) {
+            this.timer = setInterval(() => {
+              if (this.navList[this.recodIndex].showHeight <= HEIGHT) {
+                this.navList[this.recodIndex].showHeight = HEIGHT
+                clearInterval(this.timer)
+                return false
+              }
+              this.navList[this.recodIndex].showHeight -= 20
+            }, 30)
+          }
           this.bigChild = index
           sessionStorage.setItem('title', [this.navList[index].title])
         } else if (this.navList[index].children.length > 1) {
@@ -311,7 +313,6 @@
     },
     watch: {
       '$route'(to, form) {
-        console.log(form)
         if (form.path.includes('notes')) {
           this.info(to.matched[1].path)
           sessionStorage.getItem('title')
