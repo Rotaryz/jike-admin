@@ -372,7 +372,7 @@
 //      审核弹窗
       withdrawal(code) {
         let data = {note: this.reamrk, merchant_id: this.merchantId}
-        if (this.check) {
+        if (this.check && this.check !== 1) {
           let data = {remark: this.remarks, merchant_id: this.merchantId, check_status: code}
           home.licenseAudit(data).then((res) => {
             if (res.error === ERR_OK) {
@@ -407,13 +407,11 @@
         this.$refs.order.hideShade()
       },
       showUltra(item) {
-        console.log(item)
         this.$refs.order.showShade()
         this.check = 3
         this.ultraPassword = ''
         this.ultraPhone = item.mobile
         this.ultraShow = true
-        console.log(merchant)
         merchant.getQrcord(item.merchant_id).then((res) => {
           if (res.error === ERR_OK) {
             this.shopQrcord = res.data.url
