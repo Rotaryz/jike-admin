@@ -704,7 +704,7 @@
         .data-content-box
           height: 100%
         .data-detail
-          height: 92.4%
+          height: 90%
           position: relative
           .blank
             all-center()
