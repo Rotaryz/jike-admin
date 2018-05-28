@@ -129,7 +129,7 @@
         payType: 0,
         orderType: '',
         moneyDetail: {},
-        excel: `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=`
+        excel: `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=&start_time=&end_time=`
       }
     },
     created() {
@@ -214,7 +214,7 @@
           this.pageDtail = [{total: 1, per_page: 7, total_page: 1}]
           this.accountsList = res.data
         })
-        this.excel = this.tabIndex === 0 ? `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=${this.orderType}` : `${BASE_URL.api}/api/monies/download-expend?access_token=${TOKEN}&type=${this.orderType}`
+        this.excel = this.tabIndex === 0 ? `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=${this.orderType}&start_time=${this.startTime}&end_time=${this.endTime}` : `${BASE_URL.api}/api/monies/download-expend?access_token=${TOKEN}&type=${this.orderType}&start_time=${this.startTime}&end_time=${this.endTime}`
         console.log(this.excel)
       },
 //      页码
