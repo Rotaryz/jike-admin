@@ -69,7 +69,7 @@
   import {ERR_OK, BASE_URL} from 'api/config'
   import {mixinBase} from 'common/mixin/base'
   const TITLELIST = ['支付时间', '收/支', '业务类型', '交易金额']
-  const BUSINESS = [{title: '全部', status: ''}, {title: '优惠券', status: 0}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}]
+  const BUSINESS = [{title: '全部', status: ''}, {title: '优惠券', status: 0}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}, {title: '分享赚钱', status: 9}, {title: '异业联盟', status: 10}, {title: '砍价', status: 11}]
   const BUSINESS2 = [{title: '全部', status: ''}, {title: '门店提现', status: 1}, {title: '顾客提现', status: 4}]
   const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
   const SELECT = [{
@@ -129,19 +129,23 @@
         payType: 0,
         orderType: '',
         moneyDetail: {},
-        excel: `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_type=0&start_time=&end_time=0&pay_type=0&time=`
+        excel: `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=`
       }
     },
     created() {
+      console.log(this.orderType)
       this.showList()
       this.showMoney()
     },
     methods: {
       setGoodsTab(item, index) {
+        this.orderType = item.status
         this.tabGoodsIndex = index
+        this.showList()
       },
       setTab(item, index) {
         this.tabIndex = index
+        this.payType = item.status
         switch (item.status) {
           case 0:
             this.tabList = BUSINESS
@@ -150,6 +154,7 @@
             this.tabList = BUSINESS2
             break
         }
+        this.showList()
       },
 //      账单明细
       showMoney() {
@@ -209,7 +214,8 @@
           this.pageDtail = [{total: 1, per_page: 7, total_page: 1}]
           this.accountsList = res.data
         })
-        this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_type=${this.orderType}&pay_type=${this.payType}&start_time=${this.startTime}&end_time=${this.endTime}&time=${this.time}`
+        this.excel = this.tabIndex === 0 ? `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=${this.orderType}` : `${BASE_URL.api}/api/monies/download-expend?access_token=${TOKEN}&type=${this.orderType}`
+        console.log(this.excel)
       },
 //      页码
       addPage(page) {

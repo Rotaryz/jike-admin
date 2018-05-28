@@ -72,14 +72,15 @@
           <!--买单-->
           <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' :  '已支付'}}</div>
           <!--联盟-->
-          <div class="list-item list-text" v-if="item.order_type === '6'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '商家已确认' : item.status === 3 ? '拒绝后已退款' : '过期退款'}}</div>
-          <div class="list-item" v-if="item.order_type === '0' || item.order_type === '5' || item.order_type === '6' || item.order_type === '7'"><span class="showDetail"><span @click="showDetail(item)">查看</span></span></div>
-          <!--支付状态-->
-          <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
-          <div class="list-item" v-if="item.order_type === '2' || item.order_type === '3'"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit-disable">审核</span></span></div>
-          <!--提现状态-->
           <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '未处理' : item.status === 1 ? '提现成功' : '提现失败'}}</div>
-          <div class="list-item" v-if="item.order_type === '1' || item.order_type === '4'"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
+          <div class="list-item list-text" v-if="item.order_type === '6'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '商家已确认' : item.status === 3 ? '拒绝后已退款' : '过期退款'}}</div>
+          <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
+
+          <div class="list-item" v-if="(item.order_type === '0' && item.status !== 3) || item.order_type !== '0'"><span class="showDetail"><span @click="showDetail(item)">查看</span></span></div>
+          <!--支付状态-->
+          <!--<div class="list-item" v-if="item.order_type === '0' && item.status === 3"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit-disable">审核</span></span></div>-->
+          <!--提现状态-->
+          <div class="list-item" v-if="item.order_type === '0' && item.status === 3"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
           <div class="list-item list-text">{{item.operation_time}}</div>
           <div class="list-item list-text">{{item.admin_name}}</div>
         </li>
@@ -180,8 +181,10 @@
   import AdminSelect from 'base/admin-select/admin-select'
   const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作', '操作时间', '操作人']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
-  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}]
+  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}]
   const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
+  // 团购
+  const GROUNDLIST = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}, {title: '待成团', status: 10}]
   const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '提现成功', status: 1}, {title: '提现失败', status: 2}]
   const ALL = [{title: '全部', status: 1}]
   const PAY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}]
@@ -285,6 +288,8 @@
       setTab(item, idx) {
         this.tabIndex = idx
         this.orderState = item.status
+        this.page = 1
+        this.$refs.order.beginPage()
         this.showList()
       },
       setValue(value, idx) {
@@ -315,6 +320,9 @@
           case 1:
           case 4:
             this.tabNoList = DEPOSIT
+            break
+          case 8:
+            this.tabNoList = GROUNDLIST
             break
         }
         this.tabIndex = 0
@@ -364,7 +372,7 @@
         })
       },
       inquiry(item) {
-        if ((item.status === 0 && (item.order_type === '1' || item.order_type === '4')) || (item.status === 3 && item.order_type === '0')) {
+        if (item.status === 0 && item.order_type === '0') {
           this.reamrk = item.note
           this.$refs.order.showShade()
           this.detail = false
@@ -419,19 +427,14 @@
         this.moreTime = JSON.stringify(this.finalTime) !== JSON.stringify(this.sreachTime) ? this.oldTime : this.newTime
         this.payTime = JSON.stringify(this.findPayTime) !== JSON.stringify(this.sreachPayTime) ? this.oldPayTime : this.newPayTime
         let content = ''
-        let contentTwo = ''
+//        let contentTwo = ''
         this.selectList[0].children[0].data.forEach((item) => {
           if (this.orderTypes === item.status) {
             content = item.title
           }
         })
-        this.selectList[1].children[0].data.forEach((item) => {
-          if (this.orderState === item.status) {
-            contentTwo = item.title
-          }
-        })
         this.selectList[0].children[0].content = content
-        this.selectList[1].children[0].content = contentTwo
+//        this.selectList[1].children[0].content = contentTwo
         this.page = page
         this.showList()
       }
