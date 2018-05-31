@@ -181,9 +181,10 @@
   import AdminSelect from 'base/admin-select/admin-select'
   const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作', '操作时间', '操作人']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
-  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}]
+  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}]
   const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
-  // 团购
+  const ACTIVITYLIST = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '有效期过期关闭', status: 9}]
+  // 团购-*14**/
   const GROUNDLIST = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}, {title: '待成团', status: 10}]
   const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '提现成功', status: 1}, {title: '提现失败', status: 2}]
   const ALL = [{title: '全部', status: 1}]
@@ -323,6 +324,10 @@
             break
           case 8:
             this.tabNoList = GROUNDLIST
+            break
+          case 9:
+          case 11:
+            this.tabNoList = ACTIVITYLIST
             break
         }
         this.tabIndex = 0

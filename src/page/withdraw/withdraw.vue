@@ -31,7 +31,7 @@
           <div class="list-item list-text">{{item.remaining}}</div>
           <div class="list-item list-text">{{item.blocked_remaining}}</div>
           <div class="list-item list-text">{{item.total}}</div>
-          <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '提现成功' : '提现失败'}}</div>
+          <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '受理中' : item.status === 2 ? '提现成功' : '提现失败'}}</div>
           <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
           <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
           <div class="list-item"><span class="showDetail" :class="item.status !== 1? 'audit' : 'audit-disable'" @click="showDetail(item)">审核</span></div>
@@ -85,10 +85,7 @@
     show: false,
     children: [{
       content: '门店提现',
-      data: [{title: '门店提现', status: 1}, {
-        title: '顾客提现',
-        status: 4
-      }]
+      data: [{title: '门店提现', status: 1}, {title: '顾客提现', status: 4}, {title: '异业联盟员工提现', status: 12}, {title: '异业联盟商家提现', status: 13}]
     }]
   }]
   const TIMELIST = [{title: '今天', type: 'today'}, {
@@ -209,6 +206,7 @@
         })
       },
       showDetail(item) {
+        console.log(item)
         if (item.status !== 1) {
           this.reamrk = item.note
           this.$refs.order.showShade()
@@ -236,6 +234,7 @@
       withdrawal(pass) {
         switch (this.endBusiness) {
           case 1:
+          case 13:
             let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
             monies.checkWithdrawal(data).then((res) => {
               if (res.error === ERR_OK) {
@@ -248,6 +247,7 @@
             })
             break
           case 4:
+          case 12:
             let datas = {apply_id: this.inquiryId, note: this.reamrk, is_pass: pass}
             monies.customerCheckWithdrawal(datas).then((res) => {
               if (res.error === ERR_OK) {
