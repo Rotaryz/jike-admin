@@ -23,7 +23,7 @@
       <ul class="list">
         <li class="list-box" v-for="(item,index) in orderList" :key="index" :class="{'list-box-active': heightIndex === index}" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
           <a href="javaScript:;" class="list-item list-text" :title="item.created_at"><div class="list-none">{{item.created_at}}</div></a>
-          <div class="list-item list-text">{{item.order_type === '1' ? '门店提现' : item.order_type === '4' ? '顾客提现' : ''}}</div>
+          <div class="list-item list-text">{{item.order_type === '1' ? '门店提现' : item.order_type === '4' ? '顾客提现' : item.order_type === '12' ? '异业联盟员工提现' : item.order_type === '13' ? '异业联盟商家提现' : ''}}</div>
           <div class="list-item list-text">{{item.merchant_mobile}}</div>
           <div class="list-item list-text">{{item.bank}}</div>
           <a href="javaScript:;" class="list-item list-text" :title="item.withdrawal_card"><div class="list-none">{{item.withdrawal_card}}</div></a>
@@ -85,10 +85,7 @@
     show: false,
     children: [{
       content: '门店提现',
-      data: [{title: '门店提现', status: 1}, {
-        title: '顾客提现',
-        status: 4
-      }]
+      data: [{title: '门店提现', status: 1}, {title: '顾客提现', status: 4}, {title: '异业联盟员工提现', status: 12}, {title: '异业联盟商家提现', status: 13}]
     }]
   }]
   const TIMELIST = [{title: '今天', type: 'today'}, {
@@ -236,6 +233,7 @@
       withdrawal(pass) {
         switch (this.endBusiness) {
           case 1:
+          case 13:
             let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
             monies.checkWithdrawal(data).then((res) => {
               if (res.error === ERR_OK) {
@@ -248,6 +246,7 @@
             })
             break
           case 4:
+          case 12:
             let datas = {apply_id: this.inquiryId, note: this.reamrk, is_pass: pass}
             monies.customerCheckWithdrawal(datas).then((res) => {
               if (res.error === ERR_OK) {
