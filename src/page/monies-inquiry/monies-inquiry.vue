@@ -68,7 +68,7 @@
           <div class="list-item list-text">{{item.created_at}}</div>
           <div class="list-item list-text">{{item.mobile}}</div>
           <!--优惠券状态-->
-          <div class="list-item list-text" v-if="item.order_type === '0' || item.order_type === '7'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 4 ? '退款完成' : item.status === 5 ? '已评价' : item.status === 6 ? '逾期付款已关闭' : item.status === 7 ? '退款失败商家余额不足' : item.status === 8 ? '退款失败平台余额不足' : '有效期过期关闭'}}</div>
+          <div class="list-item list-text" v-if="item.order_type === '0' || item.order_type === '7' || item.order_type === '8' || item.order_type === '9' || item.order_type === '11'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 4 ? '退款完成' : item.status === 5 ? '已评价' : item.status === 6 ? '逾期付款已关闭' : item.status === 7 ? '退款失败商家余额不足' : item.status === 8 ? '退款失败平台余额不足' : item.status === 9 ? '有效期过期关闭' : '待成团'}}</div>
           <!--买单-->
           <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' :  '已支付'}}</div>
           <!--联盟-->
