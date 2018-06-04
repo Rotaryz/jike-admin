@@ -137,7 +137,7 @@
         </div>
         <div class="shade-border shade-tiem">
           <span class="shade-title">订单状态</span>
-          <span class="shade-text" v-if="orderDetail.order_type === '0'">{{orderDetail.status === 0 ? '待支付' : orderDetail.status === 1 ? '已支付' : orderDetail.status === 2 ? '待评价' : orderDetail.status === 3 ? '退款中' : orderDetail.status === 4 ? '退款完成' : orderDetail.status === 5 ? '已评价' : orderDetail.status === 6 ? '逾期付款已关闭' : orderDetail.status === 7 ? '退款失败商家余额不足' : orderDetail.status === 8 ? '退款失败平台余额不足' : '有效期过期关闭'}}</span>
+          <span class="shade-text" v-if="item.order_type === '0' || item.order_type === '7' || item.order_type === '8' || item.order_type === '9' || item.order_type === '11'">{{orderDetail.status === 0 ? '待支付' : orderDetail.status === 1 ? '已支付' : orderDetail.status === 2 ? '待评价' : orderDetail.status === 3 ? '退款中' : orderDetail.status === 4 ? '退款完成' : orderDetail.status === 5 ? '已评价' : orderDetail.status === 6 ? '逾期付款已关闭' : orderDetail.status === 7 ? '退款失败商家余额不足' : orderDetail.status === 8 ? '退款失败平台余额不足' :item.status === 9 ? '有效期过期关闭' : '待成团'}}</span>
           <span class="shade-text" v-if="orderDetail.order_type === '1' || orderDetail.order_type === '4'">{{orderDetail.status === 0 ? '未处理' : orderDetail.status === 1 ? '提现成功' : '提现失败'}}</span>
           <span class="shade-text" v-if="orderDetail.order_type === '2' || orderDetail.order_type === '3'">支付成功</span>
         </div>
@@ -428,7 +428,6 @@
         this.orderInput = this.orderInput !== this.orderSn ? this.orderSn : this.orderInput
         this.busInput = this.merchantMobile !== this.busInput ? this.merchantMobile : this.busInput
         this.orderType = this.orderTypes !== this.orderType ? this.orderTypes : this.orderType
-        this.orderState = this.orderState !== this.orderStatusCode ? this.orderStatusCode : this.orderState
         this.moreTime = JSON.stringify(this.finalTime) !== JSON.stringify(this.sreachTime) ? this.oldTime : this.newTime
         this.payTime = JSON.stringify(this.findPayTime) !== JSON.stringify(this.sreachPayTime) ? this.oldPayTime : this.newPayTime
         let content = ''
