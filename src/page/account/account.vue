@@ -17,26 +17,32 @@
       </div>
       <div class="check-tip">
         <div class="tap-first">
-          <div class="tap-item" v-for="(item, index) in timeList" :class="{'tap-item-active' : timeIndex === index}" :key="index" @click="timeCheck(index, item.type)">
-            {{item.title}}
-            <div class="block" v-if="item.type === ''" v-show="showPicker">
-              <el-date-picker
-                v-model="moreTime"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期">
-              </el-date-picker>
-            </div>
+          支付时间
+          <!--<div class="tap-item" v-for="(item, index) in timeList" :class="{'tap-item-active' : timeIndex === index}" :key="index" @click="timeCheck(index, item.type)">-->
+            <!--{{item.title}}-->
+          <div class="block">
+            <el-date-picker
+              v-model="moreTime"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期">
+            </el-date-picker>
           </div>
         </div>
-        <div class="select">
-          <admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>
+        <div class="form-tab">
+          <div class="form-tab-item hand" :class="{'form-tab-item-active': tabIndex === index, 'form-tab-item-right': tabIndex + 1 === index}" v-for="(item, index) in selectList[0].children[0].data" :key="index" @click="setTab(item,index)">{{item.title}}</div>
         </div>
-        <a class="down-excel hand" :href="excel" target="_blank">下载Excel</a>
+        <a class="down-excel hand" :href="excel" target="_blank">对账单下载</a>
       </div>
+        <!--<div class="select">-->
+          <!--<admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>-->
+        <!--</div>-->
     </div>
     <div slot="form-list" class="form-box-small">
+      <div class="form-tab">
+        <div class="form-tab-item hand" :class="{'form-tab-item-active': tabGoodsIndex === index, 'form-tab-item-right': tabGoodsIndex + 1 === index}" v-for="(item, index) in tabList" :key="index" @click="setGoodsTab(item,index)">{{item.title}}</div>
+      </div>
       <div class="form-list">
         <div class="list-header">
           <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
@@ -63,7 +69,7 @@
   import {ERR_OK, BASE_URL} from 'api/config'
   import {mixinBase} from 'common/mixin/base'
   const TITLELIST = ['支付时间', '收/支', '业务类型', '交易金额']
-  const BUSINESS = [{title: '全部', status: ''}, {title: '优惠券', status: 0}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}]
+  const BUSINESS = [{title: '全部', status: ''}, {title: '优惠券', status: 0}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}, {title: '分享赚钱', status: 9}, {title: '异业联盟', status: 10}, {title: '砍价', status: 11}]
   const BUSINESS2 = [{title: '全部', status: ''}, {title: '门店提现', status: 1}, {title: '顾客提现', status: 4}]
   const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
   const SELECT = [{
@@ -89,6 +95,9 @@
     mixins: [mixinBase],
     data() {
       return {
+        tabList: BUSINESS,
+        tabGoodsIndex: 0,
+        tabIndex: 0,
         titleListSec: TITLELIST,
         showPicker: false,
         moreTime: '', // 时间区间
@@ -120,14 +129,33 @@
         payType: 0,
         orderType: '',
         moneyDetail: {},
-        excel: `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_type=0&start_time=&end_time=0&pay_type=0&time=`
+        excel: `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=&start_time=&end_time=`
       }
     },
     created() {
+      console.log(this.orderType)
       this.showList()
       this.showMoney()
     },
     methods: {
+      setGoodsTab(item, index) {
+        this.orderType = item.status
+        this.tabGoodsIndex = index
+        this.showList()
+      },
+      setTab(item, index) {
+        this.tabIndex = index
+        this.payType = item.status
+        switch (item.status) {
+          case 0:
+            this.tabList = BUSINESS
+            break
+          case 1:
+            this.tabList = BUSINESS2
+            break
+        }
+        this.showList()
+      },
 //      账单明细
       showMoney() {
         monies.accounts().then((res) => {
@@ -145,10 +173,10 @@
         if (this.type === 'open') {
           switch (res.status) {
             case 0:
-              this.selectList[1].children[idx].data = BUSINESS
+              this.tabList = BUSINESS
               break
             case 1:
-              this.selectList[1].children[idx].data = BUSINESS2
+              this.tabList = BUSINESS2
               break
           }
           this.selectList[1].children[idx].content = this.selectList[1].children[idx].data[0].title
@@ -186,7 +214,7 @@
           this.pageDtail = [{total: 1, per_page: 7, total_page: 1}]
           this.accountsList = res.data
         })
-        this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_type=${this.orderType}&pay_type=${this.payType}&start_time=${this.startTime}&end_time=${this.endTime}&time=${this.time}`
+        this.excel = this.tabIndex === 0 ? `${BASE_URL.api}/api/monies/download-income?access_token=${TOKEN}&type=${this.orderType}&start_time=${this.startTime}&end_time=${this.endTime}` : `${BASE_URL.api}/api/monies/download-expend?access_token=${TOKEN}&type=${this.orderType}&start_time=${this.startTime}&end_time=${this.endTime}`
       },
 //      页码
       addPage(page) {
@@ -221,6 +249,34 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
+  .form-tab
+    margin-left :4.16vw
+    display :flex
+    .form-tab-item
+      display :inline-block
+      white-space :nowrap
+      color :$color-text-icon
+      font-size: $font-size-medium
+      padding :0 14px
+      border : 0.5px solid $color-line
+      height: 30px
+      border-right: none
+      line-height: 30px
+      /*&:hover
+        color :$color-nomal*/
+      &:last-child
+        border-top-right-radius :3px
+        border-bottom-right-radius :3px
+        border-right : 0.5px solid $color-line
+      &:first-child
+        border-top-left-radius :3px
+        border-bottom-left-radius :3px
+    .form-tab-item-active
+      border :0.5px solid $color-nomal !important
+      background :$color-nomal
+      color :$color-white !important
+    .form-tab-item-right
+      border-left :0.5px solid $color-nomal
   .money
     background: $color-white
     margin: 24px 24px 0
@@ -267,6 +323,8 @@
     height: 90%
     flex-direction: column
     background: $color-white
+    .form-tab
+      margin: 10px 0 20px
     .form-list
       height: 95%
       background: $color-white
@@ -275,7 +333,7 @@
         align-items: center
         padding-left: 43px
       .list-header
-        height: 14.5%
+        height: 14%
         border-bottom: 1px solid $color-big-background
         background: $color-big-background
       .list
@@ -283,7 +341,7 @@
         display: flex
         flex-direction: column
         .list-box
-          height: 14.2857%
+          height: 16.2857%
           border-bottom: 1px solid $color-big-background
           &:hover
             background :$color-background
@@ -364,6 +422,18 @@
       margin-left: 37.5px
       display: flex
       white-space: nowrap
+      position: relative
+      height: 30px
+      line-height: 30px
+      font-size :$font-size-medium
+      width: 444px
+      .block
+        height: 100%
+        width: 378px
+        position: absolute
+        z-index: 150
+        top: 0
+        left: 66px
       .tap-item
         font-size: $font-size-medium
         color: $color-text
@@ -371,11 +441,6 @@
         line-height: 20px
         margin-right: 1.5625vw
         position: relative
-        .block
-          position: absolute
-          z-index: 150
-          bottom: -48px
-          transform: translateX(-20%)
         &:hover
           color: $color-nomal
         &:before
@@ -457,17 +522,12 @@
       font-size: $font-size-medium
       height: 30px
       line-height: 30px
+      padding : 0 22px
       text-align: center
       margin-left: 3.535vw
       border-radius: 3px
-      background: $color-nomal
-      color: $color-white
-      width: 5.625vw
-      &:hover
-        background: $color-hover
-      &:active
-        background: $color-active
-
+      border :0.5px solid $color-nomal
+      color: $color-nomal
   .select
     margin-left: 3.535vw
     transform: translateY(28%)
