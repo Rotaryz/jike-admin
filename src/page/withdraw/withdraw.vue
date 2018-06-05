@@ -31,7 +31,7 @@
           <div class="list-item list-text">{{item.remaining}}</div>
           <div class="list-item list-text">{{item.blocked_remaining}}</div>
           <div class="list-item list-text">{{item.total}}</div>
-          <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '提现成功' : '提现失败'}}</div>
+          <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '受理中' : item.status === 2 ? '提现成功' : '提现失败'}}</div>
           <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
           <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
           <div class="list-item"><span class="showDetail" :class="item.status !== 1? 'audit' : 'audit-disable'" @click="showDetail(item)">审核</span></div>
@@ -206,6 +206,7 @@
         })
       },
       showDetail(item) {
+        console.log(item)
         if (item.status !== 1) {
           this.reamrk = item.note
           this.$refs.order.showShade()
