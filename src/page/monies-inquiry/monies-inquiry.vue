@@ -69,6 +69,10 @@
           <div class="list-item list-text">{{item.mobile}}</div>
           <!--优惠券状态-->
           <div class="list-item list-text" v-if="item.order_type === '0' || item.order_type === '7' || item.order_type === '8' || item.order_type === '9' || item.order_type === '11'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 4 ? '退款完成' : item.status === 5 ? '已评价' : item.status === 6 ? '逾期付款已关闭' : item.status === 7 ? '退款失败商家余额不足' : item.status === 8 ? '退款失败平台余额不足' : item.status === 9 ? '有效期过期关闭' : '待成团'}}</div>
+          <!--异业联盟购买-->
+          <div class="list-item list-text" v-if="item.order_type === '10'">{{item.status === 0 ? '待支付' : item.status === 1 ? '待使用' : item.status === 2 ? '已使用' : item.status === 5 ? '已评价' : item.status === 6 ? '已关闭' : ''}}</div>
+          <!--异联卡报名-->
+          <div class="list-item list-text" v-if="item.order_type === '14'">{{item.status === 0 ? '待付款' : item.status === 1 ? '已付款' : item.status === 7 ? '退款中' : item.status === 3 ? '已退款' : item.status === 6 ? '已关闭' : ''}}</div>
           <!--买单-->
           <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' :  '已支付'}}</div>
           <!--联盟-->
@@ -181,7 +185,7 @@
   import AdminSelect from 'base/admin-select/admin-select'
   const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作', '操作时间', '操作人']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
-  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}, {title: '分享赚钱', status: 9}, {title: '异业联盟', status: 10}, {title: '砍价', status: 11}]
+  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}, {title: '分享赚钱', status: 9}, {title: '异联卡购买', status: 10}, {title: '异联卡报名', status: 14}, {title: '砍价', status: 11}]
   const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
   const ACTIVITYLIST = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '有效期过期关闭', status: 9}]
   // 团购-*14**/
@@ -189,6 +193,10 @@
   const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '提现成功', status: 1}, {title: '提现失败', status: 2}]
   const ALL = [{title: '全部', status: 1}]
   const PAY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}]
+  /* 异联卡购买订单状态 */
+  const YLBUY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '待使用', status: 1}, {title: '已使用', status: 2}, {title: '已评价', status: 5}, {title: '已关闭', status: 6}]
+  /* 异联卡报名 */
+  const APPLY = [{title: '全部', status: ''}, {title: '待付款', status: 0}, {title: '已付款', status: 1}, {title: '退款中', status: 7}, {title: '已退款', status: 3}, {title: '已关闭', status: 6}]
   const ALLIANCE = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '商家已确认', status: 2}, {title: '拒绝后已退款', status: 3}, {title: '过期退款', status: 4}]
   const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
   let select = [{
@@ -324,6 +332,12 @@
             break
           case 8:
             this.tabNoList = GROUNDLIST
+            break
+          case 10:
+            this.tabNoList = YLBUY
+            break
+          case 14:
+            this.tabNoList = APPLY
             break
           case 9:
           case 11:
