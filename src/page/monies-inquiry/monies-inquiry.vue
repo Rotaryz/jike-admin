@@ -48,9 +48,6 @@
       </a>
     </div>
     <div slot="form-list" class="form-list" v-show="showContent">
-      <div class="form-tab">
-        <div class="form-tab-item hand" :class="{'form-tab-item-active': tabIndex === index, 'form-tab-item-right': tabIndex + 1 === index}" v-for="(item, index) in tabList" :key="index" @click="setTab(item,index)">{{item.title}}</div>
-      </div>
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -193,14 +190,13 @@
     select: false,
     show: false,
     children: [{content: '优惠券', data: orderType}]
+  }, {
+    title: '订单状态',
+    type: 'state',
+    select: false,
+    show: false,
+    children: [{content: '全部', data: couponList}]
   }]
-//    , {
-//    title: '订单状态',
-//    type: 'state',
-//    select: false,
-//    show: false,
-//    children: [{content: '全部', data: couponList}]
-//  }
   export default {
     data() {
       return {
@@ -245,10 +241,7 @@
         isRefund: false,
         isSearch: false,
         excel: '',
-        goNUm: 0,
-        tabIndex: 0,
-        tabNoList: couponList,
-        tabList: couponList
+        goNUm: 0
       }
     },
     mounted() {
@@ -270,22 +263,16 @@
         this.orderSn = this.orderInput
         this.merchantMobile = this.busInput
         this.orderTypes = this.orderType
-//        this.orderState = this.orderStatusCode
+        this.orderState = this.orderStatusCode
         this.finalTime = this.sreachTime
         this.findPayTime = this.sreachPayTime
         this.page = 1
         this.$refs.order.beginPage()
         this.showList()
-        this.tabList = this.tabNoList
         this.downExcel()
       },
       selectType(type, res) {
         this.type = type
-      },
-      setTab(item, idx) {
-        this.tabIndex = idx
-        this.orderState = item.status
-        this.showList()
       },
       setValue(value, idx) {
         if (this.type === 'business') {
@@ -297,28 +284,27 @@
           case 0:
           case 7:
             //          优惠券+礼包状态
-            this.tabNoList = couponList
+            this.selectList[1].children[idx].data = couponList
             break
           case 2:
           case 3:
             //          提现状态
-            this.tabNoList = ALL
+            this.selectList[1].children[idx].data = ALL
             break
           case 5:
             //          买单状态
-            this.tabNoList = PAY
+            this.selectList[1].children[idx].data = PAY
             break
           case 6:
             //          联盟投放状态
-            this.tabNoList = ALLIANCE
+            this.selectList[1].children[idx].data = ALLIANCE
             break
           case 1:
           case 4:
-            this.tabNoList = DEPOSIT
+            this.selectList[1].children[idx].data = DEPOSIT
             break
         }
-        this.tabIndex = 0
-//        this.selectList[1].children[idx].content = this.type === 'business' ? '全部' : this.selectList[1].children[idx].content
+        this.selectList[1].children[idx].content = this.type === 'business' ? '全部' : this.selectList[1].children[idx].content
       },
       hideShadeBox() {
         this.$refs.order.hideShade()
@@ -469,34 +455,6 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
-  .form-tab
-    margin: 10px 0 20px
-    display :flex
-    .form-tab-item
-      display :inline-block
-      white-space :nowrap
-      color :$color-text-icon
-      font-size: $font-size-medium
-      padding :0 14px
-      border : 0.5px solid $color-line
-      height: 30px
-      border-right: none
-      line-height: 30px
-      /*&:hover
-        color :$color-nomal*/
-      &:last-child
-        border-top-right-radius :3px
-        border-bottom-right-radius :3px
-        border-right : 0.5px solid $color-line
-      &:first-child
-        border-top-left-radius :3px
-        border-bottom-left-radius :3px
-    .form-tab-item-active
-      border :0.5px solid $color-nomal !important
-      background :$color-nomal
-      color :$color-white !important
-    .form-tab-item-right
-      border-left :0.5px solid $color-nomal
   .form-list
     height: 100%
     .list-header, .list-box
@@ -508,7 +466,7 @@
       border-bottom: 1px solid $color-big-background
       background: $color-big-background
     .list
-      height: 80.5%
+      height: 90.5%
       display: flex
       flex-direction: column
       .list-box
@@ -680,12 +638,16 @@
     font-size: $font-size-medium
     height: 30px
     line-height: 30px
-    padding : 0 22px
     text-align: center
-    margin-left: 3.535vw
     border-radius: 3px
-    border :0.5px solid $color-nomal
-    color: $color-nomal
+    background: $color-nomal
+    color: $color-white
+    width: 5.625vw
+    white-space: nowrap
+    &:hover
+      background: $color-hover
+    &:active
+      background: $color-active
 
   .order-btn
     background: $color-nomal

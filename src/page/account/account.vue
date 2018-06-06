@@ -17,32 +17,26 @@
       </div>
       <div class="check-tip">
         <div class="tap-first">
-          支付时间
-          <!--<div class="tap-item" v-for="(item, index) in timeList" :class="{'tap-item-active' : timeIndex === index}" :key="index" @click="timeCheck(index, item.type)">-->
-            <!--{{item.title}}-->
-          <div class="block">
-            <el-date-picker
-              v-model="moreTime"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期">
-            </el-date-picker>
+          <div class="tap-item" v-for="(item, index) in timeList" :class="{'tap-item-active' : timeIndex === index}" :key="index" @click="timeCheck(index, item.type)">
+            {{item.title}}
+            <div class="block" v-if="item.type === ''" v-show="showPicker">
+              <el-date-picker
+                v-model="moreTime"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+              </el-date-picker>
+            </div>
           </div>
         </div>
-        <div class="form-tab">
-          <div class="form-tab-item hand" :class="{'form-tab-item-active': tabIndex === index, 'form-tab-item-right': tabIndex + 1 === index}" v-for="(item, index) in selectList[0].children[0].data" :key="index" @click="setTab(item,index)">{{item.title}}</div>
+        <div class="select">
+          <admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>
         </div>
-        <a class="down-excel hand" :href="excel" target="_blank">对账单下载</a>
+        <a class="down-excel hand" :href="excel" target="_blank">下载Excel</a>
       </div>
-        <!--<div class="select">-->
-          <!--<admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>-->
-        <!--</div>-->
     </div>
     <div slot="form-list" class="form-box-small">
-      <div class="form-tab">
-        <div class="form-tab-item hand" :class="{'form-tab-item-active': tabGoodsIndex === index, 'form-tab-item-right': tabGoodsIndex + 1 === index}" v-for="(item, index) in tabList" :key="index" @click="setGoodsTab(item,index)">{{item.title}}</div>
-      </div>
       <div class="form-list">
         <div class="list-header">
           <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
@@ -95,9 +89,6 @@
     mixins: [mixinBase],
     data() {
       return {
-        tabList: BUSINESS,
-        tabGoodsIndex: 0,
-        tabIndex: 0,
         titleListSec: TITLELIST,
         showPicker: false,
         moreTime: '', // 时间区间
@@ -137,20 +128,6 @@
       this.showMoney()
     },
     methods: {
-      setGoodsTab(item, index) {
-        this.tabGoodsIndex = index
-      },
-      setTab(item, index) {
-        this.tabIndex = index
-        switch (item.status) {
-          case 0:
-            this.tabList = BUSINESS
-            break
-          case 1:
-            this.tabList = BUSINESS2
-            break
-        }
-      },
 //      账单明细
       showMoney() {
         monies.accounts().then((res) => {
@@ -168,10 +145,10 @@
         if (this.type === 'open') {
           switch (res.status) {
             case 0:
-              this.tabList = BUSINESS
+              this.selectList[1].children[idx].data = BUSINESS
               break
             case 1:
-              this.tabList = BUSINESS2
+              this.selectList[1].children[idx].data = BUSINESS2
               break
           }
           this.selectList[1].children[idx].content = this.selectList[1].children[idx].data[0].title
@@ -244,34 +221,6 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
-  .form-tab
-    margin-left :4.16vw
-    display :flex
-    .form-tab-item
-      display :inline-block
-      white-space :nowrap
-      color :$color-text-icon
-      font-size: $font-size-medium
-      padding :0 14px
-      border : 0.5px solid $color-line
-      height: 30px
-      border-right: none
-      line-height: 30px
-      /*&:hover
-        color :$color-nomal*/
-      &:last-child
-        border-top-right-radius :3px
-        border-bottom-right-radius :3px
-        border-right : 0.5px solid $color-line
-      &:first-child
-        border-top-left-radius :3px
-        border-bottom-left-radius :3px
-    .form-tab-item-active
-      border :0.5px solid $color-nomal !important
-      background :$color-nomal
-      color :$color-white !important
-    .form-tab-item-right
-      border-left :0.5px solid $color-nomal
   .money
     background: $color-white
     margin: 24px 24px 0
@@ -318,8 +267,6 @@
     height: 90%
     flex-direction: column
     background: $color-white
-    .form-tab
-      margin: 10px 0 20px
     .form-list
       height: 95%
       background: $color-white
@@ -328,7 +275,7 @@
         align-items: center
         padding-left: 43px
       .list-header
-        height: 14%
+        height: 14.5%
         border-bottom: 1px solid $color-big-background
         background: $color-big-background
       .list
@@ -336,7 +283,7 @@
         display: flex
         flex-direction: column
         .list-box
-          height: 16.2857%
+          height: 14.2857%
           border-bottom: 1px solid $color-big-background
           &:hover
             background :$color-background
@@ -417,18 +364,6 @@
       margin-left: 37.5px
       display: flex
       white-space: nowrap
-      position: relative
-      height: 30px
-      line-height: 30px
-      font-size :$font-size-medium
-      width: 444px
-      .block
-        height: 100%
-        width: 378px
-        position: absolute
-        z-index: 150
-        top: 0
-        left: 66px
       .tap-item
         font-size: $font-size-medium
         color: $color-text
@@ -436,6 +371,11 @@
         line-height: 20px
         margin-right: 1.5625vw
         position: relative
+        .block
+          position: absolute
+          z-index: 150
+          bottom: -48px
+          transform: translateX(-20%)
         &:hover
           color: $color-nomal
         &:before
@@ -517,12 +457,17 @@
       font-size: $font-size-medium
       height: 30px
       line-height: 30px
-      padding : 0 22px
       text-align: center
       margin-left: 3.535vw
       border-radius: 3px
-      border :0.5px solid $color-nomal
-      color: $color-nomal
+      background: $color-nomal
+      color: $color-white
+      width: 5.625vw
+      &:hover
+        background: $color-hover
+      &:active
+        background: $color-active
+
   .select
     margin-left: 3.535vw
     transform: translateY(28%)
