@@ -43,9 +43,7 @@
         </el-date-picker>
       </div>
       <div class="order-btn hand" @click="search">搜索</div>
-      <a :href="excel" target="_blank">
-        <div class="down-excel">下载Excel</div>
-      </a>
+      <div class="down-excel"><a class="down-excel-a" :href="excel" target="_blank">下载Excel</a></div>
     </div>
     <div slot="form-list" class="form-list" v-show="showContent">
       <div class="form-tab">
@@ -705,12 +703,17 @@
     font-size: $font-size-medium
     height: 30px
     line-height: 30px
-    padding : 0 22px
     text-align: center
     margin-left: 3.535vw
     border-radius: 3px
     border :0.5px solid $color-nomal
     color: $color-nomal
+    .down-excel-a
+      color :$color-nomal
+      width: 100%
+      height: 100%
+      padding : 0 22px
+      display: block
 
   .order-btn
     background: $color-nomal
