@@ -546,6 +546,10 @@
     .list-item
       color: $color-text
       flex: 1
+      &:nth-child(10), &:nth-child(11)
+        flex: 0.7
+      &:nth-child(5), &:nth-child(6)
+        flex: 1.3
       .showDetail
         cursor: pointer
         font-size: $font-size-small
