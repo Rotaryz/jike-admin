@@ -34,7 +34,7 @@
           <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '受理成功' : item.status === 2 ? '审核不通过' : item.status === 3 ? '提现成功' : '过期退款'}}</div>
           <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
           <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
-          <div class="list-item"><span class="showDetail" :class="item.status !== 1 || item.status !== 3? 'audit' : 'audit-disable'" @click="showDetail(item)">审核</span></div>
+          <div class="list-item"><span class="showDetail" :class="item.status === 1 || item.status === 3? 'audit-disable' : 'audit'" @click="showDetail(item)">审核</span></div>
         </li>
       </ul>
     </div>
