@@ -189,7 +189,7 @@
   // 团购-*14**/
   const GROUNDLIST = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已完成', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}, {title: '待成团', status: 10}]
   const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '受理成功', status: 1}, {title: '审核不通过', status: 2}, {title: '提现成功', status: 3}, {title: '提现失败', status: 4}]
-  const ALL = [{title: '全部', status: 1}]
+  const ALL = [{title: '全部', status: ''}]
   const PAY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}]
   /* 异联卡购买订单状态 */
   const YLBUY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '待使用', status: 1}, {title: '已使用', status: 2}, {title: '已完成', status: 5}, {title: '已关闭', status: 6}]
