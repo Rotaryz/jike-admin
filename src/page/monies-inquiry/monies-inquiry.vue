@@ -82,9 +82,9 @@
           <!--支付状态-->
           <!--<div class="list-item" v-if="item.order_type === '0' && item.status === 3"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit-disable">审核</span></span></div>-->
           <!--提现状态-->
-          <div class="list-item" v-if="item.order_type === '0' && item.status === 3"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
-          <div class="list-item list-text">{{item.operation_time}}</div>
-          <div class="list-item list-text">{{item.admin_name}}</div>
+          <div class="list-item" v-if="item.order_type === '0' && item.status === 3"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit" @click.stop="inquiry(item)">审核</span></span></div>
+          <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
+          <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
         </li>
       </ul>
     </div>
@@ -181,7 +181,7 @@
   import {ERR_OK, BASE_URL} from 'api/config'
   import Toast from 'base/toast/toast'
   import AdminSelect from 'base/admin-select/admin-select'
-  const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作', '操作时间', '操作人']
+  const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
   const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}, {title: '分享赚钱', status: 9}, {title: '异联卡购买', status: 10}, {title: '异联卡报名', status: 14}, {title: '砍价', status: 11}]
   const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已完成', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
@@ -389,13 +389,11 @@
         })
       },
       inquiry(item) {
-        if (item.status === 0 && item.order_type === '0') {
-          this.reamrk = item.note
-          this.$refs.order.showShade()
-          this.detail = false
-          this.inquiryId = item.id
-          item.status === 3 ? this.isRefund = true : this.isRefund = false
-        }
+        this.reamrk = item.note
+        this.$refs.order.showShade()
+        this.detail = false
+        this.inquiryId = item.id
+        item.status === 3 ? this.isRefund = true : this.isRefund = false
       },
       //      判断是否返回待办事项
       isDeal() {
