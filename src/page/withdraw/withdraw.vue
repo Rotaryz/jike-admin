@@ -206,7 +206,7 @@
         })
       },
       showDetail(item) {
-        if (item.status !== 1 || item.status !== 3) {
+        if (item.status !== 1 && item.status !== 3) {
           this.reamrk = item.note
           this.$refs.order.showShade()
           this.detail = false
