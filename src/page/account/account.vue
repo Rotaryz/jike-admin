@@ -133,7 +133,6 @@
       }
     },
     created() {
-      console.log(this.orderType)
       this.showList()
       this.showMoney()
     },
