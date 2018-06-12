@@ -129,7 +129,8 @@
         endFinal: '',
         type: '', // 下拉框类型,
         orderInput: '', // 订单号
-        goNUm: 0
+        goNUm: 0,
+        isWithdrawal: true
       }
     },
     mounted() {
@@ -212,6 +213,7 @@
           this.detail = false
           this.inquiryId = item.id
           this.isRefund = item.status === 3
+          this.isWithdrawal = true
         }
       },
       showHeight(index) {
@@ -235,28 +237,36 @@
           case 1:
           case 13:
             let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
-            monies.checkWithdrawal(data).then((res) => {
-              if (res.error === ERR_OK) {
-                this.$refs.order.hideShade()
-                this.isDeal()
-                this.$refs.order.showContent('审核成功')
-              } else {
-                this.$refs.order.showContent(res.message)
-              }
-            })
+            if (this.isWithdrawal) {
+              this.isWithdrawal = false
+              monies.checkWithdrawal(data).then((res) => {
+                if (res.error === ERR_OK) {
+                  this.$refs.order.hideShade()
+                  this.isDeal()
+                  this.$refs.order.showContent('审核成功')
+                } else {
+                  this.$refs.order.showContent(res.message)
+                  this.isWithdrawal = true
+                }
+              })
+            }
             break
           case 4:
           case 12:
             let datas = {apply_id: this.inquiryId, note: this.reamrk, is_pass: pass}
-            monies.customerCheckWithdrawal(datas).then((res) => {
-              if (res.error === ERR_OK) {
-                this.$refs.order.hideShade()
-                this.isDeal()
-                this.$refs.order.showContent('审核成功')
-              } else {
-                this.$refs.order.showContent(res.message)
-              }
-            })
+            if (this.isWithdrawal) {
+              this.isWithdrawal = false
+              monies.customerCheckWithdrawal(datas).then((res) => {
+                if (res.error === ERR_OK) {
+                  this.$refs.order.hideShade()
+                  this.isDeal()
+                  this.$refs.order.showContent('审核成功')
+                } else {
+                  this.$refs.order.showContent(res.message)
+                  this.isWithdrawal = true
+                }
+              })
+            }
             break
         }
       },

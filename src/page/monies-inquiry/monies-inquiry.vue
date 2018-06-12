@@ -260,7 +260,8 @@
         goNUm: 0,
         tabIndex: 0,
         tabNoList: couponList,
-        tabList: couponList
+        tabList: couponList,
+        isWthdrawal: true
       }
     },
     mounted() {
@@ -400,6 +401,7 @@
         this.detail = false
         this.inquiryId = item.id
         item.status === 3 ? this.isRefund = true : this.isRefund = false
+        this.isWthdrawal = true
       },
       //      判断是否返回待办事项
       isDeal() {
@@ -415,24 +417,32 @@
         let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
         if (this.isRefund) {
           let data = {order_id: this.inquiryId, note: this.reamrk, status: pass}
-          finances.refundConfirm(data).then((res) => {
+          if (this.isWthdrawal) {
+            this.isWthdrawal = false
+            finances.refundConfirm(data).then((res) => {
+              if (res.error === ERR_OK) {
+                this.$refs.order.showContent('审核成功')
+                this.isDeal()
+              } else {
+                this.$refs.order.showContent(res.message)
+                this.isWthdrawal = true
+              }
+            })
+            return
+          }
+        }
+        if (this.isWthdrawal) {
+          this.isWthdrawal = false
+          monies.checkWithdrawal(data).then((res) => {
             if (res.error === ERR_OK) {
-              this.$refs.order.showContent('审核成功')
-              this.isDeal()
+              this.$refs.order.hideShade()
+              this.showList()
             } else {
               this.$refs.order.showContent(res.message)
+              this.isWthdrawal = true
             }
           })
-          return
         }
-        monies.checkWithdrawal(data).then((res) => {
-          if (res.error === ERR_OK) {
-            this.$refs.order.hideShade()
-            this.showList()
-          } else {
-            this.$refs.order.showContent(res.message)
-          }
-        })
       },
       showHeight(index) {
         this.heightIndex = index

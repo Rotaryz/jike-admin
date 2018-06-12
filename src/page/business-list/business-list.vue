@@ -236,7 +236,8 @@
         check: 1,
         remarks: '',
         goNUm: 0,
-        ultraPhone: ''
+        ultraPhone: '',
+        isWithdrawal: true
       }
     },
     created() {
@@ -325,6 +326,7 @@
         })
         this.$refs.order.showShade()
         this.check = 1
+        this.isWithdrawal = true
       },
       // 越权
       ultraViresSub() {
@@ -358,6 +360,7 @@
           this.$refs.order.showShade()
           this.merchantId = res.merchant_id
           this.check = 2
+          this.isWithdrawal = true
         }
       },
       isDeal() {
@@ -374,34 +377,42 @@
         let data = {note: this.reamrk, merchant_id: this.merchantId}
         if (this.check && this.check !== 1) {
           let data = {remark: this.remarks, merchant_id: this.merchantId, check_status: code}
-          home.licenseAudit(data).then((res) => {
-            if (res.error === ERR_OK) {
-              switch (code) {
-                case 2:
-                  this.$refs.order.showContent('审核通过')
-                  break
-                case 3:
-                  this.$refs.order.showContent('审核不通过')
-                  break
+          if (this.isWithdrawal) {
+            this.isWithdrawal = false
+            home.licenseAudit(data).then((res) => {
+              if (res.error === ERR_OK) {
+                switch (code) {
+                  case 2:
+                    this.$refs.order.showContent('审核通过')
+                    break
+                  case 3:
+                    this.$refs.order.showContent('审核不通过')
+                    break
+                }
+                this.isDeal()
+                return
               }
-              this.isDeal()
+              this.$refs.order.showContent(res.message)
+              this.isWithdrawal = true
+            })
+          }
+          return false
+        }
+        if (this.isWithdrawal) {
+          this.isWithdrawal = false
+          merchant.disable(data).then((res) => {
+            if (res.error === ERR_OK) {
+              let content = ''
+              this.isDisabledCode ? content = '解冻' : content = '冻结'
+              this.$refs.order.showContent(content + '成功')
+              this.$refs.order.hideShade()
+              this.showList()
               return
             }
             this.$refs.order.showContent(res.message)
+            this.isWithdrawal = true
           })
-          return false
         }
-        merchant.disable(data).then((res) => {
-          if (res.error === ERR_OK) {
-            let content = ''
-            this.isDisabledCode ? content = '解冻' : content = '冻结'
-            this.$refs.order.showContent(content + '成功')
-            this.$refs.order.hideShade()
-            this.showList()
-            return
-          }
-          this.$refs.order.showContent(res.message)
-        })
       },
       hideShadeBox() {
         this.$refs.order.hideShade()
