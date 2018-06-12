@@ -17,26 +17,32 @@
       </div>
       <div class="check-tip">
         <div class="tap-first">
-          <div class="tap-item" v-for="(item, index) in timeList" :class="{'tap-item-active' : timeIndex === index}" :key="index" @click="timeCheck(index, item.type)">
-            {{item.title}}
-            <div class="block" v-if="item.type === ''" v-show="showPicker">
-              <el-date-picker
-                v-model="moreTime"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期">
-              </el-date-picker>
-            </div>
+          支付时间
+          <!--<div class="tap-item" v-for="(item, index) in timeList" :class="{'tap-item-active' : timeIndex === index}" :key="index" @click="timeCheck(index, item.type)">-->
+          <!--{{item.title}}-->
+          <div class="block">
+            <el-date-picker
+              v-model="moreTime"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期">
+            </el-date-picker>
           </div>
         </div>
-        <div class="select">
-          <admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>
+        <div class="form-tab">
+          <div class="form-tab-item hand" :class="{'form-tab-item-active': tabIndex === index, 'form-tab-item-right': tabIndex + 1 === index}" v-for="(item, index) in selectList[0].children[0].data" :key="index" @click="setTab(item,index)">{{item.title}}</div>
         </div>
-        <a class="down-excel hand" :href="excel" target="_blank">下载Excel</a>
+        <a class="down-excel hand" :href="excel" target="_blank">对账单下载</a>
       </div>
+      <!--<div class="select">-->
+      <!--<admin-select :select="selectList" @selectType="selectType" @setValue="setValue"></admin-select>-->
+      <!--</div>-->
     </div>
     <div slot="form-list" class="form-box-small">
+      <div class="form-tab">
+        <div class="form-tab-item hand" :class="{'form-tab-item-active': tabGoodsIndex === index, 'form-tab-item-right': tabGoodsIndex + 1 === index}" v-for="(item, index) in tabList" :key="index" @click="setGoodsTab(item,index)">{{item.title}}</div>
+      </div>
       <div class="form-list">
         <div class="list-header">
           <div class="list-item" v-for="(item, index) in titleListSec" :key="index">
@@ -434,11 +440,6 @@
         line-height: 20px
         margin-right: 1.5625vw
         position: relative
-        .block
-          position: absolute
-          z-index: 150
-          bottom: -48px
-          transform: translateX(-20%)
         &:hover
           color: $color-nomal
         &:before
@@ -524,14 +525,8 @@
       text-align: center
       margin-left: 3.535vw
       border-radius: 3px
-      background: $color-nomal
-      color: $color-white
-      width: 5.625vw
-      &:hover
-        background: $color-hover
-      &:active
-        background: $color-active
-
+      border :0.5px solid $color-nomal
+      color: $color-nomal
   .select
     margin-left: 3.535vw
     transform: translateY(28%)
