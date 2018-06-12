@@ -43,11 +43,12 @@
         </el-date-picker>
       </div>
       <div class="order-btn hand" @click="search">搜索</div>
-      <a :href="excel" target="_blank">
-        <div class="down-excel">下载Excel</div>
-      </a>
+      <div class="down-excel"><a class="down-excel-a" :href="excel" target="_blank">下载Excel</a></div>
     </div>
     <div slot="form-list" class="form-list" v-show="showContent">
+      <div class="form-tab">
+        <div class="form-tab-item hand" :class="{'form-tab-item-active': tabIndex === index, 'form-tab-item-right': tabIndex + 1 === index}" v-for="(item, index) in tabList" :key="index" @click="setTab(item,index)">{{item.title}}</div>
+      </div>
       <div class="list-header">
         <div class="list-item" v-for="(item, index) in titleList" :key="index">
           {{item}}
@@ -65,20 +66,25 @@
           <div class="list-item list-text">{{item.created_at}}</div>
           <div class="list-item list-text">{{item.mobile}}</div>
           <!--优惠券状态-->
-          <div class="list-item list-text" v-if="item.order_type === '0' || item.order_type === '7'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 4 ? '退款完成' : item.status === 5 ? '已评价' : item.status === 6 ? '逾期付款已关闭' : item.status === 7 ? '退款失败商家余额不足' : item.status === 8 ? '退款失败平台余额不足' : '有效期过期关闭'}}</div>
+          <div class="list-item list-text" v-if="item.order_type === '0' || item.order_type === '7' || item.order_type === '8' || item.order_type === '9' || item.order_type === '11'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '待评价' : item.status === 3 ? '退款中' : item.status === 4 ? '退款完成' : item.status === 5 ? '已完成' : item.status === 6 ? '逾期付款已关闭' : item.status === 7 ? '退款失败商家余额不足' : item.status === 8 ? '退款失败平台余额不足' : item.status === 9 ? '有效期过期关闭' : '待成团'}}</div>
+          <!--异业联盟购买-->
+          <div class="list-item list-text" v-if="item.order_type === '10'">{{item.status === 0 ? '待支付' : item.status === 1 ? '待使用' : item.status === 2 ? '已使用' : item.status === 5 ? '已完成' : item.status === 6 ? '已关闭' : ''}}</div>
+          <!--异联卡报名-->
+          <div class="list-item list-text" v-if="item.order_type === '14'">{{item.status === 0 ? '待付款' : item.status === 1 ? '已付款' : item.status === 7 ? '退款中' : item.status === 4 ? '已退款' : item.status === 6 ? '已关闭' : ''}}</div>
           <!--买单-->
-          <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' :  '已支付'}}</div>
+          <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : '已关闭'}}</div>
           <!--联盟-->
+          <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '未处理' : item.status === 1 ? '受理成功' : item.status === 2 ? '审核不通过' : item.status === 3 ? '提现成功' : '过期退款'}}</div>
           <div class="list-item list-text" v-if="item.order_type === '6'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '商家已确认' : item.status === 3 ? '拒绝后已退款' : '过期退款'}}</div>
-          <div class="list-item" v-if="item.order_type === '0' || item.order_type === '5' || item.order_type === '6' || item.order_type === '7'"><span class="showDetail"><span @click="showDetail(item)">查看</span></span></div>
-          <!--支付状态-->
           <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
-          <div class="list-item" v-if="item.order_type === '2' || item.order_type === '3'"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit-disable">审核</span></span></div>
+
+          <div class="list-item" v-if="(item.order_type === '0' && item.status !== 3) || item.order_type !== '0'"><span class="showDetail"><span @click="showDetail(item)">查看</span></span></div>
+          <!--支付状态-->
+          <!--<div class="list-item" v-if="item.order_type === '0' && item.status === 3"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit-disable">审核</span></span></div>-->
           <!--提现状态-->
-          <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '未处理' : item.status === 1 ? '提现成功' : '提现失败'}}</div>
-          <div class="list-item" v-if="item.order_type === '1' || item.order_type === '4'"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span :class="item.status === 0 ? 'audit' : 'audit-disable'" @click.stop="inquiry(item)">审核</span></span></div>
-          <div class="list-item list-text">{{item.operation_time}}</div>
-          <div class="list-item list-text">{{item.admin_name}}</div>
+          <div class="list-item" v-if="item.order_type === '0' && item.status === 3"><span class="showDetail"><span @click="showDetail(item)">查看 | </span><span class="audit" @click.stop="inquiry(item)">审核</span></span></div>
+          <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
+          <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
         </li>
       </ul>
     </div>
@@ -133,9 +139,11 @@
         </div>
         <div class="shade-border shade-tiem">
           <span class="shade-title">订单状态</span>
-          <span class="shade-text" v-if="orderDetail.order_type === '0'">{{orderDetail.status === 0 ? '待支付' : orderDetail.status === 1 ? '已支付' : orderDetail.status === 2 ? '待评价' : orderDetail.status === 3 ? '退款中' : orderDetail.status === 4 ? '退款完成' : orderDetail.status === 5 ? '已评价' : orderDetail.status === 6 ? '逾期付款已关闭' : orderDetail.status === 7 ? '退款失败商家余额不足' : orderDetail.status === 8 ? '退款失败平台余额不足' : '有效期过期关闭'}}</span>
+          <span class="shade-text" v-if="orderDetail.order_type === '0' || orderDetail.order_type === '7' || orderDetail.order_type === '8' || orderDetail.order_type === '9' || orderDetail.order_type === '11'">{{orderDetail.status === 0 ? '待支付' : orderDetail.status === 1 ? '已支付' : orderDetail.status === 2 ? '待评价' : orderDetail.status === 3 ? '退款中' : orderDetail.status === 4 ? '退款完成' : orderDetail.status === 5 ? '已完成' : orderDetail.status === 6 ? '逾期付款已关闭' : orderDetail.status === 7 ? '退款失败商家余额不足' : orderDetail.status === 8 ? '退款失败平台余额不足' :item.status === 9 ? '有效期过期关闭' : '待成团'}}</span>
           <span class="shade-text" v-if="orderDetail.order_type === '1' || orderDetail.order_type === '4'">{{orderDetail.status === 0 ? '未处理' : orderDetail.status === 1 ? '提现成功' : '提现失败'}}</span>
           <span class="shade-text" v-if="orderDetail.order_type === '2' || orderDetail.order_type === '3'">支付成功</span>
+          <span class="list-item list-text" v-if="orderDetail.order_type === '10'">{{orderDetail.status === 0 ? '待支付' : orderDetail.status === 1 ? '待使用' : orderDetail.status === 2 ? '已使用' : orderDetail.status === 5 ? '已完成' : orderDetail.status === 6 ? '已关闭' : ''}}</span>
+          <span class="shade-text" v-if="orderDetail.order_type === '14'">{{orderDetail.status === 0 ? '待付款' : orderDetail.status === 1 ? '已付款' : orderDetail.status === 7 ? '退款中' : orderDetail.status === 4 ? '已退款' : orderDetail.status === 6 ? '已关闭' : ''}}</span>
         </div>
         <div class="shade-border shade-tiem">
           <span class="shade-title">失败原因</span>
@@ -175,13 +183,20 @@
   import {ERR_OK, BASE_URL} from 'api/config'
   import Toast from 'base/toast/toast'
   import AdminSelect from 'base/admin-select/admin-select'
-  const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作', '操作时间', '操作人']
+  const TITLELIST = ['商户订单号', '商户账号', '业务类型', '订单金额', '支付时间', '创建时间', '交易对象', '订单状态', '操作']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
-  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}]
-  const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已评价', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
-  const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '提现成功', status: 1}, {title: '提现失败', status: 2}]
-  const ALL = [{title: '全部', status: 1}]
-  const PAY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}]
+  const orderType = [{title: '优惠券', status: 0}, {title: '门店提现', status: 1}, {title: '门店年费', status: 3}, {title: '红包创建', status: 2}, {title: '顾客提现', status: 4}, {title: '买单', status: 5}, {title: '联盟投放', status: 6}, {title: '礼包', status: 7}, {title: '团购', status: 8}, {title: '分享赚钱', status: 9}, {title: '异联卡购买', status: 10}, {title: '异联卡报名', status: 14}, {title: '砍价', status: 11}]
+  const couponList = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已完成', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}]
+  const ACTIVITYLIST = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '已完成', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '有效期过期关闭', status: 9}]
+  // 团购-*14**/
+  const GROUNDLIST = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '待评价', status: 2}, {title: '退款中', status: 3}, {title: '退款完成', status: 4}, {title: '已完成', status: 5}, {title: '逾期付款已关闭', status: 6}, {title: '退款失败商家余额不足', status: 7}, {title: '退款失败平台余额不足', status: 8}, {title: '有效期过期关闭', status: 9}, {title: '待成团', status: 10}]
+  const DEPOSIT = [{title: '全部', status: ''}, {title: '未处理', status: 0}, {title: '受理成功', status: 1}, {title: '审核不通过', status: 2}, {title: '提现成功', status: 3}, {title: '提现失败', status: 4}]
+  const ALL = [{title: '全部', status: ''}]
+  const PAY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '已关闭', status: 6}]
+  /* 异联卡购买订单状态 */
+  const YLBUY = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '待使用', status: 1}, {title: '已使用', status: 2}, {title: '已完成', status: 5}, {title: '已关闭', status: 6}]
+  /* 异联卡报名 */
+  const APPLY = [{title: '全部', status: ''}, {title: '待付款', status: 0}, {title: '已付款', status: 1}, {title: '退款中', status: 7}, {title: '已退款', status: 3}, {title: '已关闭', status: 6}]
   const ALLIANCE = [{title: '全部', status: ''}, {title: '待支付', status: 0}, {title: '已支付', status: 1}, {title: '商家已确认', status: 2}, {title: '拒绝后已退款', status: 3}, {title: '过期退款', status: 4}]
   const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
   let select = [{
@@ -190,13 +205,14 @@
     select: false,
     show: false,
     children: [{content: '优惠券', data: orderType}]
-  }, {
-    title: '订单状态',
-    type: 'state',
-    select: false,
-    show: false,
-    children: [{content: '全部', data: couponList}]
   }]
+//    , {
+//    title: '订单状态',
+//    type: 'state',
+//    select: false,
+//    show: false,
+//    children: [{content: '全部', data: couponList}]
+//  }
   export default {
     data() {
       return {
@@ -241,7 +257,11 @@
         isRefund: false,
         isSearch: false,
         excel: '',
-        goNUm: 0
+        goNUm: 0,
+        tabIndex: 0,
+        tabNoList: couponList,
+        tabList: couponList,
+        isWthdrawal: true
       }
     },
     mounted() {
@@ -262,17 +282,29 @@
       search() {
         this.orderSn = this.orderInput
         this.merchantMobile = this.busInput
+        if (this.orderTypes !== this.orderType) {
+          this.tabIndex = 0
+          this.orderState = ''
+        }
         this.orderTypes = this.orderType
-        this.orderState = this.orderStatusCode
+//        this.orderState = this.orderStatusCode
         this.finalTime = this.sreachTime
         this.findPayTime = this.sreachPayTime
         this.page = 1
         this.$refs.order.beginPage()
         this.showList()
+        this.tabList = this.tabNoList
         this.downExcel()
       },
       selectType(type, res) {
         this.type = type
+      },
+      setTab(item, idx) {
+        this.tabIndex = idx
+        this.orderState = item.status
+        this.page = 1
+        this.$refs.order.beginPage()
+        this.showList()
       },
       setValue(value, idx) {
         if (this.type === 'business') {
@@ -284,27 +316,41 @@
           case 0:
           case 7:
             //          优惠券+礼包状态
-            this.selectList[1].children[idx].data = couponList
+            this.tabNoList = couponList
             break
           case 2:
           case 3:
             //          提现状态
-            this.selectList[1].children[idx].data = ALL
+            this.tabNoList = ALL
             break
           case 5:
             //          买单状态
-            this.selectList[1].children[idx].data = PAY
+            this.tabNoList = PAY
             break
           case 6:
             //          联盟投放状态
-            this.selectList[1].children[idx].data = ALLIANCE
+            this.tabNoList = ALLIANCE
             break
           case 1:
           case 4:
-            this.selectList[1].children[idx].data = DEPOSIT
+            this.tabNoList = DEPOSIT
+            break
+          case 8:
+            this.tabNoList = GROUNDLIST
+            break
+          case 10:
+            this.tabNoList = YLBUY
+            break
+          case 14:
+            this.tabNoList = APPLY
+            break
+          case 9:
+          case 11:
+            this.tabNoList = ACTIVITYLIST
             break
         }
-        this.selectList[1].children[idx].content = this.type === 'business' ? '全部' : this.selectList[1].children[idx].content
+        // this.tabIndex = 0
+//        this.selectList[1].children[idx].content = this.type === 'business' ? '全部' : this.selectList[1].children[idx].content
       },
       hideShadeBox() {
         this.$refs.order.hideShade()
@@ -350,13 +396,12 @@
         })
       },
       inquiry(item) {
-        if ((item.status === 0 && (item.order_type === '1' || item.order_type === '4')) || (item.status === 3 && item.order_type === '0')) {
-          this.reamrk = item.note
-          this.$refs.order.showShade()
-          this.detail = false
-          this.inquiryId = item.id
-          item.status === 3 ? this.isRefund = true : this.isRefund = false
-        }
+        this.reamrk = item.note
+        this.$refs.order.showShade()
+        this.detail = false
+        this.inquiryId = item.id
+        item.status === 3 ? this.isRefund = true : this.isRefund = false
+        this.isWthdrawal = true
       },
       //      判断是否返回待办事项
       isDeal() {
@@ -372,24 +417,32 @@
         let data = {order_id: this.inquiryId, note: this.reamrk, is_pass: pass}
         if (this.isRefund) {
           let data = {order_id: this.inquiryId, note: this.reamrk, status: pass}
-          finances.refundConfirm(data).then((res) => {
+          if (this.isWthdrawal) {
+            this.isWthdrawal = false
+            finances.refundConfirm(data).then((res) => {
+              if (res.error === ERR_OK) {
+                this.$refs.order.showContent('审核成功')
+                this.isDeal()
+              } else {
+                this.$refs.order.showContent(res.message)
+                this.isWthdrawal = true
+              }
+            })
+            return
+          }
+        }
+        if (this.isWthdrawal) {
+          this.isWthdrawal = false
+          monies.checkWithdrawal(data).then((res) => {
             if (res.error === ERR_OK) {
-              this.$refs.order.showContent('审核成功')
-              this.isDeal()
+              this.$refs.order.hideShade()
+              this.showList()
             } else {
               this.$refs.order.showContent(res.message)
+              this.isWthdrawal = true
             }
           })
-          return
         }
-        monies.checkWithdrawal(data).then((res) => {
-          if (res.error === ERR_OK) {
-            this.$refs.order.hideShade()
-            this.showList()
-          } else {
-            this.$refs.order.showContent(res.message)
-          }
-        })
       },
       showHeight(index) {
         this.heightIndex = index
@@ -401,23 +454,17 @@
         this.orderInput = this.orderInput !== this.orderSn ? this.orderSn : this.orderInput
         this.busInput = this.merchantMobile !== this.busInput ? this.merchantMobile : this.busInput
         this.orderType = this.orderTypes !== this.orderType ? this.orderTypes : this.orderType
-        this.orderState = this.orderState !== this.orderStatusCode ? this.orderStatusCode : this.orderState
         this.moreTime = JSON.stringify(this.finalTime) !== JSON.stringify(this.sreachTime) ? this.oldTime : this.newTime
         this.payTime = JSON.stringify(this.findPayTime) !== JSON.stringify(this.sreachPayTime) ? this.oldPayTime : this.newPayTime
         let content = ''
-        let contentTwo = ''
+//        let contentTwo = ''
         this.selectList[0].children[0].data.forEach((item) => {
           if (this.orderTypes === item.status) {
             content = item.title
           }
         })
-        this.selectList[1].children[0].data.forEach((item) => {
-          if (this.orderState === item.status) {
-            contentTwo = item.title
-          }
-        })
         this.selectList[0].children[0].content = content
-        this.selectList[1].children[0].content = contentTwo
+//        this.selectList[1].children[0].content = contentTwo
         this.page = page
         this.showList()
       }
@@ -455,6 +502,34 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import '~common/stylus/mixin'
+  .form-tab
+    margin: 10px 0 20px
+    display :flex
+    .form-tab-item
+      display :inline-block
+      white-space :nowrap
+      color :$color-text-icon
+      font-size: $font-size-medium
+      padding :0 14px
+      border : 0.5px solid $color-line
+      height: 30px
+      border-right: none
+      line-height: 30px
+      /*&:hover
+        color :$color-nomal*/
+      &:last-child
+        border-top-right-radius :3px
+        border-bottom-right-radius :3px
+        border-right : 0.5px solid $color-line
+      &:first-child
+        border-top-left-radius :3px
+        border-bottom-left-radius :3px
+    .form-tab-item-active
+      border :0.5px solid $color-nomal !important
+      background :$color-nomal
+      color :$color-white !important
+    .form-tab-item-right
+      border-left :0.5px solid $color-nomal
   .form-list
     height: 100%
     .list-header, .list-box
@@ -466,7 +541,7 @@
       border-bottom: 1px solid $color-big-background
       background: $color-big-background
     .list
-      height: 90.5%
+      height: 80.5%
       display: flex
       flex-direction: column
       .list-box
@@ -483,6 +558,10 @@
     .list-item
       color: $color-text
       flex: 1
+      &:nth-child(10), &:nth-child(11)
+        flex: 0.7
+      &:nth-child(5), &:nth-child(6)
+        flex: 1.3
       .showDetail
         cursor: pointer
         font-size: $font-size-small
@@ -639,15 +718,16 @@
     height: 30px
     line-height: 30px
     text-align: center
+    margin-left: 3.535vw
     border-radius: 3px
-    background: $color-nomal
-    color: $color-white
-    width: 5.625vw
-    white-space: nowrap
-    &:hover
-      background: $color-hover
-    &:active
-      background: $color-active
+    border :0.5px solid $color-nomal
+    color: $color-nomal
+    .down-excel-a
+      color :$color-nomal
+      width: 100%
+      height: 100%
+      padding : 0 22px
+      display: block
 
   .order-btn
     background: $color-nomal
