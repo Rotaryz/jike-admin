@@ -74,7 +74,7 @@
           <!--买单-->
           <div class="list-item list-text" v-if="item.order_type === '5'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : '已关闭'}}</div>
           <!--联盟-->
-          <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '未处理' : item.status === 1 ? '受理成功' : item.status === 2 ? '审核不通过' : item.status === 3 ? '提现成功' : '过期退款'}}</div>
+          <div class="list-item list-text" v-if="item.order_type === '1' || item.order_type === '4'">{{item.status === 0 ? '待审核' : item.status === 1 ? '受理成功' : item.status === 2 ? '审核不通过' : item.status === 3 ? '提现成功' : item.status === 4 ? '提现失败' : ''}}</div>
           <div class="list-item list-text" v-if="item.order_type === '6'">{{item.status === 0 ? '待支付' : item.status === 1 ? '已支付' : item.status === 2 ? '商家已确认' : item.status === 3 ? '拒绝后已退款' : '过期退款'}}</div>
           <div class="list-item list-text" v-if="item.order_type === '2' || item.order_type === '3'">支付成功</div>
 
@@ -140,7 +140,7 @@
         <div class="shade-border shade-tiem">
           <span class="shade-title">订单状态</span>
           <span class="shade-text" v-if="orderDetail.order_type === '0' || orderDetail.order_type === '7' || orderDetail.order_type === '8' || orderDetail.order_type === '9' || orderDetail.order_type === '11'">{{orderDetail.status === 0 ? '待支付' : orderDetail.status === 1 ? '已支付' : orderDetail.status === 2 ? '待评价' : orderDetail.status === 3 ? '退款中' : orderDetail.status === 4 ? '退款完成' : orderDetail.status === 5 ? '已完成' : orderDetail.status === 6 ? '逾期付款已关闭' : orderDetail.status === 7 ? '退款失败商家余额不足' : orderDetail.status === 8 ? '退款失败平台余额不足' :item.status === 9 ? '有效期过期关闭' : '待成团'}}</span>
-          <span class="shade-text" v-if="orderDetail.order_type === '1' || orderDetail.order_type === '4'">{{orderDetail.status === 0 ? '未处理' : orderDetail.status === 1 ? '提现成功' : '提现失败'}}</span>
+          <span class="shade-text" v-if="orderDetail.order_type === '1' || orderDetail.order_type === '4'">{{orderDetail.status === 0 ? '待审核' : orderDetail.status === 1 ? '受理成功' : orderDetail.status === 2 ? '审核不通过' : orderDetail.status === 3 ? '提现成功' : '提现失败'}}</span>
           <span class="shade-text" v-if="orderDetail.order_type === '2' || orderDetail.order_type === '3'">支付成功</span>
           <span class="list-item list-text" v-if="orderDetail.order_type === '10'">{{orderDetail.status === 0 ? '待支付' : orderDetail.status === 1 ? '待使用' : orderDetail.status === 2 ? '已使用' : orderDetail.status === 5 ? '已完成' : orderDetail.status === 6 ? '已关闭' : ''}}</span>
           <span class="shade-text" v-if="orderDetail.order_type === '14'">{{orderDetail.status === 0 ? '待付款' : orderDetail.status === 1 ? '已付款' : orderDetail.status === 7 ? '退款中' : orderDetail.status === 4 ? '已退款' : orderDetail.status === 6 ? '已关闭' : ''}}</span>
@@ -222,6 +222,7 @@
         focus: false,
         titleList: TITLELIST,
         orderList: [],
+
         time: 1,
         pageDtail: [{total: 1, per_page: 10, total_page: 1}],
         page: 1,
