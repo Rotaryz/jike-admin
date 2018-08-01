@@ -22,11 +22,15 @@
       </div>
       <ul class="list">
         <li class="list-box" v-for="(item,index) in orderList" :key="index" :class="{'list-box-active': heightIndex === index}" @mouseenter="showHeight(index)" @mouseleave="hideHeight">
-          <a href="javaScript:;" class="list-item list-text" :title="item.created_at"><div class="list-none">{{item.created_at}}</div></a>
+          <a href="javaScript:;" class="list-item list-text" :title="item.created_at">
+            <div class="list-none">{{item.created_at}}</div>
+          </a>
           <div class="list-item list-text">{{item.order_type === '1' ? '门店提现' : item.order_type === '4' ? '顾客提现' : item.order_type === '12' ? '异业联盟员工提现' : item.order_type === '13' ? '异业联盟商家提现' : ''}}</div>
           <div class="list-item list-text">{{item.merchant_mobile}}</div>
           <div class="list-item list-text">{{item.bank}}</div>
-          <a href="javaScript:;" class="list-item list-text" :title="item.withdrawal_card"><div class="list-none">{{item.withdrawal_card}}</div></a>
+          <a href="javaScript:;" class="list-item list-text" :title="item.withdrawal_card">
+            <div class="list-none">{{item.withdrawal_card}}</div>
+          </a>
           <div class="list-item list-text">{{item.user_name}}</div>
           <div class="list-item list-text">{{item.remaining}}</div>
           <div class="list-item list-text">{{item.blocked_remaining}}</div>
@@ -34,7 +38,7 @@
           <div class="list-item list-text">{{item.status === 0 ? '未处理' : item.status === 1 ? '受理成功' : item.status === 2 ? '审核不通过' : item.status === 3 ? '提现成功' : '过期退款'}}</div>
           <!--<div class="list-item list-text">{{item.operation_time}}</div>-->
           <!--<div class="list-item list-text">{{item.admin_name}}</div>-->
-          <div class="list-item"><span class="showDetail" :class="item.status === 1 || item.status === 3? 'audit-disable' : 'audit'" @click="showDetail(item)">审核</span></div>
+          <div class="list-item"><span class="showDetail" :class="item.status === 1 || item.status === 3 || item.status === 2? 'audit-disable' : 'audit'" @click="showDetail(item)">审核</span></div>
         </li>
       </ul>
     </div>
@@ -60,9 +64,10 @@
 <script type="text/ecmascript-6">
   import FormBox from 'base/form-box/form-box'
   import monies from 'api/monies'
-  import {ERR_OK, BASE_URL} from 'api/config'
+  import { ERR_OK, BASE_URL } from 'api/config'
   import Toast from 'base/toast/toast'
   import AdminSelect from 'base/admin-select/admin-select'
+
   const titleList = ['申请日期', '业务类型', '商户账号', '提现渠道', '提现账号', '姓名', '可提现金额', '冻结金额', '申请提现金额', '处理状态', '操作']
   const statusList = [{title: '支付成功', status: 1}, {title: '退款', status: 3}]
   const TOKEN = localStorage.getItem('token') || sessionStorage.getItem('token')
@@ -96,7 +101,7 @@
     type: ''
   }]
   export default {
-    data() {
+    data () {
       return {
         timeIdx: 0,
         reamrk: '',
@@ -133,7 +138,7 @@
         isWithdrawal: true
       }
     },
-    mounted() {
+    mounted () {
 //      未完成
       this.info()
       this.excel = `${BASE_URL.api}/api/monies/download-money-orders?access_token=${TOKEN}&order_sn=&merchant_mobile=&order_type=0&order_status=&start_time=&end_time=&pay_start_time&pay_end_time=`
@@ -141,7 +146,7 @@
       this.$refs.order.setNavTitle()
     },
     methods: {
-      info() {
+      info () {
         this.orderInput = this.$route.query.order || ''
         this.business = this.$route.query.status || 1
         let status = this.$route.query.status
@@ -154,10 +159,10 @@
           this.selectList[1].children[0].content = this.selectList[1].children[0].data[idx].title
         }
       },
-      selectType(type) {
+      selectType (type) {
         this.type = type
       },
-      setValue(res, idx) {
+      setValue (res, idx) {
         switch (this.type) {
           case 'open':
             this.deal = res.status
@@ -167,15 +172,15 @@
             break
         }
       },
-      hideShadeBox() {
+      hideShadeBox () {
         this.$refs.order.hideShade()
       },
-      sreach() {
+      sreach () {
         this.$refs.order.beginPage()
         this.page = 1
         this.showList()
       },
-      showList(status = false) {
+      showList (status = false) {
         this.endTime = this.time
         this.endBusiness = this.business
         this.endInput = this.busInput
@@ -206,8 +211,8 @@
           }
         })
       },
-      showDetail(item) {
-        if (item.status !== 1 && item.status !== 3) {
+      showDetail (item) {
+        if (item.status !== 1 && item.status !== 3 && item.status !== 2) {
           this.reamrk = item.note
           this.$refs.order.showShade()
           this.detail = false
@@ -216,14 +221,14 @@
           this.isWithdrawal = true
         }
       },
-      showHeight(index) {
+      showHeight (index) {
         this.heightIndex = index
       },
-      hideHeight() {
+      hideHeight () {
         this.heightIndex = -1
       },
       //      判断是否返回待办事项
-      isDeal() {
+      isDeal () {
         if (this.timeIdx === -1 && this.goNUm <= 1) {
           this.timeIdx = 0
           this.business === '1' ? this.$router.push({path: 'notes', query: {status: 'shop_withdrawal_audit'}}) : this.$router.push({path: 'notes', query: {status: 'user_withdrawal_audit'}})
@@ -232,7 +237,7 @@
           this.showList()
         }
       },
-      withdrawal(pass) {
+      withdrawal (pass) {
         switch (this.endBusiness) {
           case 1:
           case 13:
@@ -270,7 +275,7 @@
             break
         }
       },
-      checkTime(value, page, index) {
+      checkTime (value, page, index) {
         this.timeIdx = index
         if (Array.isArray(value)) {
           this.startTime = value[0]
@@ -283,7 +288,7 @@
         }
         this.$refs.order.beginPage()
       },
-      addPage(page) {
+      addPage (page) {
         this.endTime = this.endTime !== this.time ? this.time : this.endTime
         this.endInput = this.endInput !== this.busInput ? this.busInput : this.endInput
         this.endDeal = this.endDeal !== this.deal ? this.deal : this.endDeal
@@ -293,10 +298,10 @@
         this.page = page
         this.showList()
       },
-      orderStatus(status) {
+      orderStatus (status) {
         this.status = status
       },
-      showCity(prams, page) {
+      showCity (prams, page) {
         this.address = this.$refs.order.infoData(prams)
         this.page = page
         this.showList()
