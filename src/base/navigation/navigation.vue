@@ -22,8 +22,7 @@
               <a :href="items.url" class="nav-tap" :class="item.childrenIndex === idx ? 'nav-big-active' : ''">
                 <span class="nav-icon"><img src=""></span>
                 <div class="nav-title">
-                 <span v-for="(child , index) in items.title" :key="index">{{
-                   child}}
+                 <span v-for="(child , index) in items.title" :key="index">{{child}}
             </span>
                 </div>
               </a>
